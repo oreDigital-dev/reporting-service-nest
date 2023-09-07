@@ -6,7 +6,7 @@ import { User } from 'src/entitties/user.entity';
 
 @Injectable()
 export class UtilsService {
-  constructor(private config: ConfigService, private jwt: JwtService) {}
+  constructor(private config: ConfigService, private jwt: JwtService) { }
 
   async getTokens(
     user: User,
@@ -42,4 +42,10 @@ export class UtilsService {
       console.error('Error occurred while hashing:', error.message);
     }
   }
+
+  idValidator(id: String): boolean {
+    const regex = /^[0-9a-fA-F]{24}$/;
+    return regex.test(id.toString());
+  }
+  
 }

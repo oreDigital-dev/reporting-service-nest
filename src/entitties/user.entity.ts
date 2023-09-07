@@ -29,6 +29,7 @@ export class User extends InitiatorAudit {
   email: String;
 
   @Column()
+  
   username: String;
 
   @Column()
