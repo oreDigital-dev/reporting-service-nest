@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common/exceptions';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { User } from 'src/entitties/user.entity';
+import { User } from 'src/entities/user.entity';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';

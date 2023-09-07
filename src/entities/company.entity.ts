@@ -2,6 +2,7 @@ import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "t
 import { Address } from "./address.entity";
 import { EOwnershipType } from "src/enums/EOwnershipType.enum";
 import { MineSite } from "./minesite.entity";
+import { CreateCompanyDTO } from "src/dtos/create-company.dto";
 
 @Entity({name: "entity"})
 export class Company{
@@ -31,7 +32,7 @@ export class Company{
     ownershipType :EOwnershipType;
 
     @Column()
-    productionCapacity : number;
+    productionCapacity : string;
 
     @Column()
     numberOfEmployees: number;
@@ -50,6 +51,15 @@ export class Company{
     @ManyToMany(()=>Notification)
     notifications: Notification[]
 
-
+    constructor(dto: CreateCompanyDTO){
+        this.name = dto.name;
+        this.email = dto.email;
+        this.miniLicense = dto.licenseNumber;
+        this.productionCapacity = dto.productionCapacity;
+        this.phoneNumber = dto.phoneNumber;
+        this.ownerNID = dto.ownerNID;
+        this.numberOfEmployees = dto.numberOfEmployees;
+        this.ownershipType = dto.ownership;
+    }
 
 }

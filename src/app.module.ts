@@ -14,6 +14,7 @@ import { Role } from './entitties/role.entity';
 import { RoleService } from './roles/roles.service';
 import { File } from './file/File';
 import { IncidentsModule } from './incidents/incidents.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { IncidentsModule } from './incidents/incidents.module';
     MailingModule,
     AuthModule,
     IncidentsModule,
+    CompanyModule,
   ],
   controllers: [AuthController, HomeController],
 })
