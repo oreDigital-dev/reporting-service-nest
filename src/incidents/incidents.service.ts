@@ -11,13 +11,12 @@ export class IncidentsService {
     constructor(
         @InjectRepository(Incident) public incidentRepo:  Repository<Incident>,
         private utilService : UtilsService
-        private mineSiteService 
     ){}
 
-    async saveIncident(dto : CreateIncidentDTO ){
-        if(!this.utilService.idValidator(dto.mineSite)) throw new BadRequestException("Please provide a valid original mine site id")
-        const availableMineSite  = await 
-    }
+    // async saveIncident(dto : CreateIncidentDTO ){
+    //     if(!this.utilService.idValidator(dto.mineSite)) throw new BadRequestException("Please provide a valid original mine site id")
+    //     const availableMineSite  = await 
+    // }
 
 
 }
