@@ -1,0 +1,3 @@
+export enum ELocationType{
+    COUNTRY, PROVINCE, DISTRICT, SECTOR, CELL, VILLAGE, ISIBO
+}

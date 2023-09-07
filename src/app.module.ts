@@ -9,10 +9,13 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './entitties/user.entity';
-import { Role } from './entitties/role.entity';
+import { User } from './entities/user.entity';
+import { Role } from './entities/role.entity';
 import { RoleService } from './roles/roles.service';
 import { File } from './file/File';
+import { IncidentsModule } from './incidents/incidents.module';
+import { CompanyModule } from './company/company.module';
+import { AddressModule } from './address/address.module';
 import { EmployeesModule } from './employees/employees.module';
 
 @Module({
@@ -47,7 +50,9 @@ import { EmployeesModule } from './employees/employees.module';
     UsersModule,
     MailingModule,
     AuthModule,
-    EmployeesModule,
+    IncidentsModule,
+    CompanyModule,
+    AddressModule,
   ],
   controllers: [AuthController, HomeController],
 })

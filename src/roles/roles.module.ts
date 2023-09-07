@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { RoleService } from './roles.service';
 import { RolesController } from './roles.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Role } from 'src/entitties/role.entity';
+import { Role } from 'src/entities/role.entity';
 
 @Global()
 @Module({
