@@ -32,5 +32,11 @@ export class CompanyService {
         this.companyRepo.save(company);
     }
 
+    async getCompanyById(id: string){
+        return await this.companyRepo.findOneBy({
+            id : id
+        })
+    }
+
 
 }

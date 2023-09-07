@@ -3,12 +3,13 @@ import { Address } from "./address.entity";
 import { EOwnershipType } from "src/enums/EOwnershipType.enum";
 import { MineSite } from "./minesite.entity";
 import { CreateCompanyDTO } from "src/dtos/create-company.dto";
+import {v4 } from 'uuid';
 
 @Entity({name: "entity"})
 export class Company{
 
     @PrimaryGeneratedColumn()
-    id: number;
+    id: string = v4();
 
     @Column()
     name: string;
@@ -60,6 +61,7 @@ export class Company{
         this.ownerNID = dto.ownerNID;
         this.numberOfEmployees = dto.numberOfEmployees;
         this.ownershipType = dto.ownership;
+        this.minerals  = dto.mineralTypes;
     }
 
 }

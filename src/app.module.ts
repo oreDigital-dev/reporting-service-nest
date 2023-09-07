@@ -16,6 +16,7 @@ import { File } from './file/File';
 import { IncidentsModule } from './incidents/incidents.module';
 import { CompanyModule } from './company/company.module';
 import { AddressModule } from './address/address.module';
+import { MinesiteModule } from './minesite/minesite.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { AddressModule } from './address/address.module';
     IncidentsModule,
     CompanyModule,
     AddressModule,
+    MinesiteModule,
   ],
   controllers: [AuthController, HomeController],
 })

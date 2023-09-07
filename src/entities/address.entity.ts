@@ -1,11 +1,11 @@
 import { ELocationType } from "src/enums/ELocationType";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-
+import {v4} from 'uuid'
 @Entity("Address")
 export class Address {
 
     @PrimaryGeneratedColumn()
-    id: number
+    id: string = v4()
 
     @Column({name: "location_type"})
     locationType : ELocationType;
