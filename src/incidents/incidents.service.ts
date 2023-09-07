@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Exception } from 'handlebars';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
-import { Incident } from 'src/entitties/incident.entity';
+import { Incident } from 'src/entities/incident.entity';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 

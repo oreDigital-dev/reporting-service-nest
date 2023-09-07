@@ -1,6 +1,7 @@
 import { ELocationType } from "src/enums/ELocationType";
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
+@Entity("Address")
 export class Address {
 
     @PrimaryGeneratedColumn()

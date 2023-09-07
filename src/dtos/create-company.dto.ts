@@ -11,4 +11,5 @@ export class CreateCompanyDTO {
     mineralTypes: Array<String>;
     licenseNumber: number;
     numberOfEmployees: number;
+    addressId: number;
 }

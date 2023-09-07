@@ -4,7 +4,7 @@ import { IncidentsService } from './incidents.service';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { RolesModule } from 'src/roles/roles.module';
-import { Incident } from 'src/entitties/incident.entity';
+import { Incident } from 'src/entities/incident.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 import { ERole } from 'src/enums/ERole.enum';
-import { Role } from 'src/entitties/role.entity';
+import { Role } from 'src/entities/role.entity';
 
 @Injectable()
 export class RoleService {
