@@ -16,7 +16,14 @@ import { File } from './file/File';
 import { IncidentsModule } from './incidents/incidents.module';
 import { CompanyModule } from './company/company.module';
 import { AddressModule } from './address/address.module';
-import { EmployeesModule } from './employees/employees.module';
+import { EmployeeModule } from './employee/employee.module';
+import { CompanyController } from './company/company.controller';
+import { MinesitesController } from './minesites/minesites.controller';
+import { MineSite } from './entities/minesite.entity';
+import { Company } from './entities/company.entity';
+import { Employee } from './entities/employee.enity';
+import { Notification } from './entities/notification.entity';
+import { EmployeeController } from './employee/employee.controller';
 
 @Module({
   imports: [
@@ -32,7 +39,7 @@ import { EmployeesModule } from './employees/employees.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User, Role, File],
+        entities: [Company, User, Role, Employee],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -53,8 +60,15 @@ import { EmployeesModule } from './employees/employees.module';
     IncidentsModule,
     CompanyModule,
     AddressModule,
+    EmployeeModule,
   ],
-  controllers: [AuthController, HomeController],
+  controllers: [
+    HomeController,
+    AuthController,
+    CompanyController,
+    MinesitesController,
+    EmployeeController,
+  ],
 })
 export class AppModule implements OnModuleInit {
   constructor(private readonly roleService: RoleService) {}

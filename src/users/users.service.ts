@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import {
@@ -20,16 +20,17 @@ import { RoleService } from 'src/roles/roles.service';
 @Injectable()
 export class UsersService {
   constructor(
+    @Inject(forwardRef(() => UtilsService))
+    private utilsService: UtilsService,
     @InjectRepository(User) public userRepo: Repository<User>,
     private roleService: RoleService,
     private mailingService: MailingService,
-    private utilsService: UtilsService,
   ) {}
 
   async getUsers() {
     const user = await this.userRepo.findOne({
       where: {
-        id: 1,
+        // id: 1,
       },
     });
     // user.roles.push(await this.roleService.getRoleById(1));
@@ -55,7 +56,7 @@ export class UsersService {
     return user;
   }
 
-  async getUserById(id: number, entity: String) {
+  async getUserById(id: any, entity: String) {
     const response = await this.userRepo.findOne({
       where: {
         id: id,

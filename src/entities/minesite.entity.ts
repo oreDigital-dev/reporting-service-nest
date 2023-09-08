@@ -1,32 +1,33 @@
-import { InitiatorAudit } from "src/audits/Initiator.audit";
-import { Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Address } from "./address.entity";
-import { Incident } from "./incident.entity";
-import { Company } from "./company.entity";
+import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Address } from './address.entity';
+import { Company } from './company.entity';
 
-export class MineSite extends InitiatorAudit{
+@Entity('incidents')
+export class MineSite extends InitiatorAudit {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column()
+  name: string;
 
-    @Column()
-    name : string;
+  //   @Column({ default: 'GOLD' })
+  //   minerals: Array<String>;
 
-    @Column({default:"GOLD"})
-    minerals: Array<String>;
+  //   @Column()
+  //   address: Address;
 
-    @Column()
-    address: Address;
+  //   @Column()
+  //   @OneToMany(() => Incident, (incident) => incident.mineSite)
+  //   incidents: Incident[];
 
-    @Column()
-    @OneToMany(()=> Incident, incident => incident.mineSite)
-    incidents: Incident[]
-
-    @Column()
-    @ManyToOne(()=>Company)
-    company : Company;
-
-    
-
-    
+  //   @Column()
+  //   @ManyToOne(() => Company)
+  //   company: Company;
 }

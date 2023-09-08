@@ -13,11 +13,12 @@ import { Role } from './role.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { File } from 'src/file/File';
+import { UUID } from 'crypto';
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends InitiatorAudit {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: UUID;
 
   @Column()
   firstName: String;
@@ -29,7 +30,6 @@ export class User extends InitiatorAudit {
   email: String;
 
   @Column()
-  
   username: String;
 
   @Column()

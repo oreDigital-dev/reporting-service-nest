@@ -15,7 +15,7 @@ export class CreateCompanyDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  name: string;
+  name: String;
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -24,7 +24,7 @@ export class CreateCompanyDTO {
   @IsNotEmpty()
   @ApiProperty()
   @IsEmail()
-  email: string;
+  email: any;
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -41,7 +41,7 @@ export class CreateCompanyDTO {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  productionCapacity: string;
+  productionCapacity: number;
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
