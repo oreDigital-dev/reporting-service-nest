@@ -51,7 +51,7 @@ export class CompanyService {
       dto.ownership,
     );
     company.password = hashedPassword;
-    let address: Address = await this.addressService.findById(dto.addressId);
+    // let address: Address = await this.addressService.findById(dto.addressId);
     // company.location =address;
     this.companyRepo.save(company);
   }

@@ -1,61 +1,36 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsStrongPassword,
-  IsUUID,
-} from 'class-validator';
-import { UUID } from 'crypto';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 
 export class CreateCompanyDTO {
   @IsString()
+  name: string;
   @IsNotEmpty()
-  @ApiProperty()
-  name: String;
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
   ownership: EOwnershipType;
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsEmail()
-  email: any;
+  email: string;
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   ownerNID: string;
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
-  @IsStrongPassword()
   password: string;
+
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
   phoneNumber: string;
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  productionCapacity: number;
-  @IsArray()
-  @IsNotEmpty()
-  @ApiProperty()
+
+  productionCapacity: string;
+
   mineralTypes: Array<String>;
+
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
   licenseNumber: number;
+
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
   numberOfEmployees: number;
-  @IsUUID()
+
+  @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
-  addressId: UUID;
+  addressId: string;
 }

@@ -15,13 +15,13 @@ export class MinesiteService {
   ) {}
 
   async createMineSite(dto: createMineSiteDTO) {
-    let mineSite: MineSite = new MineSite();
+    // let mineSite: MineSite = new MineSite(dto.name);
     let isAvailable = this.mineSiteRepo.findBy({
       name: dto.name,
     });
     if (isAvailable)
       throw new BadRequestException(`${name} minesite is already registered!`);
-    // const company = await this.companyService.getCompanyById(dto.companyId);
+    // // const company = await this.companyService.getCompanyById(dto.companyId);
     // mineSite.company = company;
     // const address = this.addressService.findById(dto.addressId);
   }

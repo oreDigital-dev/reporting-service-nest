@@ -1,4 +1,3 @@
-import { UUID } from 'crypto';
 import { ELocationType } from 'src/enums/ELocationType';
 import {
   Column,
@@ -6,15 +5,14 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Company } from './company.entity';
-import { combineAll } from 'rxjs';
+import { v4 } from 'uuid';
 import { MineSite } from './minesite.entity';
 import { User } from './us.entity';
+import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 
-@Entity('Address')
+@Entity('address')
 export class Address {
   @PrimaryGeneratedColumn()
   id: UUID;
@@ -34,8 +32,9 @@ export class Address {
   @OneToMany(() => MineSite, (mineSite) => mineSite.address)
   mineSite: MineSite[];
 
-  @OneToMany(() => Company, (company) => company.address)
-  companies: Company[];
+  @ManyToOne((type) => Address)
+  @JoinColumn({ name: 'parent_id' })
+  parentId: Address;
 
   @OneToMany(() => User, (user) => user.address)
   user: User[];

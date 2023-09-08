@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -12,10 +11,9 @@ import { Address } from './address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
-import { Employee } from './employee.enity';
-import { Notification } from './notification.entity';
+import { v4 } from 'uuid';
+import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { UUID } from 'crypto';
 
 @Entity('company')
 export class Company extends InitiatorAudit {
@@ -37,12 +35,12 @@ export class Company extends InitiatorAudit {
   @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  @ManyToOne(() => Address, (address) => address.companies)
-  @JoinColumn({ name: 'addres_id' })
-  address: Address;
+  // @ManyToOne(() => Address, (address) => address.companies)
+  // @JoinColumn({ name: 'address_id' })
+  // address: Address;
 
-  @Column()
-  ownershipType: EOwnershipType = EOwnershipType.PRIVATE;
+  @Column({ default: 'PRIVATE' })
+  ownershipType: EOwnershipType;
 
   @Column()
   productionCapacity: number;
@@ -63,28 +61,19 @@ export class Company extends InitiatorAudit {
   //   @OneToMany(() => Incident, (incident) => incident.mineSite)
   //   incidents: Incident[];
 
-  @ManyToMany(() => Employee)
-  @JoinTable()
-  companies: Employee[];
+  @Column()
+  @ManyToMany(() => Notification)
+  notifications: Notification[];
 
-  constructor(
-    name: String,
-    email: String,
-    minLicense: number,
-    productionCapacity: number,
-    phoneNumber: string,
-    ownershipId: string,
-    numberOfEmployees: number,
-    ownerShipType: EOwnershipType,
-  ) {
-    super();
-    this.name = name;
-    this.email = email;
-    this.miniLicense = minLicense;
-    this.productionCapacity = productionCapacity;
-    this.phoneNumber = phoneNumber;
-    this.ownerNID = ownershipId;
-    this.numberOfEmployees = numberOfEmployees;
-    this.ownershipType = ownerShipType;
-  }
-}
+//   constructor(dto: CreateCompanyDTO) {
+//     this.name = dto.name;
+//     this.email = dto.email;
+//     this.miniLicense = dto.licenseNumber;
+//     this.productionCapacity = dto.productionCapacity;
+//     this.phoneNumber = dto.phoneNumber;
+//     this.ownerNID = dto.ownerNID;
+//     this.numberOfEmployees = dto.numberOfEmployees;
+//     this.ownershipType = dto.ownership;
+//     this.minerals = dto.mineralTypes;
+//   }
+// }
