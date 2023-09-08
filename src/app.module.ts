@@ -17,6 +17,12 @@ import { IncidentsModule } from './incidents/incidents.module';
 import { CompanyModule } from './company/company.module';
 import { AddressModule } from './address/address.module';
 import { MinesiteModule } from './minesite/minesite.module';
+import { Company } from './entities/company.entity';
+import { MineSite } from './entities/minesite.entity';
+import { Notification } from './entities/notification.entity';
+import { Incident } from './entities/incident.entity';
+import { Address } from './entities/address.entity';
+import { Mineral } from './entities/minerals.entity';
 
 @Module({
   imports: [
@@ -32,7 +38,7 @@ import { MinesiteModule } from './minesite/minesite.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User, Role, File],
+        entities: [User, Role, File, Company, MineSite, Notification, Incident, Address, Mineral],
         synchronize: true,
       }),
       inject: [ConfigService],

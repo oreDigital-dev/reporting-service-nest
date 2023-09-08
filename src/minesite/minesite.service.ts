@@ -16,7 +16,7 @@ export class MinesiteService {
     ){}
 
     async createMineSite(dto : createMineSiteDTO){
-        let mineSite : MineSite  =  new MineSite(dto);
+        let mineSite : MineSite  =  new MineSite(dto.name);
         let isAvailable = this.mineSiteRepo.findBy({
           name: dto.name  
         })

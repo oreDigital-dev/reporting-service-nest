@@ -25,7 +25,7 @@ export class CompanyService {
 
         if(available) throw new BadRequestException("The company's phone number or email or owner NID is already regstered!")
         const hashedPassword = await this.authService.hashPassword(dto.password)
-        let company: Company = new Company(dto);
+        let company: Company = new Company(dto.name, dto.email, dto.licenseNumber,dto.productionCapacity, dto.phoneNumber, dto.ownerNID, dto.numberOfEmployees, dto.ownership);
         company.password = hashedPassword;
         let address : Address =await this.addressService.findById(dto.addressId);
         company.location =address;

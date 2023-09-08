@@ -31,7 +31,7 @@ export class CreateCompanyDTO {
     @IsNotEmpty()
     numberOfEmployees: number;
 
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     addressId: string;
 }

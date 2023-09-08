@@ -24,7 +24,6 @@ export class Incident extends InitiatorAudit{
       })
     measurement: Number;
 
-    @Column({name : "mine_site"})
     @ManyToMany(()=>MineSite)
     mineSite: MineSite
 

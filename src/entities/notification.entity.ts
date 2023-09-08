@@ -1,8 +1,10 @@
+import { InitiatorAudit } from "src/audits/Initiator.audit";
 import { ENotificationStatus } from "src/enums/ENotificationStatus.enum";
 import { ENotificationType } from "src/enums/ENotificationType.enum";
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-export class Notification{
+@Entity('notification')
+export class Notification extends InitiatorAudit{
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -1,7 +1,8 @@
 import { ELocationType } from "src/enums/ELocationType";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import {v4} from 'uuid'
-@Entity("Address")
+
+@Entity("address")
 export class Address {
 
     @PrimaryGeneratedColumn()
@@ -22,7 +23,7 @@ export class Address {
     residentialAddress : Address[]
 
     @ManyToOne(type => Address)
-    @JoinColumn({referencedColumnName: "parent_id"})
+    @JoinColumn({name: "parent_id"})
     parentId : Address;
 
 

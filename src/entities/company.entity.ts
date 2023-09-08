@@ -1,9 +1,11 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Address } from "./address.entity";
 import { EOwnershipType } from "src/enums/EOwnershipType.enum";
 import { MineSite } from "./minesite.entity";
 import { CreateCompanyDTO } from "src/dtos/create-company.dto";
 import {v4 } from 'uuid';
+import { Notification } from "./notification.entity";
+import { Mineral } from "./minerals.entity";
 
 @Entity({name: "entity"})
 export class Company{
@@ -26,10 +28,11 @@ export class Company{
     @Column({name: "phone_number"})
     phoneNumber : string;
 
-    @Column({name: "location"})
+    @JoinColumn({name: "location"})
+    @OneToOne(()=> Address)
     location: Address;
 
-    @Column({default : "PRIVATE"})
+    @Column()
     ownershipType :EOwnershipType;
 
     @Column()
@@ -41,27 +44,27 @@ export class Company{
     @Column()
     miniLicense : number;
 
-    @Column()
-    minerals: Array<String>;
+  
+    @ManyToMany(()=>Mineral)
+    minerals: Mineral[];
 
-    @Column()
+
     @OneToMany(()=>MineSite, site=> site.company)
     mineSites : MineSite[];
 
-    @Column()
     @ManyToMany(()=>Notification)
     notifications: Notification[]
 
-    constructor(dto: CreateCompanyDTO){
-        this.name = dto.name;
-        this.email = dto.email;
-        this.miniLicense = dto.licenseNumber;
-        this.productionCapacity = dto.productionCapacity;
-        this.phoneNumber = dto.phoneNumber;
-        this.ownerNID = dto.ownerNID;
-        this.numberOfEmployees = dto.numberOfEmployees;
-        this.ownershipType = dto.ownership;
-        this.minerals  = dto.mineralTypes;
+    constructor(name: string, email:string , licenseNumber:number, productionCapacity: string, phoneNumber:string, ownerNID:string, numberOfEmployees:number, ownership:EOwnershipType){
+        this.name = name;
+        this.email = email;
+        this.miniLicense = licenseNumber;
+        this.productionCapacity = productionCapacity;
+        this.phoneNumber = phoneNumber;
+        this.ownerNID = ownerNID;
+        this.numberOfEmployees = numberOfEmployees;
+        this.ownershipType = ownership;
+        // this.minerals  = dto.mineralTypes;
     }
 
 }
