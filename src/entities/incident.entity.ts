@@ -1,7 +1,14 @@
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { MineSite } from './minesite.entity';
 
 @Entity('incident')
 export class Incident extends InitiatorAudit {
@@ -23,9 +30,8 @@ export class Incident extends InitiatorAudit {
   })
   measurement: Number;
 
-  // @Column({name : "mine_site"})
-  // @ManyToMany(()=>MineSite)
-  // mineSite: MineSite
+  @ManyToOne(() => MineSite, (mineSite) => mineSite.incidents)
+  mineSite: MineSite;
 
   constructor(
     description: String,

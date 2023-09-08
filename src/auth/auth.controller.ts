@@ -4,7 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from 'src/dtos/login.dto';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities/us.entity';
 import { VerifyAccountDTO } from 'src/dtos/verify-account.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
@@ -56,6 +56,4 @@ export class AuthController {
       ),
     );
   }
-
-  
 }

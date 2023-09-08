@@ -5,7 +5,7 @@ import { MailingModule } from 'src/mailing/mailing.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { RolesModule } from 'src/roles/roles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities/us.entity';
 
 @Global()
 @Module({

@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common/exceptions';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities/us.entity';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
@@ -94,7 +94,7 @@ export class UsersService {
       throw new BadRequestException('This is already verified');
     verifiedAccount.status = EAccountStatus[EAccountStatus.PENDING];
     verifiedAccount.roles.forEach((role) => {
-      if (role.role_name == ERole[ERole.ADMIN]) {
+      if (role.role_name == ERole[ERole.SYSTEM_ADMIN]) {
         verifiedAccount.status = EAccountStatus[EAccountStatus.ACTIVE];
       }
     });

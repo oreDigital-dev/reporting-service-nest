@@ -1,12 +1,19 @@
 import { ENotificationStatus } from 'src/enums/ENotificationStatus.enum';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Company } from './company.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './us.entity';
+import { UUID } from 'crypto';
 
 @Entity('notifications')
 export class Notification {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: UUID;
 
   @Column()
   type: ENotificationType;
@@ -14,6 +21,7 @@ export class Notification {
   @Column()
   status: ENotificationStatus;
 
-  @Column()
-  receiver: string;
+  @ManyToOne(() => User, (user) => user.notifications)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

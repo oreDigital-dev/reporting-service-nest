@@ -2,28 +2,31 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HomeController } from './home/home.controller';
 import { MailingModule } from './mailing/mailing.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { AuthModule } from './auth/auth.module';
-import { AuthController } from './auth/auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './entities/user.entity';
+import { User } from './entities/us.entity';
 import { Role } from './entities/role.entity';
 import { RoleService } from './roles/roles.service';
-import { File } from './file/File';
 import { IncidentsModule } from './incidents/incidents.module';
 import { CompanyModule } from './company/company.module';
 import { AddressModule } from './address/address.module';
-import { EmployeeModule } from './employee/employee.module';
-import { CompanyController } from './company/company.controller';
-import { MinesitesController } from './minesites/minesites.controller';
-import { MineSite } from './entities/minesite.entity';
+import { MinesiteModule } from './minesite/minesite.module';
 import { Company } from './entities/company.entity';
 import { Employee } from './entities/employee.enity';
-import { Notification } from './entities/notification.entity';
+import { HomeController } from './home/home.controller';
+import { AuthController } from './auth/auth.controller';
+import { MinesiteController } from './minesite/minesite.controller';
+import { CompanyController } from './company/company.controller';
 import { EmployeeController } from './employee/employee.controller';
+import { RescueteamsController } from './rescueteams/rescueteams.controller';
+import { EmployeeModule } from './employee/employee.module';
+import { Notification } from './entities/notification.entity';
+import { MineSite } from './entities/minesite.entity';
+import { Incident } from './entities/incident.entity';
+import { Address } from './entities/address.entity';
 
 @Module({
   imports: [
@@ -39,7 +42,16 @@ import { EmployeeController } from './employee/employee.controller';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Company, User, Role, Employee],
+        entities: [
+          Company,
+          User,
+          Role,
+          Employee,
+          Notification,
+          MineSite,
+          Incident,
+          Address,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -60,14 +72,16 @@ import { EmployeeController } from './employee/employee.controller';
     IncidentsModule,
     CompanyModule,
     AddressModule,
+    MinesiteModule,
     EmployeeModule,
   ],
   controllers: [
     HomeController,
     AuthController,
     CompanyController,
-    MinesitesController,
+    MinesiteController,
     EmployeeController,
+    RescueteamsController,
   ],
 })
 export class AppModule implements OnModuleInit {

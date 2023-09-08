@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -36,8 +37,9 @@ export class Company extends InitiatorAudit {
   @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  // @ManyToOne(() => Address)
-  // location: Address;
+  @ManyToOne(() => Address, (address) => address.companies)
+  @JoinColumn({ name: 'addres_id' })
+  address: Address;
 
   @Column()
   ownershipType: EOwnershipType = EOwnershipType.PRIVATE;
@@ -54,16 +56,16 @@ export class Company extends InitiatorAudit {
   // @Column()
   // minerals: String[];
 
-  // @Column()
-  // @OneToMany(() => MineSite, (site) => site.company)
-  // mineSites: MineSite[];
+  @OneToMany(() => MineSite, (site) => site.company)
+  mineSites: MineSite[];
 
-  // @ManyToMany(() => Notification)
-  // notifications: Notification[];
+  //   @Column()
+  //   @OneToMany(() => Incident, (incident) => incident.mineSite)
+  //   incidents: Incident[];
 
-  // @ManyToMany(() => Employee)
-  // @JoinTable()
-  // companies: Employee[];
+  @ManyToMany(() => Employee)
+  @JoinTable()
+  companies: Employee[];
 
   constructor(
     name: String,

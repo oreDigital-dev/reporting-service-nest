@@ -7,6 +7,8 @@ import {
   TableInheritance,
   ManyToMany,
   JoinTable,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Role } from './role.entity';
@@ -14,6 +16,8 @@ import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { File } from 'src/file/File';
 import { UUID } from 'crypto';
+import { Notification } from './notification.entity';
+import { Address } from './address.entity';
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends InitiatorAudit {
@@ -59,19 +63,29 @@ export class User extends InitiatorAudit {
 
   @Column({
     nullable: true,
+    name: 'activation_code',
   })
   activationCode: number;
 
   @Column()
   status: String;
 
-  @ManyToMany(() => Role)
-  @JoinTable()
-  roles: Role[];
+  @Column({ name: 'organization_type' })
+  organizationType: String;
 
   @Column()
   national_id: String;
 
+  @ManyToMany(() => Role)
+  @JoinTable()
+  roles: Role[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
+  @ManyToOne(() => Address, (address) => address.user)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
   constructor(
     firstName: String,
     lastName: String,

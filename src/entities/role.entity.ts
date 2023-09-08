@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from './us.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 
 @Entity('roles')

@@ -2,12 +2,15 @@ import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
 import { Company } from './company.entity';
+import { Incident } from './incident.entity';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {
@@ -20,14 +23,13 @@ export class MineSite extends InitiatorAudit {
   //   @Column({ default: 'GOLD' })
   //   minerals: Array<String>;
 
-  //   @Column()
-  //   address: Address;
+  @OneToOne(() => Address, (address) => address.mineSite)
+  address: Address;
 
-  //   @Column()
-  //   @OneToMany(() => Incident, (incident) => incident.mineSite)
-  //   incidents: Incident[];
+  @OneToMany(() => Incident, (incident) => incident.mineSite)
+  incidents: Incident[];
 
-  //   @Column()
-  //   @ManyToOne(() => Company)
-  //   company: Company;
+  @ManyToOne(() => Company, (company) => company.mineSites)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }

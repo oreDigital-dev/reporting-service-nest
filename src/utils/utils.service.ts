@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { CompanyService } from 'src/company/company.service';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities/us.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()

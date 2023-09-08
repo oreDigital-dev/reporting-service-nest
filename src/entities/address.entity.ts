@@ -6,10 +6,13 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Company } from './company.entity';
 import { combineAll } from 'rxjs';
+import { MineSite } from './minesite.entity';
+import { User } from './us.entity';
 
 @Entity('Address')
 export class Address {
@@ -28,13 +31,12 @@ export class Address {
   @Column({ name: 'name_kiny' })
   nameKiny: string;
 
-  residentialAddress: Address[];
+  @OneToMany(() => MineSite, (mineSite) => mineSite.address)
+  mineSite: MineSite[];
 
-  @ManyToOne((type) => Address)
-  @JoinColumn({ referencedColumnName: 'parent_id' })
-  parentId: Address;
+  @OneToMany(() => Company, (company) => company.address)
+  companies: Company[];
 
-  // @Column()
-  // @OneToMany(() => Company, (company) => company.location)
-  // companies: Company[];
+  @OneToMany(() => User, (user) => user.address)
+  user: User[];
 }
