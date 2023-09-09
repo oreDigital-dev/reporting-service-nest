@@ -3,39 +3,43 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 } from 'uuid';
 import { MineSite } from './minesite.entity';
 import { User } from './us.entity';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings';
+import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { Company } from './company.entity';
+import { UUID } from 'crypto';
 
 @Entity('address')
-export class Address {
+export class Address extends InitiatorAudit {
   @PrimaryGeneratedColumn()
-  id: UUID;
+  id: UUID ;
 
-  @Column({ name: 'location_type' })
-  locationType: ELocationType;
+  @Column({ name: 'country' })
+  country: string;
 
-  @Column()
-  name: string;
+  @Column({name : 'province'})
+  province: string;
 
-  @Column({ name: 'name_french' })
-  nameFrench: string;
+  @Column({ name: 'district' })
+  district: string;
 
-  @Column({ name: 'name_kiny' })
-  nameKiny: string;
+  @Column({ name: 'sector' })
+  sector: string;
 
-  @OneToMany(() => MineSite, (mineSite) => mineSite.address)
-  mineSite: MineSite[];
+  @Column({ name: 'cell' })
+  cell: string;
+ 
+  @Column({ name: 'village' })
+  village: string;
 
-  @ManyToOne((type) => Address)
-  @JoinColumn({ name: 'parent_id' })
-  parentId: Address;
+  @OneToOne(()=>MineSite)
+  minesite : MineSite;
 
-  @OneToMany(() => User, (user) => user.address)
-  user: User[];
+  @OneToOne(()=>Company)
+  @JoinColumn({name : "company"})
+  company : Company
 }

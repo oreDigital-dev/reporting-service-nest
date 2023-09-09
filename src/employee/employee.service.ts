@@ -11,8 +11,6 @@ import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { Employee } from 'src/entities/employee.enity';
-import { compare } from 'bcrypt';
-import { decodedTextSpanIntersectsWith } from 'typescript';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
 

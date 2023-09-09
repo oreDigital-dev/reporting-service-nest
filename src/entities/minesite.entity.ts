@@ -23,7 +23,7 @@ export class MineSite extends InitiatorAudit {
   //   @Column({ default: 'GOLD' })
   //   minerals: Array<String>;
 
-  @OneToOne(() => Address, (address) => address.mineSite)
+  @OneToOne(() => Address, (address) => address.minesite)
   address: Address;
 
   @OneToMany(() => Incident, (incident) => incident.mineSite)

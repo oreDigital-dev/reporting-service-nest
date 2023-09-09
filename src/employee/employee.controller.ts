@@ -80,6 +80,6 @@ export class EmployeeController {
   @Delete('/:id')
   async deleteEmployeeById(@Param('id') id: UUID): Promise<ApiResponse> {
     await this.empService.deleteEmployeeById(id);
-    return new ApiResponse(true, 'The employe delted successfully', null);
+    return new ApiResponse(true, 'The employee deleted successfully', null);
   }
 }

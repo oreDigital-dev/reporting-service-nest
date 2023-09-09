@@ -3,16 +3,17 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
-import { v4 } from 'uuid';
-import { Notification } from './notification.entity';
+import { Incident } from './incident.entity';
 import { Mineral } from './minerals.entity';
+import { Notification } from './notification.entity';
+import { v4 } from 'uuid';
 
 @Entity({ name: 'entity' })
 export class Company {
@@ -34,9 +35,9 @@ export class Company {
   @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  @JoinColumn({ name: 'location' })
-  @OneToOne(() => Address)
-  location: Address;
+  @ManyToOne(() => Address, (address) => address.company)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
   @Column()
   ownershipType: EOwnershipType;
@@ -50,11 +51,14 @@ export class Company {
   @Column()
   miniLicense: number;
 
-  @ManyToMany(() => Mineral)
+  @ManyToMany(() => Company)
   minerals: Mineral[];
 
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];
+
+  @OneToMany(() => Incident, (incident) => incident.mineSite)
+  incidents: Incident[];
 
   @ManyToMany(() => Notification)
   notifications: Notification[];
@@ -77,6 +81,5 @@ export class Company {
     this.ownerNID = ownerNID;
     this.numberOfEmployees = numberOfEmployees;
     this.ownershipType = ownership;
-    // this.minerals  = dto.mineralTypes;
   }
 }
