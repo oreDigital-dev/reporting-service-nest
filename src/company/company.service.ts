@@ -29,7 +29,7 @@ export class CompanyService {
   async createCompany(dto: CreateCompanyDTO) {
     const available = await this.companyRepo.findBy([
       {
-        email: dto.email,
+        // email: dto.email,
         ownerNID: dto.ownerNID,
         phoneNumber: dto.phoneNumber,
       },

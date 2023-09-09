@@ -10,7 +10,9 @@ export class AddressService {
     @InjectRepository(Address) public addressRepo: Repository<Address>,
   ) {}
 
-  async findById(id: UUID) {
-    return this.addressRepo.findOneBy({ id: id });
+  async findById(id: any) {
+    return this.addressRepo.findOne({
+       where: { id: id }
+      });
   }
 }

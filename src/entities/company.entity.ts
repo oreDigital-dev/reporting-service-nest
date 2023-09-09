@@ -10,10 +10,11 @@ import {
 import { Address } from './address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
-import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
-import { v4 } from 'uuid';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { Incident } from './incident.entity';
+import { Mineral } from './minerals.entity';
+import { UUID } from 'crypto';
+import { Notification } from './notification.entity';
 
 @Entity('company')
 export class Company extends InitiatorAudit {
@@ -35,15 +36,15 @@ export class Company extends InitiatorAudit {
   @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  // @ManyToOne(() => Address, (address) => address.companies)
-  // @JoinColumn({ name: 'address_id' })
-  // address: Address;
+  @ManyToOne(() => Address, (address) => address.company)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
-  @Column({ default: 'PRIVATE' })
+  @Column()
   ownershipType: EOwnershipType;
 
   @Column()
-  productionCapacity: number;
+  productionCapacity: string;
 
   @Column()
   numberOfEmployees: number;
@@ -51,29 +52,34 @@ export class Company extends InitiatorAudit {
   @Column()
   miniLicense: number;
 
-  // @Column()
-  // minerals: String[];
+  @ManyToMany(()=>Company)  
+  minerals: Mineral[];
 
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];
 
-  //   @Column()
-  //   @OneToMany(() => Incident, (incident) => incident.mineSite)
-  //   incidents: Incident[];
+    @OneToMany(() => Incident, (incident) => incident.mineSite)
+    incidents: Incident[];
 
-  @Column()
   @ManyToMany(() => Notification)
   notifications: Notification[];
 
-//   constructor(dto: CreateCompanyDTO) {
-//     this.name = dto.name;
-//     this.email = dto.email;
-//     this.miniLicense = dto.licenseNumber;
-//     this.productionCapacity = dto.productionCapacity;
-//     this.phoneNumber = dto.phoneNumber;
-//     this.ownerNID = dto.ownerNID;
-//     this.numberOfEmployees = dto.numberOfEmployees;
-//     this.ownershipType = dto.ownership;
-//     this.minerals = dto.mineralTypes;
-//   }
-// }
+  constructor( name : string,
+    email : string,
+    licenseNumber : number,
+    productionCapacity : string,
+    phoneNumber : string,
+    ownerNID : string,
+    numberOfEmployees : number,
+    ownership: EOwnershipType) {
+    super()
+    this.name = name;
+    this.email = email;
+    this.miniLicense = licenseNumber;
+    this.productionCapacity = productionCapacity;
+    this.phoneNumber = phoneNumber;
+    this.ownerNID = ownerNID;
+    this.numberOfEmployees = numberOfEmployees;
+    this.ownershipType = ownership;
+  }
+}

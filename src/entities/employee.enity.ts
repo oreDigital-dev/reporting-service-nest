@@ -8,7 +8,7 @@ import { User } from './us.entity';
 @Entity('employess')
 export class Employee extends User {
   @Column()
-  email: String;
+  email: string;
 
   @ManyToMany(() => Company)
   @JoinTable()
@@ -17,9 +17,8 @@ export class Employee extends User {
   @Column('numeric')
   salary: number;
   @Column({
-    type: String,
     enum: EEmployeStatus,
-    default: EEmployeStatus[EEmployeStatus.ACTIVE],
+    default: EEmployeStatus.ACTIVE,
   })
   employeeStatus: EEmployeStatus;
 
@@ -31,13 +30,13 @@ export class Employee extends User {
   }
 
   constructor(
-    firstName: String,
-    lastName: String,
-    email: String,
-    username: String,
+    firstName: string,
+    lastName: string,
+    email: string,
+    username: string,
     myGender: EGender,
-    national_id: String,
-    phonenumber: String,
+    national_id: string,
+    phonenumber: string,
     salary: number,
   ) {
     super(

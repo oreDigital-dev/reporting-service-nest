@@ -9,6 +9,7 @@ import {
   JoinTable,
   OneToMany,
   ManyToOne,
+  OneToOne,
 } from 'typeorm';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Role } from './role.entity';
@@ -25,19 +26,19 @@ export class User extends InitiatorAudit {
   id: UUID;
 
   @Column()
-  firstName: String;
+  firstName: string;
 
   @Column()
-  lastName: String;
+  lastName: string;
 
   @Column()
-  email: String;
+  email: string;
 
   @Column()
-  username: String;
+  username: string;
 
   @Column()
-  phonenumber: String;
+  phonenumber: string;
 
   @Column({
     nullable: true,
@@ -46,9 +47,8 @@ export class User extends InitiatorAudit {
   last_login: Date;
 
   @Column({
-    type: String,
     enum: EGender,
-    default: EGender[EGender.MALE],
+    default: EGender.MALE,
   })
   gender: EGender;
   @JoinColumn({
@@ -59,7 +59,7 @@ export class User extends InitiatorAudit {
   @Column({
     nullable: true,
   })
-  password: String;
+  password: string;
 
   @Column({
     nullable: true,
@@ -68,13 +68,13 @@ export class User extends InitiatorAudit {
   activationCode: number;
 
   @Column()
-  status: String;
+  status: string;
 
-  @Column({ name: 'organization_type' })
-  organizationType: String;
+  @Column({ name: 'organization_type', nullable: true })
+  organizationType: string;
 
   @Column()
-  national_id: String;
+  national_id: string;
 
   @ManyToMany(() => Role)
   @JoinTable()
@@ -83,18 +83,17 @@ export class User extends InitiatorAudit {
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
-  @ManyToOne(() => Address, (address) => address.user)
   @JoinColumn({ name: 'address_id' })
   address: Address;
   constructor(
-    firstName: String,
-    lastName: String,
-    email: String,
-    username: String,
+    firstName: string,
+    lastName: string,
+    email: string,
+    username: string,
     myGender: EGender,
-    national_id: String,
-    phonenumber: String,
-    password: String,
+    national_id: string,
+    phonenumber: string,
+    password: string,
     status: EAccountStatus,
   ) {
     super();
@@ -103,7 +102,6 @@ export class User extends InitiatorAudit {
     this.email = email;
     this.username = username;
     this.gender = myGender;
-    // this.profile_pic=this.profile_pic
     this.national_id = national_id;
     this.phonenumber = phonenumber;
     this.password = password;
