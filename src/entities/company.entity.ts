@@ -3,31 +3,30 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
-  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
-import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { v4 } from 'uuid';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings';
-import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { Notification } from './notification.entity';
+import { Mineral } from './minerals.entity';
 
-@Entity('company')
-export class Company extends InitiatorAudit {
+@Entity({ name: 'entity' })
+export class Company {
   @PrimaryGeneratedColumn()
-  id: UUID;
+  id: string = v4();
 
   @Column()
-  name: String;
+  name: string;
 
   @Column()
   ownerNID: string;
 
   @Column()
-  email: String;
+  email: string;
 
   @Column()
   password: string;
@@ -35,15 +34,15 @@ export class Company extends InitiatorAudit {
   @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  // @ManyToOne(() => Address, (address) => address.companies)
-  // @JoinColumn({ name: 'address_id' })
-  // address: Address;
+  @JoinColumn({ name: 'location' })
+  @OneToOne(() => Address)
+  location: Address;
 
-  @Column({ default: 'PRIVATE' })
+  @Column()
   ownershipType: EOwnershipType;
 
   @Column()
-  productionCapacity: number;
+  productionCapacity: string;
 
   @Column()
   numberOfEmployees: number;
@@ -51,29 +50,33 @@ export class Company extends InitiatorAudit {
   @Column()
   miniLicense: number;
 
-  // @Column()
-  // minerals: String[];
+  @ManyToMany(() => Mineral)
+  minerals: Mineral[];
 
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];
 
-  //   @Column()
-  //   @OneToMany(() => Incident, (incident) => incident.mineSite)
-  //   incidents: Incident[];
-
-  @Column()
   @ManyToMany(() => Notification)
   notifications: Notification[];
 
-//   constructor(dto: CreateCompanyDTO) {
-//     this.name = dto.name;
-//     this.email = dto.email;
-//     this.miniLicense = dto.licenseNumber;
-//     this.productionCapacity = dto.productionCapacity;
-//     this.phoneNumber = dto.phoneNumber;
-//     this.ownerNID = dto.ownerNID;
-//     this.numberOfEmployees = dto.numberOfEmployees;
-//     this.ownershipType = dto.ownership;
-//     this.minerals = dto.mineralTypes;
-//   }
-// }
+  constructor(
+    name: string,
+    email: string,
+    licenseNumber: number,
+    productionCapacity: string,
+    phoneNumber: string,
+    ownerNID: string,
+    numberOfEmployees: number,
+    ownership: EOwnershipType,
+  ) {
+    this.name = name;
+    this.email = email;
+    this.miniLicense = licenseNumber;
+    this.productionCapacity = productionCapacity;
+    this.phoneNumber = phoneNumber;
+    this.ownerNID = ownerNID;
+    this.numberOfEmployees = numberOfEmployees;
+    this.ownershipType = ownership;
+    // this.minerals  = dto.mineralTypes;
+  }
+}

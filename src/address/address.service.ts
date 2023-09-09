@@ -11,6 +11,6 @@ export class AddressService {
   ) {}
 
   async findById(id: UUID) {
-    return this.addressRepo.findOneBy({ id: id });
+    // return this.addressRepo.findOneBy();
   }
 }
