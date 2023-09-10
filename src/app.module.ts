@@ -28,6 +28,7 @@ import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
 import { Address } from './entities/address.entity';
 import { MineralModule } from './mineral/mineral.module';
+import { Mineral } from './entities/mineral.entity';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { MineralModule } from './mineral/mineral.module';
           MineSite,
           Incident,
           Address,
+          Mineral
         ],
         synchronize: true,
       }),

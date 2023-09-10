@@ -1,12 +1,14 @@
+import { UUID } from "crypto";
 import { InitiatorAudit } from "src/audits/Initiator.audit";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import {v4} from 'uuid';
+import { Company } from "./company.entity";
 
 @Entity('mineral')
 export class Mineral extends InitiatorAudit{
 
     @PrimaryGeneratedColumn()
-    id: string = v4();
+    id: UUID;
 
     @Column({name : "name"})
     name: string;
@@ -19,6 +21,9 @@ export class Mineral extends InitiatorAudit{
 
     @Column({name : "measurement"})
     measurement: string;
+
+    @ManyToMany(() => Company)
+    companies: Company[];
 
     constructor(name: string, tagId: number, quantity: number, measurement: string){
         super()

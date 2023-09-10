@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -52,7 +53,8 @@ export class Company extends InitiatorAudit {
   @Column()
   miniLicense: number;
 
-  @ManyToMany(() => Company)
+  @ManyToMany(() => Mineral)
+  @JoinTable()
   minerals: Mineral[];
 
   @OneToMany(() => MineSite, (site) => site.company)
@@ -71,6 +73,7 @@ export class Company extends InitiatorAudit {
     phoneNumber: string,
     ownerNID: string,
     numberOfEmployees: number,
+    ownership : number
   ) {
     super()
     this.name = name;
@@ -80,6 +83,6 @@ export class Company extends InitiatorAudit {
     this.phoneNumber = phoneNumber;
     this.ownerNID = ownerNID;
     this.numberOfEmployees = numberOfEmployees;
-    // this.ownershipType = ownership;
+    this.ownershipType = ownership;
   }
 }

@@ -15,6 +15,7 @@ import { Address } from 'src/entities/address.entity';
 import { Company } from 'src/entities/company.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MineSite } from 'src/entities/minesite.entity';
+import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineralService } from 'src/mineral/mineral.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
@@ -27,22 +28,26 @@ export class CompanyService {
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
     private authService: AuthService,
-    private mineralService : MineralService
-  ) {}
+    private mineralService: MineralService
+  ) { }
   async createCompany(dto: CreateCompanyDTO) {
-    const available = await this.companyRepo.findBy([
-      {
-        email: dto.email,
-        ownerNID: dto.ownerNID,
-        phoneNumber: dto.phoneNumber,
-      },
-    ]);
+    const available = await this.companyRepo.find({
+      where: [
+        {
+          email: dto.email,
+          ownerNID: dto.ownerNID,
+          phoneNumber: dto.phoneNumber,
+        },
+      ]
+    });
 
-    if (available)
+    if (available.length != 0) {
       throw new BadRequestException(
         "The company's phone number or email or owner NID is already registered!",
       );
+    }
     const hashedPassword = await this.authService.hashPassword(dto.password);
+    let ownership : any = EOwnershipType[dto.ownership]
     let company: Company = new Company(
       dto.name,
       dto.email,
@@ -51,17 +56,21 @@ export class CompanyService {
       dto.phoneNumber,
       dto.ownerNID,
       dto.numberOfEmployees,
+      ownership
     );
     company.password = hashedPassword;
     let address: Address = await this.addressService.createAddress(dto.address);
 
     company.address = address;
+    
+      let minerals : Mineral[] = [];
 
-    for(let min of dto.minerals){
-      let mineral  : Mineral = await this.mineralService.createMineral(min)
-      company.minerals.push(mineral);
+    for (let min of dto.minerals) {
+      let mineral: Mineral = await this.mineralService.createMineral(min);
+      minerals.push(mineral);
     }
-  
+    company.minerals = minerals;
+
     this.companyRepo.save(company);
   }
 

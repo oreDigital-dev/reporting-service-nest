@@ -9,7 +9,7 @@ export class CreateCompanyDTO {
   name: string;
 
   @IsNotEmpty()
-  ownership: string;
+  ownership: any;
 
   @IsString()
   email: any;
