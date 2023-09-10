@@ -12,7 +12,7 @@ import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Incident } from './incident.entity';
-import { Mineral } from './minerals.entity';
+import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 
@@ -52,26 +52,26 @@ export class Company extends InitiatorAudit {
   @Column()
   miniLicense: number;
 
-  @ManyToMany(()=>Company)  
+  @ManyToMany(() => Company)
   minerals: Mineral[];
 
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];
 
-    @OneToMany(() => Incident, (incident) => incident.mineSite)
-    incidents: Incident[];
+  @OneToMany(() => Incident, (incident) => incident.mineSite)
+  incidents: Incident[];
 
   @ManyToMany(() => Notification)
   notifications: Notification[];
 
-  constructor( name : string,
-    email : string,
-    licenseNumber : number,
-    productionCapacity : string,
-    phoneNumber : string,
-    ownerNID : string,
-    numberOfEmployees : number,
-    ownership: EOwnershipType) {
+  constructor(name: string,
+    email: string,
+    licenseNumber: number,
+    productionCapacity: string,
+    phoneNumber: string,
+    ownerNID: string,
+    numberOfEmployees: number,
+  ) {
     super()
     this.name = name;
     this.email = email;
@@ -80,6 +80,6 @@ export class Company extends InitiatorAudit {
     this.phoneNumber = phoneNumber;
     this.ownerNID = ownerNID;
     this.numberOfEmployees = numberOfEmployees;
-    this.ownershipType = ownership;
+    // this.ownershipType = ownership;
   }
 }

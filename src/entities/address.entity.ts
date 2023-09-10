@@ -18,7 +18,7 @@ export class Address extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID ;
 
-  @Column({ name: 'country' })
+  @Column({ name: 'country' , default : 'RWANDA'})
   country: string;
 
   @Column({name : 'province'})
@@ -42,4 +42,13 @@ export class Address extends InitiatorAudit {
   @OneToOne(()=>Company)
   @JoinColumn({name : "company"})
   company : Company
+
+  constructor(province: string, district : string, sector: string, cell : string, village : string){
+    super()
+    this.province = province;
+    this.district = district;
+    this.sector = sector;
+    this.cell = cell;
+    this.village = village;
+  }
 }

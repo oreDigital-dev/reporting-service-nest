@@ -27,6 +27,7 @@ import { Notification } from './entities/notification.entity';
 import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
 import { Address } from './entities/address.entity';
+import { MineralModule } from './mineral/mineral.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { Address } from './entities/address.entity';
     AddressModule,
     MinesiteModule,
     EmployeeModule,
+    MineralModule,
   ],
   controllers: [
     HomeController,

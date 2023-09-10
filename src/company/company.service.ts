@@ -13,7 +13,9 @@ import { AuthService } from 'src/auth/auth.service';
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { Address } from 'src/entities/address.entity';
 import { Company } from 'src/entities/company.entity';
+import { Mineral } from 'src/entities/mineral.entity';
 import { MineSite } from 'src/entities/minesite.entity';
+import { MineralService } from 'src/mineral/mineral.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 
@@ -25,11 +27,12 @@ export class CompanyService {
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
     private authService: AuthService,
+    private mineralService : MineralService
   ) {}
   async createCompany(dto: CreateCompanyDTO) {
     const available = await this.companyRepo.findBy([
       {
-        // email: dto.email,
+        email: dto.email,
         ownerNID: dto.ownerNID,
         phoneNumber: dto.phoneNumber,
       },
@@ -37,7 +40,7 @@ export class CompanyService {
 
     if (available)
       throw new BadRequestException(
-        "The company's phone number or email or owner NID is already regstered!",
+        "The company's phone number or email or owner NID is already registered!",
       );
     const hashedPassword = await this.authService.hashPassword(dto.password);
     let company: Company = new Company(
@@ -48,11 +51,17 @@ export class CompanyService {
       dto.phoneNumber,
       dto.ownerNID,
       dto.numberOfEmployees,
-      dto.ownership,
     );
     company.password = hashedPassword;
-    // let address: Address = await this.addressService.findById(dto.addressId);
-    // company.location =address;
+    let address: Address = await this.addressService.createAddress(dto.address);
+
+    company.address = address;
+
+    for(let min of dto.minerals){
+      let mineral  : Mineral = await this.mineralService.createMineral(min)
+      company.minerals.push(mineral);
+    }
+  
     this.companyRepo.save(company);
   }
 

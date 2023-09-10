@@ -1,19 +1,30 @@
-import { UUID } from 'crypto';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
-import { Address } from './address.entity';
-import { type } from 'os';
+import { InitiatorAudit } from "src/audits/Initiator.audit";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {v4} from 'uuid';
 
-@Entity('mineral_records')
-export class MineralRecord {
-  @PrimaryColumn()
-  id: UUID;
+@Entity('mineral')
+export class Mineral extends InitiatorAudit{
 
-  @Column({ nullable: false, unique: true })
-  tagId: number;
+    @PrimaryGeneratedColumn()
+    id: string = v4();
 
-  quantity: number;
-  measurement: String;
-  @OneToOne((type) => Address)
-  @JoinColumn({ name: 'address_id' })
-  origin: Address;
+    @Column({name : "name"})
+    name: string;
+
+    @Column({name : "tagId"})
+    tagId: number;
+
+    @Column({name : "quantity"})
+    quantity: number;
+
+    @Column({name : "measurement"})
+    measurement: string;
+
+    constructor(name: string, tagId: number, quantity: number, measurement: string){
+        super()
+        this.name = name;
+        this.tagId = tagId;
+        this.quantity = quantity;
+        this.measurement = measurement;
+    }
 }

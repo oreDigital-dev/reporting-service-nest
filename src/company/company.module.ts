@@ -7,6 +7,7 @@ import { Company } from 'src/entities/company.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UtilsService } from 'src/utils/utils.service';
 import { UtilsModule } from 'src/utils/utils.module';
+import { MineralModule } from 'src/mineral/mineral.module';
 
 @Global()
 @Module({
@@ -15,6 +16,7 @@ import { UtilsModule } from 'src/utils/utils.module';
     AddressModule,
     AuthModule,
     forwardRef(() => UtilsModule),
+    MineralModule
   ],
   providers: [CompanyService],
   controllers: [CompanyController],
