@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { NotFoundException } from '@nestjs/common/exceptions';
-import { MailingService } from 'src/mailing/mailing.service';
-import { UtilsService } from 'src/utils/utils.service';
 import { User } from 'src/entities/us.entity';
-import { RoleService } from 'src/roles/roles.service';
 import { UUID } from 'crypto';
 
 @Injectable()
