@@ -78,14 +78,12 @@ export class User extends InitiatorAudit {
   @JoinTable()
   roles: Role[];
 
-
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
   @ManyToOne(() => User, (user) => user.address)
   @JoinColumn({ name: 'address_id' })
   address: Address;
-
 
   constructor(
     firstName: string,

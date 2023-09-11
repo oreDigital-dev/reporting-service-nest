@@ -34,20 +34,22 @@ export class CompanyController {
 
   @Get('/id')
   @Roles('SYSTEM_ADMIN, COMPANY_ADMIN')
-  async getCompanyById(@Param('id') id : UUID){
+  async getCompanyById(@Param('id') id: UUID) {
     return new ApiResponse(
-      true, 'Data retrieval successfull', await this.companyService.getCompanyById(id)
-    )
+      true,
+      'Data retrieval successfull',
+      await this.companyService.getCompanyById(id),
+    );
   }
-
 
   @Get('/id')
   @Roles('SYSTEM_ADMIN, COMPANY_ADMIN')
-  async deleteCompany(@Param('id') id : UUID){
-    return new ApiResponse(
-      true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
-    )
+  async deleteCompany(@Param('id') id: UUID) {
+    // return new ApiResponse(
+    //   // true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
+    // )
   }
+<<<<<<< HEAD
 
   @Get('/profile')
   async getCompanyProfile(){
@@ -59,4 +61,6 @@ export class CompanyController {
   
   
 
+=======
+>>>>>>> 668f1ba0daa5fb064efb05354eb03bf6ad0713df
 }
