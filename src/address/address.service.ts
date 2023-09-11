@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateAddressDTO } from 'src/dtos/create-address.dto';
 import { Address } from 'src/entities/address.entity';
 import { Repository } from 'typeorm';
 
@@ -14,7 +15,15 @@ export class AddressService {
       where: { id: id },
     });
   }
-  async saveAddress(address: Address) {
-    return this.addressRepo.save(address);
+
+  async createAddress(dto: CreateAddressDTO) {
+    let address = new Address(
+      dto.province,
+      dto.district,
+      dto.sector,
+      dto.cell,
+      dto.village,
+    );
+    return await this.addressRepo.save(address);
   }
 }

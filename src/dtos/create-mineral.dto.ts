@@ -1,29 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateAddressDTO {
+export class CreateMineralDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  province: string;
+  name: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  district: string;
+  minralCode: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  sector: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  cell: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  village: string;
+  mineralDescription: string;
 }

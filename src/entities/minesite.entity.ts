@@ -13,7 +13,7 @@ import {
 import { Address } from './address.entity';
 import { Company } from './company.entity';
 import { Incident } from './incident.entity';
-import { Mineral } from './minerals.entity';
+import { Mineral } from './mineral.entity';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {

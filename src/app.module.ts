@@ -30,14 +30,13 @@ import { Notification } from './entities/notification.entity';
 import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
 import { Address } from './entities/address.entity';
-import { Mineral } from './entities/minerals.entity';
+import { MineralModule } from './mineral/mineral.module';
 import { RescueTeam } from './entities/rescue_team.entity';
-import { UserMiddleWare } from './middlewares/user.middleware';
-import { JwtModule } from '@nestjs/jwt';
-import { RolesGuard } from './auth/guards/roles.guard';
-import { APP_GUARD } from '@nestjs/core';
 import { CompanyModule } from './company/company.module';
+import { JwtModule } from '@nestjs/jwt';
 import { CompanyController } from './company/company.controller';
+import { Mineral } from './entities/mineral.entity';
+import { MineralRecord } from './entities/mineralRecord.entity';
 
 @Module({
   imports: [
@@ -64,6 +63,8 @@ import { CompanyController } from './company/company.controller';
           Address,
           Mineral,
           RescueTeam,
+          Mineral,
+          MineralRecord,
         ],
         synchronize: true,
       }),
@@ -88,6 +89,7 @@ import { CompanyController } from './company/company.controller';
     MinesiteModule,
     EmployeeModule,
     JwtModule,
+    MineralModule,
   ],
   controllers: [
     HomeController,

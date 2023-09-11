@@ -1,50 +1,68 @@
+import { Type } from 'class-transformer';
 import {
-  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsPhoneNumber,
   IsString,
   IsStrongPassword,
 } from 'class-validator';
-import { Address } from 'src/entities/address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { CreateAddressDTO } from './create-address.dto';
+import { CreateMineralDTO } from './create-mineral.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCompanyDTO {
   @IsString()
-  name: string;
   @IsNotEmpty()
+  @ApiProperty()
+  name: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   ownership: string;
+
   @IsString()
-  @IsEmail()
+  @IsNotEmpty()
+  @ApiProperty()
   email: string;
+
   @IsString()
+  @ApiProperty()
   @IsNotEmpty()
   ownerNID: string;
+
   @IsString()
   @IsNotEmpty()
   @IsStrongPassword()
+  @ApiProperty()
   password: string;
 
   @IsString()
   @IsNotEmpty()
   @IsPhoneNumber()
+  @ApiProperty()
   phoneNumber: string;
 
   @IsNumber()
   @IsNotEmpty()
+  @ApiProperty()
   productionCapacity: number;
 
-  mineralTypes: Array<String>;
+  @Type(() => CreateMineralDTO)
+  minerals: CreateMineralDTO[];
 
   @IsNumber()
   @IsNotEmpty()
+  @ApiProperty()
   licenseNumber: number;
 
   @IsNumber()
   @IsNotEmpty()
+  @ApiProperty()
   numberOfEmployees: number;
 
   @IsNotEmpty()
+  @Type(() => CreateAddressDTO)
+  @ApiProperty()
   address: CreateAddressDTO;
 }

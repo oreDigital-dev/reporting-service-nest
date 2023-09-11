@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -11,17 +12,14 @@ import { Address } from './address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
 import { Incident } from './incident.entity';
-import { Mineral } from './minerals.entity';
-import { Notification } from './notification.entity';
-import { v4 } from 'uuid';
 import { UUID } from 'crypto';
-import { EWorkSpaceStatus } from 'src/enums/EworkSpaceStatus.enum';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { Notification } from './notification.entity';
 import { User } from './us.entity';
-import { Employee } from './employee.enity';
+import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { Mineral } from './mineral.entity';
 
-@Entity('companies')
-export class Company {
+@Entity('company')
+export class Company extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID;
 
@@ -59,13 +57,8 @@ export class Company {
   @Column()
   miniLicense: number;
 
-  @Column({
-    name: 'workspace_status',
-    default: EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION],
-  })
-  workSpaceStatus: String;
-
-  @ManyToMany(() => Company)
+  @ManyToMany(() => Mineral)
+  @JoinTable()
   minerals: Mineral[];
 
   @ManyToMany(() => User)
@@ -80,10 +73,6 @@ export class Company {
   @OneToMany(() => Notification, (notification) => notification.company)
   notifications: Notification[];
 
-  setUsers(user: User) {
-    this.users.push(user);
-  }
-
   constructor(
     name: string,
     email: string,
@@ -92,8 +81,9 @@ export class Company {
     phoneNumber: string,
     ownerNID: string,
     numberOfEmployees: number,
-    ownership: String,
+    ownership: string,
   ) {
+    super();
     this.name = name;
     this.email = email;
     this.miniLicense = licenseNumber;

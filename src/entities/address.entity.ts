@@ -2,7 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JsonContains,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -13,13 +13,14 @@ import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Company } from './company.entity';
 import { UUID } from 'crypto';
 import { RescueTeam } from './rescue_team.entity';
+import { Mineral } from './mineral.entity';
 
 @Entity('address')
 export class Address extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID;
 
-  @Column({ name: 'country' })
+  @Column({ name: 'country', default: 'RWANDA' })
   country: string;
 
   @Column({ name: 'province' })
@@ -37,8 +38,17 @@ export class Address extends InitiatorAudit {
   @Column({ name: 'village' })
   village: string;
 
+  @OneToMany(() => MineSite, (minesite) => minesite.address)
+  mineSites: MineSite[];
+
+  @ManyToOne(() => RescueTeam, (rescue_team) => rescue_team.address)
+  rescueTeams: RescueTeam;
+
+  @OneToOne(() => Company)
+  @JoinColumn({ name: 'company' })
+  company: Company;
+
   constructor(
-    country: string,
     province: string,
     district: string,
     sector: string,
@@ -46,24 +56,10 @@ export class Address extends InitiatorAudit {
     village: string,
   ) {
     super();
-    this.country = country;
     this.province = province;
     this.district = district;
     this.sector = sector;
     this.cell = cell;
     this.village = village;
   }
-
-  @OneToMany(() => MineSite, (mineSite) => mineSite.address)
-  mineSites: MineSite;
-
-  @OneToOne(() => Company)
-  @JoinColumn({ name: 'company' })
-  company: Company;
-
-  @OneToMany(() => RescueTeam, (rescue_team) => rescue_team.address)
-  rescueTeams: RescueTeam[];
-
-  @OneToMany(() => User, (user) => user.address)
-  users: User[];
 }
