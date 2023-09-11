@@ -77,9 +77,9 @@ export class User extends InitiatorAudit {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
-  @ManyToMany(() => Company)
-  @JoinTable()
-  companies: Company[];
+  @ManyToOne(() => Company, company => company.employees)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
@@ -87,13 +87,6 @@ export class User extends InitiatorAudit {
   @ManyToOne(() => User, (user) => user.address)
   @JoinColumn({ name: 'address_id' })
   address: Address;
-
-  setCompanies(company: any) {
-    this.companies.push(company);
-  }
-  getCompanies(): Company[] {
-    return this.companies;
-  }
   constructor(
     firstName: string,
     lastName: string,

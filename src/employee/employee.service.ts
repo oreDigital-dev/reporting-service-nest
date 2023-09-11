@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
-import { Repository } from 'typeorm';
+import { DeleteDateColumn, Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { Employee } from 'src/entities/employee.enity';
@@ -16,6 +16,8 @@ import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
 import { log } from 'console';
 import { MailingService } from 'src/mailing/mailing.service';
+import { CompanyService } from 'src/company/company.service';
+import { compute_alpha } from 'googleapis';
 
 @Injectable()
 export class EmployeeService {
@@ -23,6 +25,8 @@ export class EmployeeService {
     @InjectRepository(Employee) public employeeRepo: Repository<Employee>,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
+    @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
     private mailingService: MailingService,
   ) {}
 
@@ -32,12 +36,11 @@ export class EmployeeService {
         where: { email: dto.email },
       });
 
-      // if (availableEmployee) {
-      //   throw new BadRequestException(
-      //     'The employee with the provided email is already registered',
-      //   );
-      // }
-
+      if (availableEmployee) {
+        throw new BadRequestException(
+          'The employee with the provided email is already registered',
+        );
+      }
       let gender;
       switch (dto.myGender.toUpperCase()) {
         case 'MALE':
@@ -65,12 +68,6 @@ export class EmployeeService {
         `OreDigital@${new Date().getFullYear()}`,
       );
 
-      // this.mailingService.sendEmailToUser(
-      //   emplyee.email,
-      //   'employee-account-verification',
-      //   'OreDigital account verification',
-      // );
-
       emplyee.password = await this.utilsService.hashString(emplyee.password);
 
       let createdEmployee = await this.employeeRepo.save(emplyee);
@@ -78,6 +75,47 @@ export class EmployeeService {
       delete createdEmployee.password;
       delete createdEmployee.activationCode;
 
+      this.mailingService.sendEmailToUser(
+        emplyee.email,
+        'employee-account-verification',
+        'OreDigital account verification',
+      );
+      return createdEmployee;
+    } catch (error) {
+      console.error('Error creating employee: ', error);
+      throw error;
+    }
+  }
+
+  async createEmp(employee: Employee) {
+    try {
+      const availableEmployee = await this.employeeRepo.findOne({
+        where: { email: employee.email },
+      });
+
+      if (availableEmployee) {
+        throw new BadRequestException(
+          'The employee with the provided email is already registered',
+        );
+      }
+      const company = await this.companyService.getCompanyByEmail(
+        employee.email,
+      );
+      employee.company = company;
+      employee.password = await this.utilsService.hashString(employee.password);
+      let createdEmployee = await this.employeeRepo.save(employee);
+      delete createdEmployee.password;
+      delete createdEmployee.activationCode;
+      delete createdEmployee.password;
+      delete createdEmployee.firstName;
+      delete createdEmployee.lastName;
+      delete createdEmployee.activationCode;
+      delete createdEmployee.username;
+      this.mailingService.sendEmailToUser(
+        employee.email,
+        'employee-account-verification',
+        'OreDigital account verification',
+      );
       return createdEmployee;
     } catch (error) {
       console.error('Error creating employee: ', error);

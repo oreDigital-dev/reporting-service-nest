@@ -13,7 +13,10 @@ import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
 import { Company } from 'src/entities/company.entity';
+import { Employee } from 'src/entities/employee.enity';
 import { Mineral } from 'src/entities/mineral.entity';
+import { EGender } from 'src/enums/EGender.enum';
+import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineralService } from 'src/mineral/mineral.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -24,6 +27,7 @@ export class CompanyService {
   constructor(
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
+    @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
@@ -70,8 +74,31 @@ export class CompanyService {
       );
       minerals.push(mineral);
     }
+
+    const employee: Employee = new Employee(
+      '',
+      '',
+      dto.email,
+      '',
+      EGender.OTHER,
+      '',
+      dto.phoneNumber,
+      0,
+      dto.password,
+    );
     company.minerals = minerals;
-    this.companyRepo.save(company);
+    const createdCompany = await this.companyRepo.save(company);
+    employee.password = createdCompany.password;
+    employee.organizationType =
+      EOrganizationType[EOrganizationType.MINING_COMPANY];
+    const createdEmployee = await this.employeeService.createEmp(employee);
+    const tokens = await this.utilsService.getTokens(createdEmployee);
+    delete createdCompany.password;
+    return {
+      access_token: tokens.accessToken,
+      refresh_token: tokens.refreshToken,
+      user: createdEmployee,
+    };
   }
 
   async getCompanyById(id: UUID) {
@@ -91,5 +118,16 @@ export class CompanyService {
     return this.companyRepo.find({
       relations: ['address', 'mineSites', 'minerals'],
     });
+  }
+
+  async getCompanyByEmail(email: string) {
+    try {
+      return await this.companyRepo.findOne({
+        where: { email: email },
+        relations: ['employees'],
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

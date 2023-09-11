@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Incident } from 'src/entities/incident.entity';
 import { UtilsService } from 'src/utils/utils.service';
@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 export class IncidentsService {
   constructor(
     @InjectRepository(Incident) public incidentRepo: Repository<Incident>,
-    private utilService: UtilsService,
   ) {}
 
   // async saveIncident(dto : CreateIncidentDTO ){

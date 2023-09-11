@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Employee } from 'src/entities/employee.enity';
 import { UtilsModule } from 'src/utils/utils.module';
 import { MailingModule } from 'src/mailing/mailing.module';
+import { CompanyModule } from 'src/company/company.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Employee]),
     forwardRef(() => UtilsModule),
     MailingModule,
+    forwardRef(() => CompanyModule),
   ],
   providers: [EmployeeService],
   controllers: [EmployeeController],

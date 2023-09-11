@@ -13,7 +13,6 @@ export class Employee extends User {
     default: EEmployeStatus.ACTIVE,
   })
   employeeStatus: EEmployeStatus;
-
   constructor(
     firstName: string,
     lastName: string,
