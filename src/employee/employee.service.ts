@@ -37,7 +37,7 @@ export class EmployeeService {
   }
   async createEmployee(dto: CreateEmployeeDTO, req: Request, res: Response) {
     this.getEmployeeByEmail(dto.email);
-    const loggedInCompany = this.utilsService.getLoggedInProfile(
+    const loggedInCompany = await this.utilsService.getLoggedInProfile(
       req,
       res,
       'company',
@@ -66,7 +66,8 @@ export class EmployeeService {
       dto.phonenumber,
       dto.salary,
     );
-    emplyee.setCompanies(loggedInCompany);
+    // emplyee.setCompanies(loggedInCompany);
+    emplyee.company = loggedInCompany;
     let createdEmployee = await this.employeeRepo.save(emplyee);
     delete createdEmployee.password;
     delete createdEmployee.activationCode;

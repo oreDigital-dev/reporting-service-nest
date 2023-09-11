@@ -1,7 +1,6 @@
 import { UUID } from "crypto";
 import { InitiatorAudit } from "src/audits/Initiator.audit";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import {v4} from 'uuid';
 import { Company } from "./company.entity";
 
 @Entity('mineral')

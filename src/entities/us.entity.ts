@@ -8,8 +8,6 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
-  ManyToOne,
-  OneToOne,
 } from 'typeorm';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Role } from './role.entity';

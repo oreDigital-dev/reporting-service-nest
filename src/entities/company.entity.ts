@@ -16,6 +16,7 @@ import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
+import { Employee } from './employee.enity';
 
 @Entity('company')
 export class Company extends InitiatorAudit {
@@ -56,6 +57,9 @@ export class Company extends InitiatorAudit {
   @ManyToMany(() => Mineral)
   @JoinTable()
   minerals: Mineral[];
+
+  @OneToMany(()=>Employee, emp => emp.company)
+  employees: Employee;
 
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];

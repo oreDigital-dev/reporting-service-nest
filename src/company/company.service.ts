@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
+import { Request, Response } from 'express';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
 
@@ -28,7 +29,8 @@ export class CompanyService {
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
     private authService: AuthService,
-    private mineralService: MineralService
+    private mineralService: MineralService,
+    private utilService : UtilsService
   ) { }
   async createCompany(dto: CreateCompanyDTO) {
     const available = await this.companyRepo.find({
@@ -47,7 +49,7 @@ export class CompanyService {
       );
     }
     const hashedPassword = await this.authService.hashPassword(dto.password);
-    let ownership : any = EOwnershipType[dto.ownership]
+    let ownership: any = EOwnershipType[dto.ownership]
     let company: Company = new Company(
       dto.name,
       dto.email,
@@ -62,8 +64,8 @@ export class CompanyService {
     let address: Address = await this.addressService.createAddress(dto.address);
 
     company.address = address;
-    
-      let minerals : Mineral[] = [];
+
+    let minerals: Mineral[] = [];
 
     for (let min of dto.minerals) {
       let mineral: Mineral = await this.mineralService.createMineral(min);
@@ -80,10 +82,43 @@ export class CompanyService {
       relations: ['employees'],
     });
 
-    if (!isCompanyAvailable)
+    if (isCompanyAvailable == null)
       throw new NotFoundException(
         'The company with the provided id is not found',
       );
     return isCompanyAvailable;
   }
+
+  async getAllCompanies() {
+    try {
+      const companies = await this.companyRepo.find();
+      if (companies.length == 0) {
+        throw new NotFoundException("No companies registered!")
+      }
+      return companies;
+    } catch (err) {
+      return { error: JSON.stringify(err) }
+    }
+  }
+
+  async deleteCompany(id: UUID) {
+    try {
+      await this.companyRepo.delete({
+        id
+      })
+      return {message : "Company account successfully deleted!"}
+    }catch(err){
+      return {error: JSON.stringify(err)}
+    }
+  }
+
+  async getCompanyProfile(req: Request, res: Response){
+    try{
+      return this.utilService.getLoggedInProfile(req, res, 'COMPANY')
+    }catch(err){
+
+    }
+  }
+
+  
 }
