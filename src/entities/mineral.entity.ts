@@ -1,34 +1,33 @@
-import { UUID } from "crypto";
-import { InitiatorAudit } from "src/audits/Initiator.audit";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Company } from "./company.entity";
+import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { MineSite } from './minesite.entity';
+import { UUID } from 'crypto';
 
-@Entity('mineral')
-export class Mineral extends InitiatorAudit{
+@Entity('minerals')
+export class Mineral extends InitiatorAudit {
+  @PrimaryGeneratedColumn()
+  id: UUID;
+  @Column({
+    unique: true,
+    name: 'name',
+  })
+  name: string;
+  @Column({
+    name: 'mineral_code',
+  })
+  mineralCode: string;
+  @Column({
+    name: 'mineral_description',
+  })
+  mineralDescripption: string;
 
-    @PrimaryGeneratedColumn()
-    id: UUID;
+  @ManyToMany(() => MineSite, (mineral) => mineral.minerals)
+  mineSites: MineSite[];
 
-    @Column({name : "name"})
-    name: string;
-
-    @Column({name : "tagId"})
-    tagId: number;
-
-    @Column({name : "quantity"})
-    quantity: number;
-
-    @Column({name : "measurement"})
-    measurement: string;
-
-    @ManyToMany(() => Company)
-    companies: Company[];
-
-    constructor(name: string, tagId: number, quantity: number, measurement: string){
-        super()
-        this.name = name;
-        this.tagId = tagId;
-        this.quantity = quantity;
-        this.measurement = measurement;
-    }
+  constructor(name: string, mineralCode: string, mineralDescription: string) {
+    super();
+    this.name = name;
+    this.mineralCode = mineralCode;
+    this.mineralDescripption = mineralDescription;
+  }
 }

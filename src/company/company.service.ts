@@ -10,12 +10,11 @@ import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
-
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
+import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
 import { Company } from 'src/entities/company.entity';
 import { Mineral } from 'src/entities/mineral.entity';
-import { MineSite } from 'src/entities/minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineralService } from 'src/mineral/mineral.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -25,7 +24,8 @@ import { Repository } from 'typeorm';
 export class CompanyService {
   constructor(
     @Inject(forwardRef(() => UtilsService))
-    private userService: UtilsService,
+    private utilsService: UtilsService,
+    private employeeService: EmployeeService,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
     private authService: AuthService,
@@ -40,7 +40,7 @@ export class CompanyService {
           ownerNID: dto.ownerNID,
           phoneNumber: dto.phoneNumber,
         },
-      ]
+      ],
     });
 
     if (available.length != 0) {
@@ -58,28 +58,28 @@ export class CompanyService {
       dto.phoneNumber,
       dto.ownerNID,
       dto.numberOfEmployees,
-      ownership
+      ownership,
     );
     company.password = hashedPassword;
     let address: Address = await this.addressService.createAddress(dto.address);
 
     company.address = address;
-
     let minerals: Mineral[] = [];
 
     for (let min of dto.minerals) {
-      let mineral: Mineral = await this.mineralService.createMineral(min);
+      let mineral: Mineral = await this.mineralService.getMineralByName(
+        min.toUpperCase(),
+      );
       minerals.push(mineral);
     }
     company.minerals = minerals;
-
     this.companyRepo.save(company);
   }
 
   async getCompanyById(id: UUID) {
     const isCompanyAvailable = await this.companyRepo.findOne({
       where: { id: id },
-      relations: ['employees'],
+      relations: ['employees', 'notifications', 'address'],
     });
 
     if (isCompanyAvailable == null)

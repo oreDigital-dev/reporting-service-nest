@@ -23,9 +23,8 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
-  @IsEnum(EGender)
   @ApiProperty()
-  gender: EGender;
+  gender: string;
 
   @IsString()
   @IsOptional()

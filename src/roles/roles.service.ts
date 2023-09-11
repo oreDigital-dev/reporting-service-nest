@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 import { ERole } from 'src/enums/ERole.enum';
 import { Role } from 'src/entities/role.entity';
+import { User } from 'src/entities/us.entity';
+import { Employee } from 'src/entities/employee.enity';
 
 @Injectable()
 export class RoleService {
@@ -18,10 +20,21 @@ export class RoleService {
     ];
     roleArray.forEach((role) => {
       const roleEntity = this.roleRepo.create({
-        role_name: ERole[role],
+        roleName: ERole[role],
       });
       this.roleRepo.save(roleEntity);
     });
+  }
+
+  async assignRoleToEmployee(roleName: any, user: Employee) {
+    const role: Role = await this.roleRepo.findOne({
+      where: {
+        roleName: roleName,
+      },
+    });
+    // user.roles.push(role);
+    console.log(user.roles);
+    return user;
   }
 
   async getAllRoles() {
@@ -29,7 +42,6 @@ export class RoleService {
   }
 
   async getRoleById(id: number) {
-    console.log(id);
     const role = await this.roleRepo.findOne({
       where: {
         id: id,

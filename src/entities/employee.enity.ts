@@ -1,16 +1,11 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
-import { Company } from './company.entity';
+import { ChildEntity, Column } from 'typeorm';
 import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { User } from './us.entity';
 
-@Entity('employess')
-export class Employee extends User{
-
-  @ManyToOne(() => Company)
-  company: Company;
-
+@ChildEntity('employees')
+export class Employee extends User {
   @Column('numeric')
   salary: number;
   @Column({
@@ -18,13 +13,6 @@ export class Employee extends User{
     default: EEmployeStatus.ACTIVE,
   })
   employeeStatus: EEmployeStatus;
-
-  // setCompanies(company: any) {
-  //   this.companies.push(company);
-  // }
-  // getCompanies(): Company[] {
-  //   return this.companies;
-  // }
 
   constructor(
     firstName: string,
@@ -35,6 +23,7 @@ export class Employee extends User{
     national_id: string,
     phonenumber: string,
     salary: number,
+    password: string,
   ) {
     super(
       firstName,
@@ -46,7 +35,8 @@ export class Employee extends User{
       phonenumber,
       '',
       EAccountStatus.ACTIVE,
-    )
+    );
+    this.password = password;
     this.salary = salary;
   }
 }

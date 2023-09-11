@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UUID } from 'crypto';
 import { CreateAddressDTO } from 'src/dtos/create-address.dto';
 import { Address } from 'src/entities/address.entity';
 import { Repository } from 'typeorm';
@@ -13,12 +12,18 @@ export class AddressService {
 
   async findById(id: any) {
     return this.addressRepo.findOne({
-       where: { id: id }
-      });
+      where: { id: id },
+    });
   }
 
-  async createAddress( dto: CreateAddressDTO){
-    let address = new Address(dto.province, dto.district, dto.sector, dto.cell, dto.village);
+  async createAddress(dto: CreateAddressDTO) {
+    let address = new Address(
+      dto.province,
+      dto.district,
+      dto.sector,
+      dto.cell,
+      dto.village,
+    );
     return await this.addressRepo.save(address);
   }
 }

@@ -1,19 +1,29 @@
-import { IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateAddressDTO{
-    @IsString()
-    province : string;
-    
-    @IsString()
-    district : string;
+export class CreateAddressDTO {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  province: string;
 
-    @IsString()
-    sector : string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  district: string;
 
-    @IsString()
-    cell : string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  sector: string;
 
-    @IsString()
-    village : string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  cell: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  village: string;
 }

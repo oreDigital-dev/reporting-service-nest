@@ -46,15 +46,19 @@ export class MailingService {
     this.mailService.addTransporter('gmail', config);
   }
 
-  public async sendVerificationEmail(receiver: String) {
+  public async sendEmailToUser(
+    receiver: String,
+    template: string,
+    subject: string,
+  ) {
     await this.setTransport();
     this.mailService
       .sendMail({
         transporterName: 'gmail',
         to: receiver.toString(),
         from: this.configService.get('EMAIL'),
-        subject: 'Rwanda Coding Academy user account verification',
-        template: 'verify-acccount',
+        subject: subject,
+        template: template,
         context: {
           code: '38320',
         },

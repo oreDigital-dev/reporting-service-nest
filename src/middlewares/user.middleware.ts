@@ -26,7 +26,8 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/favicon.ico' ||
       req.baseUrl == '/auth/login' ||
       req.baseUrl == '/api/swagger-docs.html' ||
-      req.baseUrl == '/users/create'
+      req.baseUrl == '/users/create' ||
+      req.baseUrl == '/companies/create'
     ) {
       next();
     } else {
@@ -43,10 +44,8 @@ export class UserMiddleWare implements NestMiddleware {
         req['user'] = user;
         next();
       } else {
-        console.log(req.baseUrl);
-        throw new UnauthorizedException(
-          'Please you are not authorized to access resource',
-        );
+        console.log(req);
+        throw new UnauthorizedException('Please get authenticated first');
       }
     }
   }

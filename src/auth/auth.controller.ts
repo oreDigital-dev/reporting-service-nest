@@ -8,26 +8,31 @@ import { User } from 'src/entities/us.entity';
 import { VerifyAccountDTO } from 'src/dtos/verify-account.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
+import { AuthService } from './auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   public isUserAvailable: User;
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    private authService: AuthService,
+  ) {}
 
   @Post('/login')
   async login(@Body() dto: LoginDTO): Promise<ApiResponse> {
     this.isUserAvailable = await this.userService.getUserByEmail(dto.email);
+    console.log(this.isUserAvailable);
     const arePasswordsMatch = await bcrypt.compare(
-      dto.password.toString(),
-      this.isUserAvailable.password.toString(),
+      dto.password,
+      this.isUserAvailable.password,
     );
     if (!arePasswordsMatch)
       throw new BadRequestException('Invalid email or password');
     return new ApiResponse(
       true,
       'User loggedInSucccessfully',
-      await this.userService.login(dto),
+      await this.authService.login(dto),
     );
   }
   @Post('verify_account')
@@ -40,7 +45,7 @@ export class AuthController {
     return new ApiResponse(
       true,
       'Your account is verified successfully',
-      await this.userService.verifyAccount(dto.email),
+      await this.authService.verifyAccount(dto.email),
     );
   }
 
@@ -49,7 +54,7 @@ export class AuthController {
     return new ApiResponse(
       true,
       'Your account was rest successfully ',
-      await this.userService.resetPassword(
+      await this.authService.resetPassword(
         dto.email,
         dto.activationCode,
         dto.newPassword,

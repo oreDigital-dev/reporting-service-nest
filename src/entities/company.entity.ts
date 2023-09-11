@@ -11,12 +11,12 @@ import {
 import { Address } from './address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineSite } from './minesite.entity';
-import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Incident } from './incident.entity';
-import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Employee } from './employee.enity';
+import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { Mineral } from './mineral.entity';
 
 @Entity('company')
 export class Company extends InitiatorAudit {
@@ -24,13 +24,13 @@ export class Company extends InitiatorAudit {
   id: UUID;
 
   @Column()
-  name: String;
+  name: string;
 
   @Column()
   ownerNID: string;
 
   @Column()
-  email: String;
+  email: string;
 
   @Column()
   password: string;
@@ -42,11 +42,14 @@ export class Company extends InitiatorAudit {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  @Column()
-  ownershipType: EOwnershipType;
+  @Column({
+    name: 'owner_ship_type',
+    default: EOwnershipType[EOwnershipType.PUBLIC],
+  })
+  ownershipType: String;
 
-  @Column()
-  productionCapacity: string;
+  @Column({ nullable: true })
+  productionCapacity: number;
 
   @Column()
   numberOfEmployees: number;
@@ -67,19 +70,20 @@ export class Company extends InitiatorAudit {
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];
 
-  @ManyToMany(() => Notification)
+  @OneToMany(() => Notification, (notification) => notification.company)
   notifications: Notification[];
 
-  constructor(name: string,
+  constructor(
+    name: string,
     email: string,
     licenseNumber: number,
-    productionCapacity: string,
+    productionCapacity: number,
     phoneNumber: string,
     ownerNID: string,
     numberOfEmployees: number,
-    ownership : number
+    ownership: string,
   ) {
-    super()
+    super();
     this.name = name;
     this.email = email;
     this.miniLicense = licenseNumber;

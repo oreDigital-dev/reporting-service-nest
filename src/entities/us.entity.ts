@@ -8,6 +8,7 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Role } from './role.entity';
@@ -17,6 +18,7 @@ import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
+import { Company } from './company.entity';
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends InitiatorAudit {
@@ -45,18 +47,16 @@ export class User extends InitiatorAudit {
   last_login: Date;
 
   @Column({
-    enum: EGender,
-    default: EGender.MALE,
+    nullable: false,
+    default: EGender[EGender.OTHER],
   })
-  gender: EGender;
+  gender: string;
   @JoinColumn({
     name: 'profile_picture',
   })
   profile_pic: File;
 
-  @Column({
-    nullable: true,
-  })
+  @Column()
   password: string;
 
   @Column({
@@ -77,12 +77,23 @@ export class User extends InitiatorAudit {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
+  @ManyToMany(() => Company)
+  @JoinTable()
+  companies: Company[];
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
+  @ManyToOne(() => User, (user) => user.address)
   @JoinColumn({ name: 'address_id' })
   address: Address;
+
+  setCompanies(company: any) {
+    this.companies.push(company);
+  }
+  getCompanies(): Company[] {
+    return this.companies;
+  }
   constructor(
     firstName: string,
     lastName: string,
@@ -99,7 +110,7 @@ export class User extends InitiatorAudit {
     this.lastName = lastName;
     this.email = email;
     this.username = username;
-    this.gender = myGender;
+    this.gender = EGender[myGender];
     this.national_id = national_id;
     this.phonenumber = phonenumber;
     this.password = password;

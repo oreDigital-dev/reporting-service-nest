@@ -1,21 +1,19 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateMineralDTO{
+export class CreateMineralDTO {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  minralCode: string;
 
-    @IsString()
-    @IsNotEmpty()
-    tagId: number;
-
-    @IsString()
-    @IsNotEmpty()
-    quantity: number;
-
-    @IsString()
-    @IsNotEmpty()
-    measurement: string;
-
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  mineralDescription: string;
 }

@@ -1,0 +1,6 @@
+export enum EWorkSpaceStatus {
+  GRANTED,
+  PENDING,
+  WAITING_EMAIL_VERIFICATION,
+  REJECTED,
+}

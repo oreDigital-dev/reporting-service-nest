@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { Module, OnModuleInit } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  OnModuleInit,
+} from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailingModule } from './mailing/mailing.module';
@@ -11,7 +16,6 @@ import { User } from './entities/us.entity';
 import { Role } from './entities/role.entity';
 import { RoleService } from './roles/roles.service';
 import { IncidentsModule } from './incidents/incidents.module';
-import { CompanyModule } from './company/company.module';
 import { AddressModule } from './address/address.module';
 import { MinesiteModule } from './minesite/minesite.module';
 import { Company } from './entities/company.entity';
@@ -19,7 +23,6 @@ import { Employee } from './entities/employee.enity';
 import { HomeController } from './home/home.controller';
 import { AuthController } from './auth/auth.controller';
 import { MinesiteController } from './minesite/minesite.controller';
-import { CompanyController } from './company/company.controller';
 import { EmployeeController } from './employee/employee.controller';
 import { RescueteamsController } from './rescueteams/rescueteams.controller';
 import { EmployeeModule } from './employee/employee.module';
@@ -28,7 +31,13 @@ import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
 import { Address } from './entities/address.entity';
 import { MineralModule } from './mineral/mineral.module';
+import { RescueTeam } from './entities/rescue_team.entity';
+import { CompanyModule } from './company/company.module';
+import { JwtModule } from '@nestjs/jwt';
+import { CompanyController } from './company/company.controller';
 import { Mineral } from './entities/mineral.entity';
+import { MineralRecord } from './entities/mineralRecord.entity';
+import { MineralService } from './mineral/mineral.service';
 
 @Module({
   imports: [
@@ -53,7 +62,10 @@ import { Mineral } from './entities/mineral.entity';
           MineSite,
           Incident,
           Address,
-          Mineral
+          Mineral,
+          RescueTeam,
+          Mineral,
+          MineralRecord,
         ],
         synchronize: true,
       }),
@@ -77,6 +89,7 @@ import { Mineral } from './entities/mineral.entity';
     AddressModule,
     MinesiteModule,
     EmployeeModule,
+    JwtModule,
     MineralModule,
   ],
   controllers: [
@@ -87,12 +100,22 @@ import { Mineral } from './entities/mineral.entity';
     EmployeeController,
     RescueteamsController,
   ],
+  // providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })
-export class AppModule implements OnModuleInit {
-  constructor(private readonly roleService: RoleService) {}
-
+export class AppModule implements OnModuleInit, NestModule {
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly mineralService: MineralService,
+  ) {}
+  configure(consumer: MiddlewareConsumer) {
+    // consumer.apply(UserMiddleWare).forRoutes('*');
+  }
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
+    let minerals = await this.mineralService.getAllMinerals();
+    if (!minerals) {
+      this.mineralService.createMinera();
+    }
     if (!roles || roles.length == 0) {
       this.roleService.createRoles();
     }
