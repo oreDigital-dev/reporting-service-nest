@@ -17,6 +17,8 @@ import { EmployeeModule } from 'src/employee/employee.module';
     TypeOrmModule.forFeature([Company]),
     AddressModule,
     MailingModule,
+    EmployeeModule,
+    // UtilsModule,
     AuthModule,
     MineralModule,
     forwardRef(() => UtilsModule),

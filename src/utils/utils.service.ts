@@ -92,7 +92,7 @@ export class UtilsService {
             .status(403)
             .json({ sucess: false, message: error.message });
         const details: any = await this.jwtService.decode(token);
-        let entity;
+        let entity:any;
         switch (type.toString().toUpperCase()) {
           case 'USER':
             entity = await this.userService.getUserById(details.id, 'User');

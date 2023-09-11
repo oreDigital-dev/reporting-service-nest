@@ -11,7 +11,7 @@ import { UtilsService } from 'src/utils/utils.service';
 import { DeleteDateColumn, Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
-import { Employee } from 'src/entities/employee.enity';
+import { Employee } from 'src/entities/employee.entity';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
 import { log } from 'console';
@@ -121,7 +121,7 @@ export class EmployeeService {
       console.error('Error creating employee: ', error);
       throw error;
     }
-  }
+    }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {
     let availalbleUser = await this.getEmployeeByEmail(dto.id);

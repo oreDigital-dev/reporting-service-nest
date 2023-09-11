@@ -7,18 +7,21 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
+import { Request, Response } from 'express';
+import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
 import { Company } from 'src/entities/company.entity';
-import { Employee } from 'src/entities/employee.enity';
+import { Employee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineralService } from 'src/mineral/mineral.service';
+import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 
@@ -33,6 +36,7 @@ export class CompanyService {
     private addressService: AddressService,
     private authService: AuthService,
     private mineralService: MineralService,
+    private roleService: RoleService,
   ) {}
   async createCompany(dto: CreateCompanyDTO) {
     const available = await this.companyRepo.find({
@@ -102,16 +106,20 @@ export class CompanyService {
   }
 
   async getCompanyById(id: UUID) {
-    const isCompanyAvailable = await this.companyRepo.findOne({
-      where: { id: id },
-      relations: ['employees', 'notifications', 'address'],
-    });
+    try {
+      const isCompanyAvailable = await this.companyRepo.findOne({
+        where: { id: id },
+        relations: ['employees', 'notifications', 'address'],
+      });
 
-    if (!isCompanyAvailable)
-      throw new NotFoundException(
-        'The company with the provided id is not found',
-      );
-    return isCompanyAvailable;
+      if (isCompanyAvailable == null)
+        throw new NotFoundException(
+          'The company with the provided id is not found',
+        );
+      return isCompanyAvailable;
+    } catch (err) {
+      throw new Exception(err);
+    }
   }
 
   async getAllCompanies() {
@@ -119,7 +127,6 @@ export class CompanyService {
       relations: ['address', 'mineSites', 'minerals'],
     });
   }
-
   async getCompanyByEmail(email: string) {
     try {
       return await this.companyRepo.findOne({
@@ -128,6 +135,24 @@ export class CompanyService {
       });
     } catch (error) {
       throw error;
+    }
+  }
+  async deleteCompany(id: UUID) {
+    try {
+      await this.companyRepo.delete({
+        id,
+      });
+      return { message: 'Company account successfully deleted!' };
+    } catch (err) {
+      throw new Exception(err);
+    }
+  }
+
+  async getCompanyProfile(req: Request, res: Response) {
+    try {
+      return this.utilsService.getLoggedInProfile(req, res, 'COMPANY');
+    } catch (err) {
+      throw new Exception(err);
     }
   }
 }

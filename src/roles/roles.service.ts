@@ -6,7 +6,7 @@ import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception
 import { ERole } from 'src/enums/ERole.enum';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/us.entity';
-import { Employee } from 'src/entities/employee.enity';
+import { Employee } from 'src/entities/employee.entity';
 
 @Injectable()
 export class RoleService {

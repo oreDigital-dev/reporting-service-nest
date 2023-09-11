@@ -11,7 +11,7 @@ import { User } from './us.entity';
 import { UUID } from 'crypto';
 import { RescueTeam } from './rescue_team.entity';
 import { Company } from './company.entity';
-import { Employee } from './employee.enity';
+import { Employee } from './employee.entity';
 
 @Entity('notifications')
 export class Notification {
