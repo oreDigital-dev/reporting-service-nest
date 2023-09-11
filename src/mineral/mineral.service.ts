@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateMineralDTO } from 'src/dtos/create-mineral.dto';
+import { Mineral } from 'src/entities/mineral.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

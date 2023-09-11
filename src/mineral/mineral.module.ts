@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MineralController } from './mineral.controller';
 import { MineralService } from './mineral.service';
-import { Mineral } from 'src/entities/mineralRecord.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Mineral } from 'src/entities/mineral.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Mineral])],

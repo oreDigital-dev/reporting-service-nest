@@ -1,9 +1,12 @@
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 import { MineSite } from './minesite.entity';
+import { UUID } from 'crypto';
 
 @Entity('minerals')
 export class Mineral extends InitiatorAudit {
+  @PrimaryColumn()
+  id: UUID;
   name: string;
   @Column({
     name: 'mineral_code',
