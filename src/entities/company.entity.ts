@@ -14,11 +14,16 @@ import { Incident } from './incident.entity';
 import { Mineral } from './minerals.entity';
 import { Notification } from './notification.entity';
 import { v4 } from 'uuid';
+import { UUID } from 'crypto';
+import { EWorkSpaceStatus } from 'src/enums/EworkSpaceStatus.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { User } from './us.entity';
+import { Employee } from './employee.enity';
 
-@Entity({ name: 'entity' })
+@Entity('companies')
 export class Company {
   @PrimaryGeneratedColumn()
-  id: string = v4();
+  id: UUID;
 
   @Column()
   name: string;
@@ -39,11 +44,14 @@ export class Company {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  @Column()
-  ownershipType: EOwnershipType;
+  @Column({
+    name: 'owner_ship_type',
+    default: EOwnershipType[EOwnershipType.PUBLIC],
+  })
+  ownershipType: String;
 
-  @Column()
-  productionCapacity: string;
+  @Column({ nullable: true })
+  productionCapacity: number;
 
   @Column()
   numberOfEmployees: number;
@@ -51,8 +59,17 @@ export class Company {
   @Column()
   miniLicense: number;
 
+  @Column({
+    name: 'workspace_status',
+    default: EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION],
+  })
+  workSpaceStatus: String;
+
   @ManyToMany(() => Company)
   minerals: Mineral[];
+
+  @ManyToMany(() => User)
+  users: User[];
 
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];
@@ -60,18 +77,22 @@ export class Company {
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];
 
-  @ManyToMany(() => Notification)
+  @OneToMany(() => Notification, (notification) => notification.company)
   notifications: Notification[];
+
+  setUsers(user: User) {
+    this.users.push(user);
+  }
 
   constructor(
     name: string,
     email: string,
     licenseNumber: number,
-    productionCapacity: string,
+    productionCapacity: number,
     phoneNumber: string,
     ownerNID: string,
     numberOfEmployees: number,
-    ownership: EOwnershipType,
+    ownership: String,
   ) {
     this.name = name;
     this.email = email;

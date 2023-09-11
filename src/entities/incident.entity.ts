@@ -1,13 +1,7 @@
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MineSite } from './minesite.entity';
 
 @Entity('incident')

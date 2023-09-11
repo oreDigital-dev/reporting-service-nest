@@ -1,24 +1,39 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsPhoneNumber,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
+import { Address } from 'src/entities/address.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
+import { CreateAddressDTO } from './create-address.dto';
 
 export class CreateCompanyDTO {
   @IsString()
   name: string;
   @IsNotEmpty()
-  ownership: EOwnershipType;
+  ownership: string;
   @IsString()
+  @IsEmail()
   email: string;
   @IsString()
   @IsNotEmpty()
   ownerNID: string;
   @IsString()
   @IsNotEmpty()
+  @IsStrongPassword()
   password: string;
 
   @IsString()
+  @IsNotEmpty()
+  @IsPhoneNumber()
   phoneNumber: string;
 
-  productionCapacity: string;
+  @IsNumber()
+  @IsNotEmpty()
+  productionCapacity: number;
 
   mineralTypes: Array<String>;
 
@@ -30,7 +45,6 @@ export class CreateCompanyDTO {
   @IsNotEmpty()
   numberOfEmployees: number;
 
-  @IsNumber()
   @IsNotEmpty()
-  addressId: string;
+  address: CreateAddressDTO;
 }

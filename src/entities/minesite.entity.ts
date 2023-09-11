@@ -3,6 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -11,6 +13,7 @@ import {
 import { Address } from './address.entity';
 import { Company } from './company.entity';
 import { Incident } from './incident.entity';
+import { Mineral } from './minerals.entity';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {
@@ -20,10 +23,12 @@ export class MineSite extends InitiatorAudit {
   @Column()
   name: string;
 
-  //   @Column({ default: 'GOLD' })
-  //   minerals: Array<String>;
+  @ManyToMany(() => Mineral, (mineral) => mineral.mineSites)
+  @JoinTable()
+  minerals: Mineral[];
 
-  @OneToOne(() => Address, (address) => address.minesite)
+  @ManyToOne(() => Address, (address) => address.mineSites)
+  @JoinColumn({ name: 'address_id' })
   address: Address;
 
   @OneToMany(() => Incident, (incident) => incident.mineSite)

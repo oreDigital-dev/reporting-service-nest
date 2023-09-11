@@ -1,30 +1,40 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Address } from "./address.entity";
-import { ERescueTeamCategory } from "src/enums/ERescueTeamCategory.enum";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Address } from './address.entity';
+import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
+import { Notification } from './notification.entity';
 
-@Entity("rescue_team")
-export class RescueTeam{
+@Entity('rescue_team')
+export class RescueTeam {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column()
+  name: string;
 
-    @Column()
-    name : string;
+  @Column()
+  email: string;
 
-    @Column()
-    email : string;
+  @Column()
+  password: string;
 
-    @Column()
-    password : string;
+  @Column()
+  code: string;
 
-    @Column()
-    code: string;
+  @ManyToOne(() => Address, (address) => address.rescueTeams)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
-    @Column()
-    address : Address;
+  @Column()
+  category: ERescueTeamCategory;
 
-    @Column()
-    category: ERescueTeamCategory;
-
-    notifications: Notification[]
+  @OneToMany(() => Notification, (notification) => notification.rescueTeam)
+  notifications: Notification[];
 }

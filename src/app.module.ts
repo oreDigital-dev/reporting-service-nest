@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { Module, OnModuleInit } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  OnModuleInit,
+} from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailingModule } from './mailing/mailing.module';
@@ -11,7 +16,6 @@ import { User } from './entities/us.entity';
 import { Role } from './entities/role.entity';
 import { RoleService } from './roles/roles.service';
 import { IncidentsModule } from './incidents/incidents.module';
-import { CompanyModule } from './company/company.module';
 import { AddressModule } from './address/address.module';
 import { MinesiteModule } from './minesite/minesite.module';
 import { Company } from './entities/company.entity';
@@ -19,7 +23,6 @@ import { Employee } from './entities/employee.enity';
 import { HomeController } from './home/home.controller';
 import { AuthController } from './auth/auth.controller';
 import { MinesiteController } from './minesite/minesite.controller';
-import { CompanyController } from './company/company.controller';
 import { EmployeeController } from './employee/employee.controller';
 import { RescueteamsController } from './rescueteams/rescueteams.controller';
 import { EmployeeModule } from './employee/employee.module';
@@ -27,6 +30,14 @@ import { Notification } from './entities/notification.entity';
 import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
 import { Address } from './entities/address.entity';
+import { Mineral } from './entities/minerals.entity';
+import { RescueTeam } from './entities/rescue_team.entity';
+import { UserMiddleWare } from './middlewares/user.middleware';
+import { JwtModule } from '@nestjs/jwt';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { CompanyModule } from './company/company.module';
+import { CompanyController } from './company/company.controller';
 
 @Module({
   imports: [
@@ -51,6 +62,8 @@ import { Address } from './entities/address.entity';
           MineSite,
           Incident,
           Address,
+          Mineral,
+          RescueTeam,
         ],
         synchronize: true,
       }),
@@ -74,6 +87,7 @@ import { Address } from './entities/address.entity';
     AddressModule,
     MinesiteModule,
     EmployeeModule,
+    JwtModule,
   ],
   controllers: [
     HomeController,
@@ -83,10 +97,13 @@ import { Address } from './entities/address.entity';
     EmployeeController,
     RescueteamsController,
   ],
+  // providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })
-export class AppModule implements OnModuleInit {
+export class AppModule implements OnModuleInit, NestModule {
   constructor(private readonly roleService: RoleService) {}
-
+  configure(consumer: MiddlewareConsumer) {
+    // consumer.apply(UserMiddleWare).forRoutes('*');
+  }
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
     if (!roles || roles.length == 0) {

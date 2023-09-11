@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
@@ -13,65 +14,75 @@ import { EGender } from 'src/enums/EGender.enum';
 import { Employee } from 'src/entities/employee.enity';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
+import { log } from 'console';
+import { MailingService } from 'src/mailing/mailing.service';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectRepository(Employee) public employeeRepo: Repository<Employee>,
-    @Inject(UtilsService) private utilsService: UtilsService,
+    @Inject(forwardRef(() => UtilsService))
+    private utilsService: UtilsService,
+    private mailingService: MailingService,
   ) {}
 
-  async getEmployeeByEmail(email: any) {
-    const isEmployeeAvailable = await this.employeeRepo.findOne({
-      where: {
-        email: email,
-      },
-      relations: ['roles', 'companies'],
-    });
-
-    if (!isEmployeeAvailable)
-      throw new NotFoundException(
-        'The employe with the provided id is not found',
-      );
-    return isEmployeeAvailable;
-  }
   async createEmployee(dto: CreateEmployeeDTO, req: Request, res: Response) {
-    this.getEmployeeByEmail(dto.email);
-    const loggedInCompany = this.utilsService.getLoggedInProfile(
-      req,
-      res,
-      'company',
-    );
-    let gender;
-    switch (dto.myGender.toUpperCase()) {
-      case 'MALE':
-        gender = EGender[EGender.MALE];
-        break;
-      case 'FEMALE':
-        gender = EGender[EGender.FEMALE];
-        break;
-      case 'OTHER':
-        gender = EGender[EGender.OTHER];
-        break;
-      default:
-        throw new BadRequestException('The provided gender is invalid');
+    try {
+      const availableEmployee = await this.employeeRepo.findOne({
+        where: { email: dto.email },
+      });
+
+      // if (availableEmployee) {
+      //   throw new BadRequestException(
+      //     'The employee with the provided email is already registered',
+      //   );
+      // }
+
+      let gender;
+      switch (dto.myGender.toUpperCase()) {
+        case 'MALE':
+          gender = EGender.MALE;
+          break;
+        case 'FEMALE':
+          gender = EGender.FEMALE;
+          break;
+        case 'OTHER':
+          gender = EGender.OTHER;
+          break;
+        default:
+          throw new BadRequestException('The provided gender is invalid');
+      }
+
+      let emplyee: Employee = new Employee(
+        dto.firstName,
+        dto.lastName,
+        dto.email,
+        dto.username,
+        gender,
+        dto.national_id,
+        dto.phonenumber,
+        dto.salary,
+        `OreDigital@${new Date().getFullYear()}`,
+      );
+
+      // this.mailingService.sendEmailToUser(
+      //   emplyee.email,
+      //   'employee-account-verification',
+      //   'OreDigital account verification',
+      // );
+
+      emplyee.password = await this.utilsService.hashString(emplyee.password);
+
+      let createdEmployee = await this.employeeRepo.save(emplyee);
+
+      delete createdEmployee.password;
+      delete createdEmployee.activationCode;
+
+      return createdEmployee;
+    } catch (error) {
+      console.error('Error creating employee: ', error);
+      throw error;
     }
-    const emplyee: Employee = new Employee(
-      dto.firstName,
-      dto.lastName,
-      dto.email,
-      dto.username,
-      gender,
-      dto.national_id,
-      dto.phonenumber,
-      dto.salary,
-    );
-    emplyee.setCompanies(loggedInCompany);
-    let createdEmployee = await this.employeeRepo.save(emplyee);
-    delete createdEmployee.password;
-    delete createdEmployee.activationCode;
-    delete createdEmployee.status;
-    return createdEmployee;
   }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {
@@ -99,6 +110,7 @@ export class EmployeeService {
       dto.national_id,
       dto.phonenumber,
       dto.salary,
+      dto.password,
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);
@@ -106,6 +118,21 @@ export class EmployeeService {
     delete createdEmployee.activationCode;
     delete createdEmployee.status;
     return createdEmployee;
+  }
+
+  async getEmployeeByEmail(email: any) {
+    const isEmployeeAvailable = await this.employeeRepo.findOne({
+      where: {
+        email: email,
+      },
+      relations: ['roles', 'companies'],
+    });
+
+    if (!isEmployeeAvailable)
+      throw new NotFoundException(
+        'The employe with the provided id is not found',
+      );
+    return isEmployeeAvailable;
   }
 
   async getEmployeeById(id: UUID) {
@@ -131,7 +158,7 @@ export class EmployeeService {
 
   async getAllEmployees() {
     let employees = this.employeeRepo.find({});
-    let newEmployees: Employee[];
+    let newEmployees: Employee[] = [];
     (await employees).forEach((employee) => {
       delete employee.password;
       delete employee.activationCode;

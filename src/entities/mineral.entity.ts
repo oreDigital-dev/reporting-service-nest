@@ -1,7 +1,6 @@
 import { UUID } from 'crypto';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { Address } from './address.entity';
-import { type } from 'os';
 
 @Entity('mineral_records')
 export class MineralRecord {

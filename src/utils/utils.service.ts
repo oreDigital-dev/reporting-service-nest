@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/entities/us.entity';
+import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -48,6 +49,7 @@ export class UtilsService {
       refreshToken: refreshToken.toString(),
     };
   }
+
   async hashString(input) {
     try {
       if (typeof input !== 'string') {
@@ -57,6 +59,7 @@ export class UtilsService {
       return hash;
     } catch (error) {
       console.error('Error occurred while hashing:', error.message);
+      throw error;
     }
   }
 

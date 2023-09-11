@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UUID } from 'crypto';
 import { Address } from 'src/entities/address.entity';
 import { Repository } from 'typeorm';
 
@@ -14,5 +13,8 @@ export class AddressService {
     return this.addressRepo.findOne({
       where: { id: id },
     });
+  }
+  async saveAddress(address: Address) {
+    return this.addressRepo.save(address);
   }
 }
