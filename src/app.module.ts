@@ -19,7 +19,7 @@ import { IncidentsModule } from './incidents/incidents.module';
 import { AddressModule } from './address/address.module';
 import { MinesiteModule } from './minesite/minesite.module';
 import { Company } from './entities/company.entity';
-import { Employee } from './entities/employee.enity';
+import { Employee } from './entities/employee.entity';
 import { HomeController } from './home/home.controller';
 import { AuthController } from './auth/auth.controller';
 import { MinesiteController } from './minesite/minesite.controller';

@@ -18,7 +18,7 @@ import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
-import { Company } from './company.entity';
+
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends InitiatorAudit {
@@ -77,9 +77,7 @@ export class User extends InitiatorAudit {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
-  @ManyToMany(() => Company)
-  @JoinTable()
-  companies: Company[];
+
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
@@ -88,12 +86,7 @@ export class User extends InitiatorAudit {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  setCompanies(company: any) {
-    this.companies.push(company);
-  }
-  getCompanies(): Company[] {
-    return this.companies;
-  }
+
   constructor(
     firstName: string,
     lastName: string,

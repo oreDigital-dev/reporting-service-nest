@@ -18,6 +18,7 @@ import { EmployeeModule } from 'src/employee/employee.module';
     AddressModule,
     MailingModule,
     EmployeeModule,
+    // UtilsModule,
     AuthModule,
     forwardRef(() => UtilsModule),
     MineralModule,

@@ -5,6 +5,7 @@ import { CompanyService } from './company.service';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { Roles } from 'src/utils/decorators/roles.decorator';
+import { UUID } from 'crypto';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -30,4 +31,26 @@ export class CompanyController {
       await this.companyService.getAllCompanies(),
     );
   }
+
+  @Get('/id')
+  @Roles('SYSTEM_ADMIN, COMPANY_ADMIN')
+  async getCompanyById(@Param('id') id : UUID){
+    return new ApiResponse(
+      true, 'Data retrieval successfull', await this.companyService.getCompanyById(id)
+    )
+  }
+
+
+  @Get('/id')
+  @Roles('SYSTEM_ADMIN, COMPANY_ADMIN')
+  async deleteCompany(@Param('id') id : UUID){
+    return new ApiResponse(
+      true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
+    )
+  }
+
+
+  
+  
+
 }

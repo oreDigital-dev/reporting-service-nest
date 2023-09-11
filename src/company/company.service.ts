@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 import { Request, Response } from 'express';
+import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
@@ -30,63 +31,71 @@ export class CompanyService {
     private addressService: AddressService,
     private authService: AuthService,
     private mineralService: MineralService,
-    private utilService : UtilsService
   ) { }
   async createCompany(dto: CreateCompanyDTO) {
-    const available = await this.companyRepo.find({
-      where: [
-        {
-          email: dto.email,
-          ownerNID: dto.ownerNID,
-          phoneNumber: dto.phoneNumber,
-        },
-      ],
-    });
+    try {
 
-    if (available.length != 0) {
-      throw new BadRequestException(
-        "The company's phone number or email or owner NID is already registered!",
+      const available = await this.companyRepo.find({
+        where: [
+          {
+            email: dto.email,
+            ownerNID: dto.ownerNID,
+            phoneNumber: dto.phoneNumber,
+          },
+        ],
+      });
+
+      if (available.length != 0) {
+        throw new BadRequestException(
+          "The company's phone number or email or owner NID is already registered!",
+        );
+      }
+      const hashedPassword = await this.authService.hashPassword(dto.password);
+      let ownership: any = EOwnershipType[dto.ownership]
+      let company: Company = new Company(
+        dto.name,
+        dto.email,
+        dto.licenseNumber,
+        dto.productionCapacity,
+        dto.phoneNumber,
+        dto.ownerNID,
+        dto.numberOfEmployees,
+        ownership,
       );
-    }
-    const hashedPassword = await this.authService.hashPassword(dto.password);
-    let ownership: any = EOwnershipType[dto.ownership]
-    let company: Company = new Company(
-      dto.name,
-      dto.email,
-      dto.licenseNumber,
-      dto.productionCapacity,
-      dto.phoneNumber,
-      dto.ownerNID,
-      dto.numberOfEmployees,
-      ownership,
-    );
-    company.password = hashedPassword;
-    let address: Address = await this.addressService.createAddress(dto.address);
+      company.password = hashedPassword;
+      let address: Address = await this.addressService.createAddress(dto.address);
 
-    company.address = address;
-    let minerals: Mineral[] = [];
+      company.address = address;
+      let minerals: Mineral[] = [];
 
-    for (let min of dto.minerals) {
-      let mineral: Mineral = await this.mineralService.getMineralByName(
-        min.toUpperCase(),
-      );
-      minerals.push(mineral);
+      for (let min of dto.minerals) {
+        let mineral: Mineral = await this.mineralService.getMineralByName(
+          min.toUpperCase(),
+        );
+        minerals.push(mineral);
+      }
+      company.minerals = minerals;
+      this.companyRepo.save(company);
+    } catch (err) {
+      throw new Exception(err)
     }
-    company.minerals = minerals;
-    this.companyRepo.save(company);
   }
 
   async getCompanyById(id: UUID) {
-    const isCompanyAvailable = await this.companyRepo.findOne({
-      where: { id: id },
-      relations: ['employees', 'notifications', 'address'],
-    });
+    try {
+      const isCompanyAvailable = await this.companyRepo.findOne({
+        where: { id: id },
+        relations: ['notifications', 'address'],
+      });
 
-    if (isCompanyAvailable == null)
-      throw new NotFoundException(
-        'The company with the provided id is not found',
-      );
-    return isCompanyAvailable;
+      if (isCompanyAvailable == null)
+        throw new NotFoundException(
+          'The company with the provided id is not found',
+        );
+      return isCompanyAvailable;
+    } catch (err) {
+      throw new Exception(err)
+    }
   }
 
   async getAllCompanies() {
@@ -97,7 +106,7 @@ export class CompanyService {
       }
       return companies;
     } catch (err) {
-      return { error: JSON.stringify(err) }
+      throw new Exception(err)
     }
   }
 
@@ -106,19 +115,19 @@ export class CompanyService {
       await this.companyRepo.delete({
         id
       })
-      return {message : "Company account successfully deleted!"}
-    }catch(err){
-      return {error: JSON.stringify(err)}
+      return { message: "Company account successfully deleted!" }
+    } catch (err) {
+      throw new Exception(err)
     }
   }
 
-  async getCompanyProfile(req: Request, res: Response){
-    try{
-      return this.utilService.getLoggedInProfile(req, res, 'COMPANY')
-    }catch(err){
-
+  async getCompanyProfile(req: Request, res: Response) {
+    try {
+      return this.utilsService.getLoggedInProfile(req, res, 'COMPANY')
+    } catch (err) {
+      throw new Exception(err)
     }
   }
 
-  
+
 }
