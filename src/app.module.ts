@@ -38,6 +38,7 @@ import { CompanyController } from './company/company.controller';
 import { Mineral } from './entities/mineral.entity';
 import { MineralRecord } from './entities/mineralRecord.entity';
 import { MineralService } from './mineral/mineral.service';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { MineralService } from './mineral/mineral.service';
     EmployeeModule,
     JwtModule,
     MineralModule,
+    NotificationModule,
   ],
   controllers: [
     HomeController,

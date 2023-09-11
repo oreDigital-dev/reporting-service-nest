@@ -49,6 +49,12 @@ export class CompanyController {
     )
   }
 
+  @Get('/profile')
+  async getCompanyProfile(){
+    return new ApiResponse(
+      true, 'Data retrieval successfull', await this.companyService.getCompanyProfile
+    )
+  }
 
   
   

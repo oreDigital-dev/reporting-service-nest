@@ -10,9 +10,6 @@ export class Incident extends InitiatorAudit {
   id: number;
 
   @Column()
-  description: String;
-
-  @Column()
   type: EIncidentType;
 
   @Column()
@@ -28,15 +25,11 @@ export class Incident extends InitiatorAudit {
   mineSite: MineSite;
 
   constructor(
-    description: String,
     type: EIncidentType,
-    status: EIncidentStatus,
     measurement: Number,
   ) {
     super();
-    this.description = description;
     this.type = type;
-    this.status = status;
     this.measurement = measurement;
   }
 }

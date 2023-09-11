@@ -21,8 +21,11 @@ export class Notification {
   @Column()
   type: ENotificationType;
 
-  @Column()
+  @Column({default : ENotificationStatus['UNREAD']})
   status: ENotificationStatus;
+
+  @Column()
+  message: string;
 
   @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })
@@ -36,7 +39,10 @@ export class Notification {
   @ManyToOne(() => Company, (company) => company.notifications)
   company: Company;
 
-  //   @JoinColumn({ name: 'company_id' })
-  //   @ManyToOne(() => Employee, (employee) => employee.notifications)
-  //   employee: Employee;
+
+
+  constructor(message: string, type: ENotificationType ){
+    this.message = message;
+    this.type = type;
+  }
 }

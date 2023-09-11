@@ -45,4 +45,5 @@ export class MineralService {
       await this.mineralRepo.save(new Mineral(name, '', ''));
     });
   }
+  
 }

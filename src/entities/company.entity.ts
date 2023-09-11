@@ -61,7 +61,6 @@ export class Company extends InitiatorAudit {
   @JoinTable()
   minerals: Mineral[];
 
-
   @OneToMany(() => MineSite, (site) => site.company)
   mineSites: MineSite[];
 
@@ -69,7 +68,7 @@ export class Company extends InitiatorAudit {
   incidents: Incident[];
 
   @OneToMany(() => Notification, (notification) => notification.company)
-  notifications: Notification[];
+  notifications: Notification[] ;
 
   constructor(
     name: string,
