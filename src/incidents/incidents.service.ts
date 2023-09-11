@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
+import { Company } from 'src/entities/company.entity';
 import { Incident } from 'src/entities/incident.entity';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
@@ -11,7 +12,7 @@ import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { MinesiteService } from 'src/minesite/minesite.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class IncidentsService {
@@ -48,13 +49,16 @@ export class IncidentsService {
     }
   }
 
-  // getIncidentByLoggedInCompany(req: Request, res: Response){
-  //   try{
-  //     let loggedInCompany = await this.utilService.getLoggedInProfile(req,res, 'company' );
-  //     let incidents = await this.incidentRepo.findBy({
-        
-  //     })
-  //   }
-  // }
+ async getIncidentByLoggedInCompany(req: Request, res: Response){
+    try{
+      let loggedInCompany : Company = await this.utilService.getLoggedInProfile(req,res, 'company' );
+      let incidents = await this.incidentRepo.findBy({
+        mineSite: In(loggedInCompany.mineSites)
+      })
+      return incidents;
+    }catch(err){
+      throw new Exception(err)
+    }
+  }
 
 }
