@@ -83,7 +83,7 @@ export class EmployeeService {
       console.error('Error creating employee: ', error);
       throw error;
     }
-  }
+    }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {
     let availalbleUser = await this.getEmployeeByEmail(dto.id);
