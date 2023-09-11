@@ -48,8 +48,9 @@ export class CreateCompanyDTO {
   @ApiProperty()
   productionCapacity: number;
 
-  @Type(() => CreateMineralDTO)
-  minerals: CreateMineralDTO[];
+  @ApiProperty()
+  @IsNotEmpty()
+  minerals: string[];
 
   @IsNumber()
   @IsNotEmpty()

@@ -65,11 +65,12 @@ export class CompanyService {
     let minerals: Mineral[] = [];
 
     for (let min of dto.minerals) {
-      let mineral: Mineral = await this.mineralService.createMineral(min);
+      let mineral: Mineral = await this.mineralService.getMineralByName(
+        min.toUpperCase(),
+      );
       minerals.push(mineral);
     }
     company.minerals = minerals;
-
     this.companyRepo.save(company);
   }
 
@@ -87,6 +88,8 @@ export class CompanyService {
   }
 
   async getAllCompanies() {
-    return this.companyRepo.find({ relations: ['address', 'mineSites'] });
+    return this.companyRepo.find({
+      relations: ['address', 'mineSites', 'minerals'],
+    });
   }
 }

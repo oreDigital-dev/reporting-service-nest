@@ -37,6 +37,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CompanyController } from './company/company.controller';
 import { Mineral } from './entities/mineral.entity';
 import { MineralRecord } from './entities/mineralRecord.entity';
+import { MineralService } from './mineral/mineral.service';
 
 @Module({
   imports: [
@@ -102,12 +103,19 @@ import { MineralRecord } from './entities/mineralRecord.entity';
   // providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })
 export class AppModule implements OnModuleInit, NestModule {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly mineralService: MineralService,
+  ) {}
   configure(consumer: MiddlewareConsumer) {
     // consumer.apply(UserMiddleWare).forRoutes('*');
   }
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
+    let minerals = await this.mineralService.getAllMinerals();
+    if (!minerals) {
+      this.mineralService.createMinera();
+    }
     if (!roles || roles.length == 0) {
       this.roleService.createRoles();
     }
