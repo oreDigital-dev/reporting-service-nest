@@ -21,6 +21,7 @@ import { compute_alpha } from 'googleapis';
 import { Role } from 'src/entities/role.entity';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -124,6 +125,7 @@ export class EmployeeService {
         employee.email,
       );
       employee.company = company;
+      employee.status = EAccountStatus[EAccountStatus.ACTIVE];
       employee.password = await this.utilsService.hashString(employee.password);
       let createdEmployee = await this.employeeRepo.save(employee);
       delete createdEmployee.password;
