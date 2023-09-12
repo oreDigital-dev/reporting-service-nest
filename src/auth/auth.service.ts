@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginDTO } from 'src/dtos/login.dto';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
@@ -16,8 +20,10 @@ export class AuthService {
   }
 
   async login(dto: LoginDTO) {
-    const user = await this.userService.getUserByEmail(dto.email);
-    console.log(user);
+    const user = await this.userService.userRepo.findOne({
+      where: { email: dto.email },
+    });
+    if (!user) throw new UnauthorizedException('Invalid email or password');
     if (
       user.status ==
         EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
