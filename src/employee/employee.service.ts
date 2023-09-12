@@ -18,6 +18,9 @@ import { log } from 'console';
 import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
 import { compute_alpha } from 'googleapis';
+import { Role } from 'src/entities/role.entity';
+import { RoleService } from 'src/roles/roles.service';
+import { ERole } from 'src/enums/ERole.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -28,9 +31,10 @@ export class EmployeeService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private mailingService: MailingService,
+    private roleService: RoleService,
   ) {}
 
-  async createEmployee(dto: CreateEmployeeDTO, req: Request, res: Response) {
+  async createEmployee(dto: CreateEmployeeDTO) {
     try {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: dto.email },
@@ -80,7 +84,25 @@ export class EmployeeService {
         'employee-account-verification',
         'OreDigital account verification',
       );
-      return createdEmployee;
+      const tokens = await this.utilsService.getTokens(emplyee);
+      let savedEmployee = await this.employeeRepo.findOne({
+        where: { email: emplyee.email },
+        relations: ['roles'],
+      });
+
+      const employee = await this.roleService.assignRoleToEmployee(
+        ERole[ERole.COMPANY_OWNER],
+        savedEmployee,
+      );
+      savedEmployee = await this.employeeRepo.save(employee);
+      return {
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        emplyee: await this.employeeRepo.findOne({
+          where: { email: emplyee.email },
+          relations: ['roles', 'company'],
+        }),
+      };
     } catch (error) {
       console.error('Error creating employee: ', error);
       throw error;
@@ -121,7 +143,7 @@ export class EmployeeService {
       console.error('Error creating employee: ', error);
       throw error;
     }
-    }
+  }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {
     let availalbleUser = await this.getEmployeeByEmail(dto.id);
@@ -163,7 +185,7 @@ export class EmployeeService {
       where: {
         email: email,
       },
-      relations: ['roles', 'companies'],
+      relations: ['roles'],
     });
 
     if (!isEmployeeAvailable)
@@ -176,7 +198,7 @@ export class EmployeeService {
   async getEmployeeById(id: UUID) {
     const isEmployeeAvailable = await this.employeeRepo.findOne({
       where: { id: id },
-      relations: ['roles', 'companies'],
+      relations: ['roles'],
     });
     if (!isEmployeeAvailable)
       throw new NotFoundException(

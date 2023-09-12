@@ -16,6 +16,7 @@ import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Mineral } from './mineral.entity';
+import { User } from './us.entity';
 
 @Entity('company')
 export class Company extends InitiatorAudit {
@@ -65,6 +66,10 @@ export class Company extends InitiatorAudit {
 
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  employees: User[];
 
   @OneToMany(() => Notification, (notification) => notification.company)
   notifications: Notification[];

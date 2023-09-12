@@ -38,6 +38,7 @@ import { CompanyController } from './company/company.controller';
 import { Mineral } from './entities/mineral.entity';
 import { MineralRecord } from './entities/mineralRecord.entity';
 import { MineralService } from './mineral/mineral.service';
+import { UserMiddleWare } from './middlewares/user.middleware';
 
 @Module({
   imports: [
@@ -108,12 +109,12 @@ export class AppModule implements OnModuleInit, NestModule {
     private readonly mineralService: MineralService,
   ) {}
   configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(UserMiddleWare).forRoutes('*');
+    consumer.apply(UserMiddleWare).forRoutes('*');
   }
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
     let minerals = await this.mineralService.getAllMinerals();
-    if (!minerals) {
+    if (!minerals || minerals.length == 0) {
       this.mineralService.createMinera();
     }
     if (!roles || roles.length == 0) {

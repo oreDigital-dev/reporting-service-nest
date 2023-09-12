@@ -42,7 +42,10 @@ export class MineralService {
       EMineralName[EMineralName.ZINC],
     ];
     mineralNames.forEach(async (name) => {
-      await this.mineralRepo.save(new Mineral(name, '', ''));
+      const mineral = await this.getMineralByName(name);
+      if (!mineral || mineral != null) {
+        await this.mineralRepo.save(new Mineral(name, '', ''));
+      }
     });
   }
 }

@@ -20,6 +20,7 @@ import { Mineral } from 'src/entities/mineral.entity';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
+import { ERole } from 'src/enums/ERole.enum';
 import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -95,6 +96,9 @@ export class CompanyService {
     employee.password = createdCompany.password;
     employee.organizationType =
       EOrganizationType[EOrganizationType.MINING_COMPANY];
+    const role = await this.roleService.getRoleByName(
+      ERole[ERole.COMPANY_OWNER],
+    );
     const createdEmployee = await this.employeeService.createEmp(employee);
     const tokens = await this.utilsService.getTokens(createdEmployee);
     delete createdCompany.password;
