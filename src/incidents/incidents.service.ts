@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
+import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
 import { Company } from 'src/entities/company.entity';
@@ -20,27 +21,49 @@ export class IncidentsService {
     @InjectRepository(Incident) public incidentRepo: Repository<Incident>,
     private utilService: UtilsService,
     private minesiteService: MinesiteService,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+  ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
     try {
-      if (!this.utilService.idValidator(dto.mineSite)) throw new BadRequestException("The provided id is invalid!")
+      if (!this.utilService.idValidator(dto.mineSite))
+        throw new BadRequestException('The provided id is invalid!');
       let incident = new Incident(dto.type, dto.measurement);
-      let minesite = await this.minesiteService.getMineSiteById(dto.mineSite)
+      let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
       incident.mineSite = minesite;
 
-      if (dto.type == EIncidentType.AIR_QUALITY) {
+      if (dto.type == EIncidentType[EIncidentType.AIR_QUALITY]) {
         if (dto.measurement < 14) {
           incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(ENotificationType['COMPANIES_AND_REPORTS'], new CreateNotificationDTO(`${minesite.name}'s temperature is at the lowest!`, 'COMPANY'), minesite.company.id)
+          await this.notificationService.notify(
+            ENotificationType['COMPANIES_AND_REPORTS'],
+            new CreateNotificationDTO(
+              `${minesite.name}'s temperature is at the lowest!`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
         } else if (dto.measurement > 18) {
           incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(ENotificationType['COMPANIES_AND_REPORTS'], new CreateNotificationDTO(`${minesite.name}'s temperature is at the highest!`, 'COMPANY'), minesite.company.id)
+          await this.notificationService.notify(
+            ENotificationType['COMPANIES_AND_REPORTS'],
+            new CreateNotificationDTO(
+              `${minesite.name}'s temperature is at the highest!`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
         }
-      } else if (dto.type == EIncidentType.LANDSLIDES) {
+      } else if (dto.type == EIncidentType[EIncidentType.LANDSLIDES]) {
         if (dto.measurement < 14) {
-          await this.notificationService.notify(ENotificationType['COMPANIES_AND_REPORTS'], new CreateNotificationDTO(`${minesite.name} reports landslide occurrence!`, 'COMPANY'), minesite.company.id)
+          await this.notificationService.notify(
+            ENotificationType['COMPANIES_AND_REPORTS'],
+            new CreateNotificationDTO(
+              `${minesite.name} reports landslide occurrence!`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
         }
       }
       this.incidentRepo.save(incident);
@@ -49,16 +72,42 @@ export class IncidentsService {
     }
   }
 
- async getIncidentByLoggedInCompany(req: Request, res: Response){
-    try{
-      let loggedInCompany : Company = await this.utilService.getLoggedInProfile(req,res, 'company' );
+  async getIncidentByLoggedInCompany(req: Request, res: Response) {
+    try {
+      let loggedInCompany: Company = await this.utilService.getLoggedInProfile(
+        req,
+        res,
+        'company',
+      );
       let incidents = await this.incidentRepo.findBy({
-        mineSite: In(loggedInCompany.mineSites)
-      })
+        mineSite: In(loggedInCompany.mineSites),
+      });
       return incidents;
-    }catch(err){
-      throw new Exception(err)
+    } catch (err) {
+      throw new Exception(err);
     }
   }
 
+  async CreateCombinedIncidents(dto: CombinedIncidentDTO) {
+    const mineSite = await this.minesiteService.getMineSiteById(
+      dto.originMineSiteId,
+    );
+    // if (!mineSite)
+    //   throw new BadRequestException(
+    //     'The mineSite with the provided id is not found',
+    //   );
+
+    const incidents: Incident[] = [
+      new Incident(EIncidentType[EIncidentType.HUMIDITY], dto.humidityVaue),
+      new Incident(EIncidentType[EIncidentType.HEATINDEX], dto.heatIndexValue),
+      new Incident(
+        EIncidentType[EIncidentType.TEMPERATURE],
+        dto.temperatureValue,
+      ),
+    ];
+
+    incidents.forEach(async (incident) => {
+      await this.incidentRepo.save(incident);
+    });
+  }
 }
