@@ -21,8 +21,9 @@ export class AuthController {
 
   @Post('/login')
   async login(@Body() dto: LoginDTO): Promise<ApiResponse> {
-    this.isUserAvailable = await this.userService.getUserByEmail(dto.email);
-    console.log(this.isUserAvailable);
+    this.isUserAvailable = await this.userService.userRepo.findOne({
+      where: { email: dto.email },
+    });
     const arePasswordsMatch = await bcrypt.compare(
       dto.password,
       this.isUserAvailable.password,
