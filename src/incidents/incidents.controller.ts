@@ -4,6 +4,7 @@ import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { Request, Response } from 'express';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
+import { Incident } from 'src/entities/incident.entity';
 
 @Controller('incidents')
 export class IncidentsController {
@@ -26,7 +27,6 @@ export class IncidentsController {
       this.incidentService.CreateCombinedIncidents(dto),
     );
   }
-
   @Get('/all/by-company')
   getIncidentsByLoggedInCompany(request: Request, response: Response) {
     return new ApiResponse(
@@ -34,5 +34,10 @@ export class IncidentsController {
       'Retrieved successfully!',
       this.incidentService.getIncidentByLoggedInCompany(request, response),
     );
+  }
+
+  @Get('/all')
+  getAllIncidents() {
+    return this.incidentService.getAllIncidents();
   }
 }

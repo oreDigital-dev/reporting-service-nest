@@ -88,6 +88,14 @@ export class IncidentsService {
     }
   }
 
+  async getAllIncidents() {
+    try {
+      return await this.incidentRepo.find({});
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async CreateCombinedIncidents(dto: CombinedIncidentDTO) {
     const mineSite = await this.minesiteService.getMineSiteById(
       dto.originMineSiteId,
