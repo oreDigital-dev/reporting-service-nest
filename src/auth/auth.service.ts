@@ -33,7 +33,12 @@ export class AuthService {
         'This account is not yet verified, please check your gmail inbox for verification details',
       );
     const tokens = this.utilsService.getTokens(user);
-    return tokens;
+    delete user.password;
+    return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      user: user,
+    };
   }
   async verifyAccount(email: string) {
     const verifiedAccount = await this.userService.getUserByEmail(email);
