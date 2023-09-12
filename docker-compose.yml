@@ -45,8 +45,8 @@ services:
     ports:
       - "8010:3000"
     networks:
-      - oreDigital-network
+      - oreD-network
 
 networks:
-  oreDigital-network:
+  oreD-network:
     driver: bridge
