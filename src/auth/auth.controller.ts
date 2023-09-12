@@ -1,5 +1,11 @@
 /* eslint-disable */
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  Post,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { ApiTags } from '@nestjs/swagger';
@@ -24,6 +30,8 @@ export class AuthController {
     this.isUserAvailable = await this.userService.userRepo.findOne({
       where: { email: dto.email },
     });
+    if (!this.isUserAvailable)
+      throw new ForbiddenException('Invalid email or password');
     const arePasswordsMatch = await bcrypt.compare(
       dto.password,
       this.isUserAvailable.password,
