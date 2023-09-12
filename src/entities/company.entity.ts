@@ -72,7 +72,7 @@ export class Company extends InitiatorAudit {
   employees: User[];
 
   @OneToMany(() => Notification, (notification) => notification.company)
-  notifications: Notification[];
+  notifications: Notification[] ;
 
   constructor(
     name: string,

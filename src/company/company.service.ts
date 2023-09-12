@@ -109,6 +109,10 @@ export class CompanyService {
     };
   }
 
+  async saveCompany(company: Company){
+    return this.companyRepo.save(company);
+  }
+
   async getCompanyById(id: UUID) {
     try {
       const isCompanyAvailable = await this.companyRepo.findOne({

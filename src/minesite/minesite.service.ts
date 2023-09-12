@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UUID } from 'crypto';
 import { AddressService } from 'src/address/address.service';
 import { CompanyService } from 'src/company/company.service';
 import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
@@ -24,5 +25,16 @@ export class MinesiteService {
     // // const company = await this.companyService.getCompanyById(dto.companyId);
     // mineSite.company = company;
     // const address = this.addressService.findById(dto.addressId);
+  }
+
+  async getMineSiteById(id:  UUID){
+    let minesite = await this.mineSiteRepo.findOneBy({
+      id
+    })
+
+    if(minesite == null){
+      throw new NotFoundException('Minesite not found!')
+    }
+    return minesite
   }
 }

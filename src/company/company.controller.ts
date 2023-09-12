@@ -49,4 +49,18 @@ export class CompanyController {
     //   // true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
     // )
   }
+<<<<<<< HEAD
+
+  @Get('/profile')
+  async getCompanyProfile(){
+    return new ApiResponse(
+      true, 'Data retrieval successfull', await this.companyService.getCompanyProfile
+    )
+  }
+
+  
+  
+
+=======
+>>>>>>> 668f1ba0daa5fb064efb05354eb03bf6ad0713df
 }
