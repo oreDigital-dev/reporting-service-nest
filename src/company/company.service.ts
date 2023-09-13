@@ -6,6 +6,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IsEmail } from 'class-validator';
 import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
@@ -109,7 +110,7 @@ export class CompanyService {
     };
   }
 
-  async saveCompany(company: Company){
+  async saveCompany(company: Company) {
     return this.companyRepo.save(company);
   }
 
@@ -158,7 +159,8 @@ export class CompanyService {
 
   async getCompanyProfile(req: Request, res: Response) {
     try {
-      return this.utilsService.getLoggedInProfile(req, res, 'COMPANY');
+      let owner: any = await this.utilsService.getLoggedInProfile(req, res);
+      return this.companyRepo.findOne({ where: { email: owner.email } });
     } catch (err) {
       throw new Exception(err);
     }

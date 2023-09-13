@@ -210,11 +210,7 @@ export class EmployeeService {
   }
 
   async getEmployeesByLoggedInCompany(req: Request, res: Response) {
-    let company = await this.utilsService.getLoggedInProfile(
-      req,
-      res,
-      'company',
-    );
+    let company: any = await this.utilsService.getLoggedInProfile(req, res);
     return company.employees;
   }
 

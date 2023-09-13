@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
+import { CompanyService } from 'src/company/company.service';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
@@ -22,6 +23,7 @@ export class IncidentsService {
     private utilService: UtilsService,
     private minesiteService: MinesiteService,
     private notificationService: NotificationService,
+    private companyService: CompanyService,
   ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
@@ -74,10 +76,9 @@ export class IncidentsService {
 
   async getIncidentByLoggedInCompany(req: Request, res: Response) {
     try {
-      let loggedInCompany: Company = await this.utilService.getLoggedInProfile(
-        req,
-        res,
-        'company',
+      let owner: any = await this.utilService.getLoggedInProfile(req, res);
+      const loggedInCompany: any = this.companyService.getCompanyByEmail(
+        owner.email,
       );
       let incidents = await this.incidentRepo.findBy({
         mineSite: In(loggedInCompany.mineSites),
