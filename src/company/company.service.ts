@@ -96,11 +96,11 @@ export class CompanyService {
     );
     company.minerals = minerals;
     const createdCompany = await this.companyRepo.save(company);
-    employee.organizationType =
-      EOrganizationType[EOrganizationType.MINING_COMPANY];
-    const role = await this.roleService.getRoleByName(
-      ERole[ERole.COMPANY_ADMIN],
-    );
+    // employee.organizationType =
+    //   EOrganizationType[EOrganizationType.MINING_COMPANY];
+    // const role = await this.roleService.getRoleByName(
+    //   ERole[ERole.COMPANY_ADMIN],
+    // );
     const createdEmployee = await this.employeeService.createEmp(employee);
     const tokens = await this.utilsService.getTokens(createdEmployee);
     // delete createdCompany.password;

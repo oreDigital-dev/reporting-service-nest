@@ -3,6 +3,8 @@ import { Organization } from './organization.entity';
 import { MineSite } from './minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { Mineral } from './mineral.entity';
+import { RescueTeamEmployee } from './rescue_team-employee';
+import { MiningCompanyEmployee } from './mining_company-employee';
 
 @ChildEntity('mining_companies')
 export class MiningCompany extends Organization {
@@ -26,6 +28,10 @@ export class MiningCompany extends Organization {
   @ManyToMany(() => Mineral)
   @JoinTable()
   minerals: Mineral[];
+
+  @ManyToMany(() => MiningCompanyEmployee)
+  @JoinTable()
+  employees: MiningCompanyEmployee[];
 
   constructor(name: string, email: string, phoneNumber: string) {
     super(name, email, phoneNumber);

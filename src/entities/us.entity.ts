@@ -69,12 +69,12 @@ export class User extends InitiatorAudit {
   @Column()
   status: string;
 
-  @Column({
-    name: 'organization_type',
-    nullable: true,
-    default: EOrganizationType[EOrganizationType.MINING_COMPANY],
-  })
-  organizationType: string;
+  // @Column({
+  //   name: 'organization_type',
+  //   nullable: true,
+  //   default: EOrganizationType[EOrganizationType.MINING_COMPANY],
+  // })
+  // organizationType: string;
 
   @Column()
   national_id: string;

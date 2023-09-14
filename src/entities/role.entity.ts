@@ -1,11 +1,5 @@
 /* eslint-disable */
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './us.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { ERole } from 'src/enums/ERole.enum';

@@ -27,10 +27,6 @@ export class Organization extends InitiatorAudit {
   @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  @ManyToMany(() => User)
-  @JoinTable()
-  employees: Employee[];
-
   @ManyToOne(() => Address, (address) => address.company)
   @JoinColumn({ name: 'address_id' })
   address: Address;
