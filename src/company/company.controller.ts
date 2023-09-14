@@ -49,7 +49,6 @@ export class CompanyController {
     //   // true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
     // )
   }
-<<<<<<< HEAD
 
   @Get('/profile')
   async getCompanyProfile(){
@@ -61,6 +60,4 @@ export class CompanyController {
   
   
 
-=======
->>>>>>> 668f1ba0daa5fb064efb05354eb03bf6ad0713df
 }

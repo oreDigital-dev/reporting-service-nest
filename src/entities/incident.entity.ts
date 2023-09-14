@@ -19,14 +19,14 @@ export class Incident extends InitiatorAudit {
     nullable: true,
     default: null,
   })
-  measurement: Number;
+  measurement: number;
 
   @ManyToOne(() => MineSite, (mineSite) => mineSite.incidents)
   mineSite: MineSite;
 
   constructor(
     type: EIncidentType,
-    measurement: Number,
+    measurement: number,
   ) {
     super();
     this.type = type;

@@ -10,10 +10,11 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class NotificationService {
+    activeUsers = {};
     constructor(
     @InjectRepository(Notification) public notificationRepo: Repository<Notification>,
     private companyService: CompanyService
-
+        
     ){
     }
     async notify(type: string, dto: CreateNotificationDTO, id : UUID){
@@ -28,4 +29,17 @@ export class NotificationService {
             this.companyService.saveCompany(company);
         }
     }
+
+    async sendNotification(data: CreateNotificationDTO){
+        let user;
+        let newNotification;
+
+        if(this.activeUsers[data.to]){
+            
+        }
+    }
+
+
+
+
 }

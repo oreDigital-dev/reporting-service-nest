@@ -12,7 +12,6 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/entities/us.entity';
-import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -93,7 +92,7 @@ export class UtilsService {
             .json({ sucess: false, message: error.message });
         const details: any = await this.jwtService.decode(token);
         let entity:any;
-        switch (type.toString().toUpperCase()) {
+        switch (type.toString().toUpperCase()){
           case 'USER':
             entity = await this.userService.getUserById(details.id, 'User');
             break;
