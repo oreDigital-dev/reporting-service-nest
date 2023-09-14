@@ -28,13 +28,9 @@ export class EmployeeController {
   ) {}
 
   @Post('/create')
-  async createEmployee(
-    @Body() dto: CreateEmployeeDTO,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  async createEmployee(@Body() dto: CreateEmployeeDTO) {
     try {
-      const employee = await this.empService.createEmployee(dto, req, res);
+      const employee = await this.empService.createEmployee(dto);
       return new ApiResponse(
         true,
         'The employee created successfully',

@@ -1,13 +1,24 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+  forwardRef,
+  Inject,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
 import { LoginDTO } from 'src/dtos/login.dto';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { ERole } from 'src/enums/ERole.enum';
 import { UsersService } from 'src/users/users.service';
+import { UtilsService } from 'src/utils/utils.service';
 @Injectable()
 export class AuthService {
-  utilsService: any;
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    @Inject(forwardRef(() => UtilsService))
+    private utilsService: UtilsService,
+  ) {}
 
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
@@ -16,8 +27,18 @@ export class AuthService {
   }
 
   async login(dto: LoginDTO) {
-    const user = await this.userService.getUserByEmail(dto.email);
-    console.log(user);
+    const user = await this.userService.userRepo.findOne({
+      where: { email: dto.email },
+    });
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+    const arePasswordsMatch = await bcrypt.compare(
+      dto.password.toString(),
+      user.password.toString(),
+    );
+    if (!arePasswordsMatch)
+      throw new BadRequestException('Invalid email or password');
     if (
       user.status ==
         EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
@@ -27,7 +48,12 @@ export class AuthService {
         'This account is not yet verified, please check your gmail inbox for verification details',
       );
     const tokens = this.utilsService.getTokens(user);
-    return tokens;
+    delete user.password;
+    return {
+      access_token: (await tokens).accessToken,
+      refresh_token: (await tokens).refreshToken,
+      user: user,
+    };
   }
   async verifyAccount(email: string) {
     const verifiedAccount = await this.userService.getUserByEmail(email);
@@ -50,7 +76,6 @@ export class AuthService {
   getUserByEmail(email: string) {
     throw new Error('Method not implemented.');
   }
-  
   async resetPassword(
     email: string,
     activationCode: number,
@@ -78,5 +103,10 @@ export class AuthService {
     delete savedUser.password;
     delete savedUser.activationCode;
     return { tokens, user: savedUser };
+  }
+
+  async getProfile(req: Request, res: Response) {
+    let profile = this.utilsService.getLoggedInProfile(req, res);
+    return profile;
   }
 }

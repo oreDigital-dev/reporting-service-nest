@@ -10,12 +10,16 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('incidents')
 @Controller('incidents')
 export class IncidentsController {
-    constructor(private incidentService : IncidentsService){}
+  constructor(private incidentService: IncidentsService) {}
 
-    @Post('/create')
-    createIncident(@Body() dto: CreateIncidentDTO){
-        return new ApiResponse(true, 'Incident created successfully!', this.incidentService.saveIncident(dto))
-    }
+  @Post('/create')
+  createIncident(@Body() dto: CreateIncidentDTO) {
+    return new ApiResponse(
+      true,
+      'Incident created successfully!',
+      this.incidentService.saveIncident(dto),
+    );
+  }
 
     @Get('/all/by-company')
     getIncidentsByLoggedInCompany(request : Request , response: Response){

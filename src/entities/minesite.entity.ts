@@ -7,7 +7,6 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
@@ -15,6 +14,7 @@ import { Company } from './company.entity';
 import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
+import { MineralRecord } from './mineralRecord.entity';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {
@@ -32,10 +32,18 @@ export class MineSite extends InitiatorAudit {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
+  @OneToMany(() => MineralRecord, (record) => record.mineSite)
+  mineralRecords: MineralRecord[];
+
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];
 
   @ManyToOne(() => Company, (company) => company.mineSites)
   @JoinColumn({ name: 'company_id' })
   company: Company;
+
+  constructor(name: string) {
+    super();
+    this.name = name;
+  }
 }

@@ -21,8 +21,9 @@ export class IncidentsService {
     @InjectRepository(Incident) public incidentRepo: Repository<Incident>,
     private utilService: UtilsService,
     private minesiteService: MinesiteService,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+    private companyService: CompanyService,
+  ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
     try {
@@ -34,14 +35,35 @@ export class IncidentsService {
       if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
         if (dto.measurement < 14) {
           incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(ENotificationType['COMPANIES_AND_REPORTS'], new CreateNotificationDTO(`${minesite.name}'s temperature is at the lowest!`, 'COMPANY'), minesite.company.id)
+          await this.notificationService.notify(
+            ENotificationType['COMPANIES_AND_REPORTS'],
+            new CreateNotificationDTO(
+              `${minesite.name}'s temperature is at the lowest!`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
         } else if (dto.measurement > 18) {
           incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(ENotificationType['COMPANIES_AND_REPORTS'], new CreateNotificationDTO(`${minesite.name}'s temperature is at the highest!`, 'COMPANY'), minesite.company.id)
+          await this.notificationService.notify(
+            ENotificationType['COMPANIES_AND_REPORTS'],
+            new CreateNotificationDTO(
+              `${minesite.name}'s temperature is at the highest!`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
         }
       } else if (dto.type == EIncidentType.LANDSLIDES.toString()) {
         if (dto.measurement < 14) {
-          await this.notificationService.notify(ENotificationType['COMPANIES_AND_REPORTS'], new CreateNotificationDTO(`${minesite.name} reports landslide occurrence!`, 'COMPANY'), minesite.company.id)
+          await this.notificationService.notify(
+            ENotificationType['COMPANIES_AND_REPORTS'],
+            new CreateNotificationDTO(
+              `${minesite.name} reports landslide occurrence!`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
         }
       }
       this.incidentRepo.save(incident);

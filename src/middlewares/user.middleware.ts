@@ -25,6 +25,8 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '' ||
       req.baseUrl == '/favicon.ico' ||
       req.baseUrl == '/auth/login' ||
+      req.baseUrl == '/auth/verify_account' ||
+      req.baseUrl == '/auth/reset_password' ||
       req.baseUrl == '/api/swagger-docs.html' ||
       req.baseUrl == '/users/create' ||
       req.baseUrl == '/companies/create'
@@ -44,7 +46,6 @@ export class UserMiddleWare implements NestMiddleware {
         req['user'] = user;
         next();
       } else {
-        console.log(req);
         throw new UnauthorizedException('Please get authenticated first');
       }
     }

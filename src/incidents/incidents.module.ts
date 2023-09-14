@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MinesiteModule } from 'src/minesite/minesite.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { UtilsModule } from 'src/utils/utils.module';
+import { CompanyModule } from 'src/company/company.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { UtilsModule } from 'src/utils/utils.module';
     RolesModule,
     MinesiteModule,
     NotificationModule,
-    TypeOrmModule.forFeature([Incident])
+    CompanyModule,
+    TypeOrmModule.forFeature([Incident]),
   ],
   controllers: [IncidentsController],
   providers: [IncidentsService],

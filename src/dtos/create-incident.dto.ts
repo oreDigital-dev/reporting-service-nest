@@ -4,17 +4,14 @@ import { UUID } from "crypto";
 import { EIncidentStatus } from "src/enums/EIncidentStatus.enum";
 import { EIncidentType } from "src/enums/EIncidentType.enum";
 
-export class CreateIncidentDTO{
+export class CreateIncidentDTO {
+  @IsNotEmpty()
+  type: string;
+  @IsNotEmpty()
+  measurement: number;
 
-    @IsNotEmpty()
-    type:string;
-
-
-    @IsNotEmpty()
-    measurement :  number;
-
-    @IsNotEmpty()
-    @IsUUID()
-    mineSite :  UUID;
+  @IsNotEmpty()
+  @IsUUID()
+  mineSite: UUID;
 
 } 

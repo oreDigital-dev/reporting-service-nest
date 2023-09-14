@@ -6,13 +6,16 @@ import { Employee } from 'src/entities/employee.entity';
 import { UtilsModule } from 'src/utils/utils.module';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { CompanyModule } from 'src/company/company.module';
+import { RolesModule } from 'src/roles/roles.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Employee]),
     forwardRef(() => UtilsModule),
+    forwardRef(() => MailingModule),
     MailingModule,
     forwardRef(() => CompanyModule),
+    RolesModule,
   ],
   providers: [EmployeeService],
   controllers: [EmployeeController],

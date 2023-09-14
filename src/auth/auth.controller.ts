@@ -1,7 +1,14 @@
 /* eslint-disable */
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from 'src/dtos/login.dto';
 import { User } from 'src/entities/us.entity';
@@ -9,6 +16,7 @@ import { VerifyAccountDTO } from 'src/dtos/verify-account.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
 import { AuthService } from './auth.service';
+import { Response, Request } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -21,14 +29,7 @@ export class AuthController {
 
   @Post('/login')
   async login(@Body() dto: LoginDTO): Promise<ApiResponse> {
-    this.isUserAvailable = await this.userService.getUserByEmail(dto.email);
-    console.log(this.isUserAvailable);
-    const arePasswordsMatch = await bcrypt.compare(
-      dto.password,
-      this.isUserAvailable.password,
-    );
-    if (!arePasswordsMatch)
-      throw new BadRequestException('Invalid email or password');
+    console.log(dto);
     return new ApiResponse(
       true,
       'User loggedInSucccessfully',
@@ -60,5 +61,10 @@ export class AuthController {
         dto.newPassword,
       ),
     );
+  }
+  @Get('profile')
+  async getProfile(@Req() req: Request, @Res() res: Response) {
+    let profile = await this.authService.getProfile(req, res);
+    return new ApiResponse(true, 'Profile retrieved successfully', profile);
   }
 }

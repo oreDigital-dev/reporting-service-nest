@@ -1,23 +1,19 @@
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { CreateAddressDTO } from './create-address.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class createMineSiteDTO{
+export class createMineSiteDTO {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  name: string;
 
-    @IsString()
-    name : string;
+  @IsArray()
+  @IsNotEmpty()
+  @ApiProperty()
+  minerals: Array<string>;
 
-    @IsString()
-    @IsNotEmpty()
-    address: string;
-
-    @IsArray()
-    @IsNotEmpty()
-    minerals: Array<String>;
-
-    @IsString()
-    @IsNotEmpty()
-    companyId : string;
-
-    @IsString()
-    @IsNotEmpty()
-    addressId: string;
+  @IsNotEmpty()
+  @ApiProperty()
+  address: CreateAddressDTO;
 }

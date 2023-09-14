@@ -8,16 +8,17 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
-import { DeleteDateColumn, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { Employee } from 'src/entities/employee.entity';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
-import { log } from 'console';
 import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
-import { compute_alpha } from 'googleapis';
+import { RoleService } from 'src/roles/roles.service';
+import { ERole } from 'src/enums/ERole.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -28,9 +29,10 @@ export class EmployeeService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private mailingService: MailingService,
+    private roleService: RoleService,
   ) {}
 
-  async createEmployee(dto: CreateEmployeeDTO, req: Request, res: Response) {
+  async createEmployee(dto: CreateEmployeeDTO) {
     try {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: dto.email },
@@ -80,7 +82,25 @@ export class EmployeeService {
         'employee-account-verification',
         'OreDigital account verification',
       );
-      return createdEmployee;
+      const tokens = await this.utilsService.getTokens(emplyee);
+      let savedEmployee = await this.employeeRepo.findOne({
+        where: { email: emplyee.email },
+        relations: ['roles'],
+      });
+
+      const employee = await this.roleService.assignRoleToEmployee(
+        ERole[ERole.COMPANY_OWNER],
+        savedEmployee,
+      );
+      savedEmployee = await this.employeeRepo.save(employee);
+      return {
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        emplyee: await this.employeeRepo.findOne({
+          where: { email: emplyee.email },
+          relations: ['roles', 'company'],
+        }),
+      };
     } catch (error) {
       console.error('Error creating employee: ', error);
       throw error;
@@ -102,6 +122,7 @@ export class EmployeeService {
         employee.email,
       );
       employee.company = company;
+      employee.status = EAccountStatus[EAccountStatus.ACTIVE];
       employee.password = await this.utilsService.hashString(employee.password);
       let createdEmployee = await this.employeeRepo.save(employee);
       delete createdEmployee.password;
@@ -121,7 +142,7 @@ export class EmployeeService {
       console.error('Error creating employee: ', error);
       throw error;
     }
-    }
+  }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {
     let availalbleUser = await this.getEmployeeByEmail(dto.id);
@@ -163,7 +184,7 @@ export class EmployeeService {
       where: {
         email: email,
       },
-      relations: ['roles', 'companies'],
+      relations: ['roles'],
     });
 
     if (!isEmployeeAvailable)
@@ -176,7 +197,7 @@ export class EmployeeService {
   async getEmployeeById(id: UUID) {
     const isEmployeeAvailable = await this.employeeRepo.findOne({
       where: { id: id },
-      relations: ['roles', 'companies'],
+      relations: ['roles'],
     });
     if (!isEmployeeAvailable)
       throw new NotFoundException(
@@ -186,11 +207,7 @@ export class EmployeeService {
   }
 
   async getEmployeesByLoggedInCompany(req: Request, res: Response) {
-    let company = await this.utilsService.getLoggedInProfile(
-      req,
-      res,
-      'company',
-    );
+    let company: any = await this.utilsService.getLoggedInProfile(req, res);
     return company.employees;
   }
 

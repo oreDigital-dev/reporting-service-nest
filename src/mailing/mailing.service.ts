@@ -25,9 +25,9 @@ export class MailingService {
 
     const accessToken: any = await new Promise((resolve, reject) => {
       OAuth2Client.getAccessToken((error, token) => {
-        if (error) {
-          reject('Failed to create the access_token for gmt');
-        }
+        // if (error) {
+        //   reject('Failed to create the access_token for gmt');
+        // }
         resolve(token);
       });
     });
@@ -67,7 +67,7 @@ export class MailingService {
         console.log('mail sent successfully');
       })
       .catch((error) => {
-        console.log(error);
+        console.log('error while sending an email', error);
       });
   }
 }

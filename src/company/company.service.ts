@@ -6,6 +6,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IsEmail } from 'class-validator';
 import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
@@ -20,6 +21,7 @@ import { Mineral } from 'src/entities/mineral.entity';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
+import { ERole } from 'src/enums/ERole.enum';
 import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -34,6 +36,7 @@ export class CompanyService {
     private employeeService: EmployeeService,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
+    @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
@@ -54,7 +57,8 @@ export class CompanyService {
         "The company's phone number or email or owner NID is already registered!",
       );
     }
-    const hashedPassword = await this.authService.hashPassword(dto.password);
+    const hashedPassword = await this.utilsService.hashString(dto.password);
+
     let ownership: any = EOwnershipType[dto.ownership];
     let company: Company = new Company(
       dto.name,
@@ -65,10 +69,11 @@ export class CompanyService {
       dto.ownerNID,
       dto.numberOfEmployees,
       ownership,
+      dto.password,
     );
+
     company.password = hashedPassword;
     let address: Address = await this.addressService.createAddress(dto.address);
-
     company.address = address;
     let minerals: Mineral[] = [];
 
@@ -95,9 +100,12 @@ export class CompanyService {
     employee.password = createdCompany.password;
     employee.organizationType =
       EOrganizationType[EOrganizationType.MINING_COMPANY];
+    const role = await this.roleService.getRoleByName(
+      ERole[ERole.COMPANY_OWNER],
+    );
     const createdEmployee = await this.employeeService.createEmp(employee);
     const tokens = await this.utilsService.getTokens(createdEmployee);
-    delete createdCompany.password;
+    // delete createdCompany.password;
     return {
       access_token: tokens.accessToken,
       refresh_token: tokens.refreshToken,
@@ -105,7 +113,7 @@ export class CompanyService {
     };
   }
 
-  async saveCompany(company: Company){
+  async saveCompany(company: Company) {
     return this.companyRepo.save(company);
   }
 
@@ -135,7 +143,7 @@ export class CompanyService {
     try {
       return await this.companyRepo.findOne({
         where: { email: email },
-        relations: ['employees'],
+        relations: ['employees', 'mineSites'],
       });
     } catch (error) {
       throw error;
@@ -154,7 +162,8 @@ export class CompanyService {
 
   async getCompanyProfile(req: Request, res: Response) {
     try {
-      return this.utilsService.getLoggedInProfile(req, res, 'COMPANY');
+      let owner: any = await this.utilsService.getLoggedInProfile(req, res);
+      return this.companyRepo.findOne({ where: { email: owner.email } });
     } catch (err) {
       throw new Exception(err);
     }

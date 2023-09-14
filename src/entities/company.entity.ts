@@ -16,6 +16,7 @@ import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Mineral } from './mineral.entity';
+import { User } from './us.entity';
 
 @Entity('company')
 export class Company extends InitiatorAudit {
@@ -66,8 +67,12 @@ export class Company extends InitiatorAudit {
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];
 
+  @ManyToMany(() => User)
+  @JoinTable()
+  employees: User[];
+
   @OneToMany(() => Notification, (notification) => notification.company)
-  notifications: Notification[] ;
+  notifications: Notification[];
 
   constructor(
     name: string,
@@ -78,6 +83,7 @@ export class Company extends InitiatorAudit {
     ownerNID: string,
     numberOfEmployees: number,
     ownership: string,
+    password: string,
   ) {
     super();
     this.name = name;
@@ -88,5 +94,6 @@ export class Company extends InitiatorAudit {
     this.ownerNID = ownerNID;
     this.numberOfEmployees = numberOfEmployees;
     this.ownershipType = ownership;
+    this.password = password;
   }
 }

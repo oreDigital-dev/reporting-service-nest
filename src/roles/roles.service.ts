@@ -17,12 +17,17 @@ export class RoleService {
       ERole.RESCUE_TEAM_ADMIN,
       ERole.POLICE_STATION_ADMIN,
       ERole.POLICE_STATION_ADMIN,
+      ERole.COMPANY_EMPLOYEE,
+      ERole.COMPANY_OWNER,
     ];
-    roleArray.forEach((role) => {
-      const roleEntity = this.roleRepo.create({
-        roleName: ERole[role],
-      });
-      this.roleRepo.save(roleEntity);
+    roleArray.forEach(async (role) => {
+      const availableRole = await this.getRoleByName(role);
+      if (!availableRole || availableRole == null) {
+        const roleEntity = this.roleRepo.create({
+          roleName: ERole[role],
+        });
+        this.roleRepo.save(roleEntity);
+      }
     });
   }
 
@@ -32,13 +37,20 @@ export class RoleService {
         roleName: roleName,
       },
     });
-    // user.roles.push(role);
-    console.log(user.roles);
+    user.roles.push(role);
     return user;
   }
 
   async getAllRoles() {
     return await this.roleRepo.find();
+  }
+
+  async getRoleByName(name: any) {
+    return await this.roleRepo.findOne({
+      where: {
+        roleName: name,
+      },
+    });
   }
 
   async getRoleById(id: number) {

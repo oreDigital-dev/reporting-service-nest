@@ -1,8 +1,16 @@
 import { UUID } from 'crypto';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { v4 } from 'uuid';
 import { Company } from './company.entity';
+import { MineSite } from './minesite.entity';
 
 @Entity('mineral_records')
 export class MineralRecord extends InitiatorAudit {
@@ -23,6 +31,12 @@ export class MineralRecord extends InitiatorAudit {
 
   @ManyToMany(() => Company)
   companies: Company[];
+
+  @ManyToOne(() => MineSite, (minesite) => minesite.mineralRecords)
+  @JoinColumn({
+    name: 'minesite_id',
+  })
+  mineSite: MineSite;
 
   constructor(
     name: string,

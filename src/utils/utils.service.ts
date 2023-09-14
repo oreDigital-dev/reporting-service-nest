@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
+import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/entities/us.entity';
 import { UsersService } from 'src/users/users.service';
@@ -19,6 +20,8 @@ export class UtilsService {
   constructor(
     @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     @Inject(JwtService) private readonly jwtService: JwtService,
@@ -67,49 +70,24 @@ export class UtilsService {
     return regex.test(id.toString());
   }
 
-  async getLoggedInProfile(req: Request, res: Response, type: String) {
-    let context: ExecutionContext;
-    const request = req;
+  async getLoggedInProfile(req: Request, res: Response) {
     const authorization = req.headers.authorization;
-    if (
-      req.baseUrl == '' ||
-      req.baseUrl == '/favicon.ico' ||
-      req.baseUrl == '/auth/login' ||
-      req.baseUrl == '/api/swagger-docs.html' ||
-      req.baseUrl == '/users/create'
-    ) {
+    if (authorization) {
+      const token = authorization.split(' ')[1];
+      if (!authorization.toString().startsWith('Bearer '))
+        throw new UnauthorizedException('The provided token is invalid');
+      const { tokenVerified, error } = this.jwtService.verify(token, {
+        secret: this.configService.get('SECRET_KEY'),
+      });
+      if (error)
+        return res.status(403).json({ sucess: false, message: error.message });
+      const details: any = await this.jwtService.decode(token);
+      return await this.userService.getUserById(details.id, 'User');
     } else {
-      if (authorization) {
-        const token = authorization.split(' ')[1];
-        if (!authorization.toString().startsWith('Bearer '))
-          throw new UnauthorizedException('The provided token is invalid');
-        const { tokenVerified, error } = this.jwtService.verify(token, {
-          secret: this.configService.get('SECRET_KEY'),
-        });
-        if (error)
-          return res
-            .status(403)
-            .json({ sucess: false, message: error.message });
-        const details: any = await this.jwtService.decode(token);
-        let entity:any;
-        switch (type.toString().toUpperCase()){
-          case 'USER':
-            entity = await this.userService.getUserById(details.id, 'User');
-            break;
-          case 'COMPANY':
-            entity = await this.companyService.getCompanyById(details.id);
-            break;
-          default:
-            throw new BadRequestException('Please provide valid entity type');
-        }
-
-        return entity;
-      } else {
-        return res.status(403).json({
-          sucess: false,
-          message: 'Please you are not authorized to access resource',
-        });
-      }
+      return res.status(403).json({
+        sucess: false,
+        message: 'Please you are not authorized to access resource',
+      });
     }
   }
 }
