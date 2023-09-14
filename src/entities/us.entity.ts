@@ -18,6 +18,7 @@ import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
+import { EOrganizationType } from 'src/enums/EOrganizationType';
 
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -68,7 +69,11 @@ export class User extends InitiatorAudit {
   @Column()
   status: string;
 
-  @Column({ name: 'organization_type', nullable: true })
+  @Column({
+    name: 'organization_type',
+    nullable: true,
+    default: EOrganizationType[EOrganizationType.MINING_COMPANY],
+  })
   organizationType: string;
 
   @Column()

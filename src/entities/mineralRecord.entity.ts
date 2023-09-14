@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 } from 'uuid';
-import { Company } from './company.entity';
 import { MineSite } from './minesite.entity';
+import { MiningCompany } from './mining-company.entity';
 
 @Entity('mineral_records')
 export class MineralRecord extends InitiatorAudit {
@@ -29,8 +29,8 @@ export class MineralRecord extends InitiatorAudit {
   @Column({ name: 'measurement' })
   measurement: string;
 
-  @ManyToMany(() => Company)
-  companies: Company[];
+  @ManyToMany(() => MiningCompany)
+  companies: MiningCompany[];
 
   @ManyToOne(() => MineSite, (minesite) => minesite.mineralRecords)
   @JoinColumn({

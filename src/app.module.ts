@@ -18,8 +18,6 @@ import { RoleService } from './roles/roles.service';
 import { IncidentsModule } from './incidents/incidents.module';
 import { AddressModule } from './address/address.module';
 import { MinesiteModule } from './minesite/minesite.module';
-import { Company } from './entities/company.entity';
-import { Employee } from './entities/employee.entity';
 import { HomeController } from './home/home.controller';
 import { AuthController } from './auth/auth.controller';
 import { MinesiteController } from './minesite/minesite.controller';
@@ -40,6 +38,10 @@ import { MineralRecord } from './entities/mineralRecord.entity';
 import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
+import { RmbModule } from './rmb/rmb.module';
+import { Employee } from './entities/employee.enity';
+import { MiningCompany } from './entities/mining-company.entity';
+import { MiningCompanyModule } from './mining-company/mining-company.module';
 
 @Module({
   imports: [
@@ -56,7 +58,7 @@ import { UserMiddleWare } from './middlewares/user.middleware';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         entities: [
-          Company,
+          MiningCompany,
           User,
           Role,
           Employee,
@@ -94,6 +96,9 @@ import { UserMiddleWare } from './middlewares/user.middleware';
     JwtModule,
     MineralModule,
     NotificationModule,
+    RmbModule,
+    RescueTeam,
+    MiningCompanyModule,
   ],
   controllers: [
     HomeController,
