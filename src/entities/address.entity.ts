@@ -10,10 +10,11 @@ import {
 import { MineSite } from './minesite.entity';
 import { User } from './us.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { Company } from './company.entity';
 import { UUID } from 'crypto';
 import { RescueTeam } from './rescue_team.entity';
 import { Mineral } from './mineral.entity';
+import { MiningCompany } from './mining-company.entity';
+import { Organization } from './organization.entity';
 
 @Entity('address')
 export class Address extends InitiatorAudit {
@@ -44,9 +45,9 @@ export class Address extends InitiatorAudit {
   @ManyToOne(() => RescueTeam, (rescue_team) => rescue_team.address)
   rescueTeams: RescueTeam;
 
-  @OneToOne(() => Company)
+  @OneToOne(() => Organization)
   @JoinColumn({ name: 'company' })
-  company: Company;
+  company: Organization;
 
   constructor(
     province: string,

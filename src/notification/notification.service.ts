@@ -25,7 +25,7 @@ export class NotificationService {
             notification = await this.notificationRepo.save(notification)
             notifications.push(notification)
             company.notifications = notifications;
-            notification.company = company;
+            notification.miningCompany = company;
             this.companyService.saveCompany(company);
         }
     }
