@@ -34,7 +34,7 @@ export class UsersService {
       where: {
         id: id,
       },
-      relations: ['roles'],
+      relations: ['roles', 'company'],
     });
     if (!response) {
       throw new NotFoundException(`${entity} not found`);

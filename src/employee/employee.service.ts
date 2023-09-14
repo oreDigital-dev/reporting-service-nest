@@ -8,17 +8,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
-import { DeleteDateColumn, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { Employee } from 'src/entities/employee.entity';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
-import { log } from 'console';
 import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
-import { compute_alpha } from 'googleapis';
-import { Role } from 'src/entities/role.entity';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';

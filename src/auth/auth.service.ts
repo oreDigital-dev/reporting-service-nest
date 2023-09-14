@@ -2,16 +2,23 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
+  forwardRef,
+  Inject,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
 import { LoginDTO } from 'src/dtos/login.dto';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { ERole } from 'src/enums/ERole.enum';
 import { UsersService } from 'src/users/users.service';
+import { UtilsService } from 'src/utils/utils.service';
 @Injectable()
 export class AuthService {
-  utilsService: any;
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    @Inject(forwardRef(() => UtilsService))
+    private utilsService: UtilsService,
+  ) {}
 
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
@@ -23,7 +30,15 @@ export class AuthService {
     const user = await this.userService.userRepo.findOne({
       where: { email: dto.email },
     });
-    if (!user) throw new UnauthorizedException('Invalid email or password');
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+    const arePasswordsMatch = await bcrypt.compare(
+      dto.password.toString(),
+      user.password.toString(),
+    );
+    if (!arePasswordsMatch)
+      throw new BadRequestException('Invalid email or password');
     if (
       user.status ==
         EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
@@ -35,8 +50,8 @@ export class AuthService {
     const tokens = this.utilsService.getTokens(user);
     delete user.password;
     return {
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
+      access_token: (await tokens).accessToken,
+      refresh_token: (await tokens).refreshToken,
       user: user,
     };
   }
@@ -60,6 +75,7 @@ export class AuthService {
   getUserByEmail(email: string) {
     throw new Error('Method not implemented.');
   }
+
   async resetPassword(
     email: string,
     activationCode: number,
@@ -87,5 +103,10 @@ export class AuthService {
     delete savedUser.password;
     delete savedUser.activationCode;
     return { tokens, user: savedUser };
+  }
+
+  async getProfile(req: Request, res: Response) {
+    let profile = this.utilsService.getLoggedInProfile(req, res);
+    return profile;
   }
 }

@@ -72,7 +72,7 @@ export class Company extends InitiatorAudit {
   employees: User[];
 
   @OneToMany(() => Notification, (notification) => notification.company)
-  notifications: Notification[] ;
+  notifications: Notification[];
 
   constructor(
     name: string,
@@ -83,6 +83,7 @@ export class Company extends InitiatorAudit {
     ownerNID: string,
     numberOfEmployees: number,
     ownership: string,
+    password: string,
   ) {
     super();
     this.name = name;
@@ -93,5 +94,6 @@ export class Company extends InitiatorAudit {
     this.ownerNID = ownerNID;
     this.numberOfEmployees = numberOfEmployees;
     this.ownershipType = ownership;
+    this.password = password;
   }
 }

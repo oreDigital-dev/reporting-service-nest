@@ -11,7 +11,7 @@ export class createMineSiteDTO {
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
-  minerals: Array<String>;
+  minerals: Array<string>;
 
   @IsNotEmpty()
   @ApiProperty()

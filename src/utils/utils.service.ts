@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
+import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/entities/us.entity';
 import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
@@ -20,6 +21,8 @@ export class UtilsService {
   constructor(
     @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     @Inject(JwtService) private readonly jwtService: JwtService,
@@ -69,8 +72,6 @@ export class UtilsService {
   }
 
   async getLoggedInProfile(req: Request, res: Response) {
-    let context: ExecutionContext;
-    const request = req;
     const authorization = req.headers.authorization;
     if (authorization) {
       const token = authorization.split(' ')[1];

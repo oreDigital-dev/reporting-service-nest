@@ -36,6 +36,7 @@ export class CompanyService {
     private employeeService: EmployeeService,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private addressService: AddressService,
+    @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
@@ -56,7 +57,8 @@ export class CompanyService {
         "The company's phone number or email or owner NID is already registered!",
       );
     }
-    const hashedPassword = await this.authService.hashPassword(dto.password);
+    const hashedPassword = await this.utilsService.hashString(dto.password);
+
     let ownership: any = EOwnershipType[dto.ownership];
     let company: Company = new Company(
       dto.name,
@@ -67,10 +69,11 @@ export class CompanyService {
       dto.ownerNID,
       dto.numberOfEmployees,
       ownership,
+      dto.password,
     );
+
     company.password = hashedPassword;
     let address: Address = await this.addressService.createAddress(dto.address);
-
     company.address = address;
     let minerals: Mineral[] = [];
 
@@ -102,7 +105,7 @@ export class CompanyService {
     );
     const createdEmployee = await this.employeeService.createEmp(employee);
     const tokens = await this.utilsService.getTokens(createdEmployee);
-    delete createdCompany.password;
+    // delete createdCompany.password;
     return {
       access_token: tokens.accessToken,
       refresh_token: tokens.refreshToken,
@@ -140,7 +143,7 @@ export class CompanyService {
     try {
       return await this.companyRepo.findOne({
         where: { email: email },
-        relations: ['employees'],
+        relations: ['employees', 'mineSites'],
       });
     } catch (error) {
       throw error;

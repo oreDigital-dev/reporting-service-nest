@@ -12,6 +12,7 @@ import { RolesModule } from 'src/roles/roles.module';
   imports: [
     TypeOrmModule.forFeature([Employee]),
     forwardRef(() => UtilsModule),
+    forwardRef(() => MailingModule),
     MailingModule,
     forwardRef(() => CompanyModule),
     RolesModule,

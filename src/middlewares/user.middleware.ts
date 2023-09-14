@@ -33,7 +33,6 @@ export class UserMiddleWare implements NestMiddleware {
     ) {
       next();
     } else {
-      console.log(req);
       if (authorization) {
         const token = authorization.split(' ')[1];
         if (!authorization.toString().startsWith('Bearer '))
