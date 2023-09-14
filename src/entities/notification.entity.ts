@@ -10,8 +10,7 @@ import {
 import { User } from './us.entity';
 import { UUID } from 'crypto';
 import { RescueTeam } from './rescue_team.entity';
-import { Company } from './company.entity';
-import { Employee } from './employee.entity';
+import { MiningCompany } from './mining-company.entity';
 
 @Entity('notifications')
 export class Notification {
@@ -21,7 +20,7 @@ export class Notification {
   @Column()
   type: ENotificationType;
 
-  @Column({default : ENotificationStatus['UNREAD']})
+  @Column({ default: ENotificationStatus['UNREAD'] })
   status: ENotificationStatus;
 
   @Column()
@@ -36,12 +35,10 @@ export class Notification {
   rescueTeam: RescueTeam;
 
   @JoinColumn({ name: 'company_id' })
-  @ManyToOne(() => Company, (company) => company.notifications)
-  company: Company;
+  @ManyToOne(() => MiningCompany, (company) => company.notifications)
+  miningCompany: MiningCompany;
 
-
-
-  constructor(message: string, type: ENotificationType ){
+  constructor(message: string, type: ENotificationType) {
     this.message = message;
     this.type = type;
   }
