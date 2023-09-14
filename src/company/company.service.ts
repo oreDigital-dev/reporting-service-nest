@@ -15,9 +15,10 @@ import { AuthService } from 'src/auth/auth.service';
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
-import { Employee } from 'src/entities/employee.enity';
+import { Employee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
+import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
@@ -38,10 +39,9 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
-    private authService: AuthService,
     private mineralService: MineralService,
-    private roleService: RoleService,
   ) {}
+  
   async createCompany(dto: CreateCompanyDTO) {
     const available = await this.companyRepo.find({
       where: [
@@ -54,22 +54,18 @@ export class CompanyService {
 
     if (available.length != 0) {
       throw new BadRequestException(
-        "The company's phone number or email or owner NID is already registered!",
+        "The company's phone number or email is already registered!",
       );
     }
     const hashedPassword = await this.utilsService.hashString(dto.password);
 
     let ownership: any = EOwnershipType[dto.ownership];
     let company: MiningCompany = new MiningCompany(
-      dto.name,
+      dto.companyName,
       dto.email,
-      // dto.licenseNumber,
-      // dto.productionCapacity,
       dto.phoneNumber,
-      // dto.ownerNID,
-      // dto.numberOfEmployees,
-      // ownership,
-      // dto.password,
+      dto.numberOfEmployees,
+      ownership,
     );
 
     let address: Address = await this.addressService.createAddress(dto.address);
@@ -77,38 +73,34 @@ export class CompanyService {
     let minerals: Mineral[] = [];
 
     for (let min of dto.minerals) {
-      let mineral: Mineral = await this.mineralService.getMineralByName(
-        min.toUpperCase(),
+      let mineral: Mineral = await this.mineralService.getMineralById(
+        min
       );
       minerals.push(mineral);
     }
 
     const employee: Employee = new Employee(
-      '',
-      '',
+      dto.firstName,
+      dto.lastName,
       dto.email,
-      '',
-      EGender.OTHER,
-      '',
+      EGender[dto.gender],
+      dto.ownerNID,
       dto.phoneNumber,
-      0,
-      dto.password,
+      hashedPassword,
     );
+
     company.minerals = minerals;
+    
     const createdCompany = await this.companyRepo.save(company);
-    // employee.organizationType =
-    //   EOrganizationType[EOrganizationType.MINING_COMPANY];
-    // const role = await this.roleService.getRoleByName(
-    //   ERole[ERole.COMPANY_ADMIN],
-    // );
+
+    employee.company =  createdCompany;
+    employee.role = ECompanyRole.ADMIN;
+
     const createdEmployee = await this.employeeService.createEmp(employee);
-    const tokens = await this.utilsService.getTokens(createdEmployee);
-    // delete createdCompany.password;
-    return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
-      user: createdEmployee,
-    };
+
+    createdCompany.employees.push(createdEmployee);
+    
+    return await this.companyRepo.save(company);
   }
 
   async saveCompany(company: MiningCompany) {

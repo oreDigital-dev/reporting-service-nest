@@ -39,7 +39,7 @@ import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
-import { Employee } from './entities/employee.enity';
+import { Employee } from './entities/employee.entity';
 import { MiningCompany } from './entities/mining-company.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
 

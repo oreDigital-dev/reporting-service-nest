@@ -10,12 +10,30 @@ import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { CreateAddressDTO } from './create-address.dto';
 import { CreateMineralDTO } from './create-mineral.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { UUID } from 'crypto';
 
 export class CreateCompanyDTO {
+
+  @IsString()
+  @IsNotEmpty()
+  companyName: string;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  name: string;
+  firstName: string;
+
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  lastName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  gender: string;
+
 
   @IsNotEmpty()
   @ApiProperty()
@@ -50,7 +68,7 @@ export class CreateCompanyDTO {
 
   @ApiProperty()
   @IsNotEmpty()
-  minerals: string[];
+  minerals: UUID[];
 
   @IsNumber()
   @IsNotEmpty()

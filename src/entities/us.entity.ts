@@ -35,8 +35,6 @@ export class User extends InitiatorAudit {
   @Column()
   email: string;
 
-  @Column()
-  username: string;
 
   @Column()
   phonenumber: string;
@@ -94,7 +92,6 @@ export class User extends InitiatorAudit {
     firstName: string,
     lastName: string,
     email: string,
-    username: string,
     myGender: EGender,
     national_id: string,
     phonenumber: string,
@@ -105,7 +102,6 @@ export class User extends InitiatorAudit {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
-    this.username = username;
     this.gender = EGender[myGender];
     this.national_id = national_id;
     this.phonenumber = phonenumber;
