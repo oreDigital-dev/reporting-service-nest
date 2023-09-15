@@ -27,7 +27,17 @@ export class MiningCompany extends Organization {
   @JoinTable()
   minerals: Mineral[];
 
-  constructor(name: string, email: string, phoneNumber: string) {
+  constructor(
+    name: string,
+    email: string,
+    phoneNumber: string,
+    ownerShipType: string,
+    numberOfEmployes: number,
+    miniLicense: number,
+  ) {
     super(name, email, phoneNumber);
+    this.ownershipType = ownerShipType;
+    this.numberOfEmployees = numberOfEmployes;
+    this.miniLicense = miniLicense;
   }
 }

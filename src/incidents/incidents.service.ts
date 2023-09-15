@@ -6,7 +6,6 @@ import { CompanyService } from 'src/company/company.service';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
-import { Company } from 'src/entities/company.entity';
 import { Incident } from 'src/entities/incident.entity';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';

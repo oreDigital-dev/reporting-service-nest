@@ -6,6 +6,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { UUID } from 'crypto';
+import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -13,7 +14,7 @@ export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
   @Post('/create')
-  async createCompany(@Body() body: CreateCompanyDTO) {
+  async createCompany(@Body() body: CreateMiningCompanyDTO) {
     const company = await this.companyService.createCompany(body);
     return new ApiResponse(
       true,

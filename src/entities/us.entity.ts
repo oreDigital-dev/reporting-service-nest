@@ -10,7 +10,6 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { Role } from './role.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
@@ -19,6 +18,7 @@ import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 import { EOrganizationType } from 'src/enums/EOrganizationType';
+import { InitiatorAudit } from '../audits/Initiator.audit';
 
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
