@@ -6,7 +6,11 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { EmployeeModule } from 'src/employee/employee.module';
 
 @Module({
-  imports: [UsersModule, forwardRef(() => UtilsModule), EmployeeModule],
+  imports: [
+    forwardRef(() => UsersModule),
+    forwardRef(() => UtilsModule),
+    EmployeeModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService],

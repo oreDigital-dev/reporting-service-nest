@@ -66,7 +66,7 @@ export class EmployeeService {
         dto.email,
         gender,
         dto.national_id,
-        dto.phonenumber,
+        dto.phoneNumber,
         hashedPassword,
       );
 
@@ -165,7 +165,7 @@ export class EmployeeService {
       dto.email,
       gender,
       dto.national_id,
-      dto.phonenumber,
+      dto.phoneNumber,
       hashedPassword,
     );
     let updatedUser = Object.assign(availalbleUser, dto);

@@ -10,7 +10,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     JwtModule,
     ConfigModule,
-    forwardRef(() => EmployeeModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
   ],

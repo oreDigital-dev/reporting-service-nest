@@ -39,18 +39,12 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  registercode: string;
+  registrationKey: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
   national_id: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsPhoneNumber()
-  phonenumber: string;
 
   @IsString()
   @IsNotEmpty()

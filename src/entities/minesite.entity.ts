@@ -14,7 +14,6 @@ import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
 import { MiningCompany } from './mining-company.entity';
-import { MineralRecord } from 'src/dtos/createMineral-record';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {
@@ -31,9 +30,6 @@ export class MineSite extends InitiatorAudit {
   @ManyToOne(() => Address, (address) => address.mineSites)
   @JoinColumn({ name: 'address_id' })
   address: Address;
-
-  @OneToMany(() => MineralRecord, (record) => record.mineSite)
-  mineralRecords: MineralRecord[];
 
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];

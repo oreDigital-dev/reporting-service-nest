@@ -1,5 +1,4 @@
 import {
-  ChildEntity,
   Column,
   Entity,
   JoinColumn,
@@ -13,7 +12,6 @@ import { Organization } from './organization.entity';
 import { MineSite } from './minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { Mineral } from './mineral.entity';
-import { Employee } from './employee.entity';
 import { Address } from './address.entity';
 import { UUID, randomUUID } from 'crypto';
 import { Notification } from './notification.entity';

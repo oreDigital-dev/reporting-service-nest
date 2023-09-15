@@ -18,11 +18,12 @@ import { UtilsService } from 'src/utils/utils.service';
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
-    private employeeService: EmployeeService
-  ) { }
+    private employeeService: EmployeeService,
+  ) {}
 
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
@@ -33,18 +34,16 @@ export class AuthService {
   async login(dto: LoginDTO) {
     let user: any;
     if (EUserType[dto.userType] == EUserType.RMB_EMPLOYEE) {
-       user = await this.employeeService.getEmployeeByEmail(dto.email);
+      user = await this.employeeService.getEmployeeByEmail(dto.email);
     }
-    const passwordMatch = await bcrypt.compare(
-      dto.password,
-      user.password,
-    )
-    console.log("PWD",passwordMatch)
+
+    const passwordMatch = await bcrypt.compare(dto.password, user.password);
+    console.log('PWD', passwordMatch);
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
     if (
       user.status ==
-      EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
+        EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
       user.status == EAccountStatus[EAccountStatus.PENDING]
     )
       throw new BadRequestException(
@@ -58,6 +57,7 @@ export class AuthService {
       user: user,
     };
   }
+
   async verifyAccount(email: string) {
     const verifiedAccount = await this.userService.getUserByEmail(email);
     if (verifiedAccount.status === EAccountStatus[EAccountStatus.ACTIVE])
@@ -89,7 +89,7 @@ export class AuthService {
     if (
       account.status === EAccountStatus[EAccountStatus.PENDING] ||
       account.status ==
-      EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
+        EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
     )
       throw new BadRequestException(
         "Please first verify your account and we'll help you to remember your password later",

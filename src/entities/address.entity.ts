@@ -2,17 +2,13 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MineSite } from './minesite.entity';
-import { User } from './us.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { UUID } from 'crypto';
-import { Mineral } from './mineral.entity';
-import { MiningCompany } from './mining-company.entity';
 import { Organization } from './organization.entity';
 
 @Entity('address')
@@ -40,7 +36,6 @@ export class Address extends InitiatorAudit {
 
   @OneToMany(() => MineSite, (minesite) => minesite.address)
   mineSites: MineSite[];
-
 
   @OneToOne(() => Organization)
   @JoinColumn({ name: 'company' })

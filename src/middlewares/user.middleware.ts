@@ -29,7 +29,8 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/auth/reset_password' ||
       req.baseUrl == '/api/swagger-docs.html' ||
       req.baseUrl == '/users/create' ||
-      req.baseUrl == '/companies/create'
+      req.baseUrl == '/companies/create' ||
+      req.baseUrl == '/users/create/system-admin'
     ) {
       next();
     } else {
