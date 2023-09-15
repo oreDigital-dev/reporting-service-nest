@@ -1,6 +1,4 @@
 import {
-  BadRequestException,
-  ExecutionContext,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -8,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { hash } from 'bcrypt';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
@@ -52,13 +50,10 @@ export class UtilsService {
     };
   }
 
-  async hashString(input) {
+  async hashString(input : string) {
     try {
-      if (typeof input !== 'string') {
-        throw new Error('Input must be a string');
-      }
-      const hash = await bcrypt.hash(input, 10);
-      return hash;
+      const hashed = await hash(input, 10);
+      return hashed;
     } catch (error) {
       console.error('Error occurred while hashing:', error.message);
       throw error;
