@@ -13,13 +13,14 @@ import { Address } from './address.entity';
 import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
-import { MineralRecord } from './mineralRecord.entity';
 import { MiningCompany } from './mining-company.entity';
+import { MineralRecord } from 'src/dtos/createMineral-record';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID;
+
   @Column()
   name: string;
 

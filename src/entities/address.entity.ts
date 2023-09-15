@@ -11,7 +11,6 @@ import { MineSite } from './minesite.entity';
 import { User } from './us.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { UUID } from 'crypto';
-import { RescueTeam } from './rescue_team.entity';
 import { Mineral } from './mineral.entity';
 import { MiningCompany } from './mining-company.entity';
 import { Organization } from './organization.entity';
@@ -42,8 +41,6 @@ export class Address extends InitiatorAudit {
   @OneToMany(() => MineSite, (minesite) => minesite.address)
   mineSites: MineSite[];
 
-  @ManyToOne(() => RescueTeam, (rescue_team) => rescue_team.address)
-  rescueTeams: RescueTeam;
 
   @OneToOne(() => Organization)
   @JoinColumn({ name: 'company' })

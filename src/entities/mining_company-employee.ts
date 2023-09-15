@@ -1,5 +1,9 @@
-import { Entity } from 'typeorm';
-import { Employee } from './employee.entity';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { MiningCompany } from './mining-company.entity';
 
-@Entity('mng')
-export class MiningCompanyEmployee {}
+@Entity('mining_company_employees')
+export class MiningCompanyEmployee {
+  @ManyToOne(() => MiningCompany)
+  @JoinColumn({ name: 'mining_company_id' })
+  company: MiningCompany;
+}

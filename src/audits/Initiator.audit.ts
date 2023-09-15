@@ -9,6 +9,6 @@ export class InitiatorAudit extends TimeStampsAudit {
     super();
   }
 
-  creadBy: String;
-  updatedBy: String;
+  creadBy: string;
+  updatedBy: string;
 }

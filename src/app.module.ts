@@ -4,6 +4,7 @@ import {
   Module,
   NestModule,
   OnModuleInit,
+  forwardRef,
 } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -22,19 +23,16 @@ import { HomeController } from './home/home.controller';
 import { AuthController } from './auth/auth.controller';
 import { MinesiteController } from './minesite/minesite.controller';
 import { EmployeeController } from './employee/employee.controller';
-import { RescueteamsController } from './rescueteams/rescueteams.controller';
 import { EmployeeModule } from './employee/employee.module';
 import { Notification } from './entities/notification.entity';
 import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
 import { Address } from './entities/address.entity';
 import { MineralModule } from './mineral/mineral.module';
-import { RescueTeam } from './entities/rescue_team.entity';
 import { CompanyModule } from './company/company.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CompanyController } from './company/company.controller';
 import { Mineral } from './entities/mineral.entity';
-import { MineralRecord } from './entities/mineralRecord.entity';
 import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
@@ -42,9 +40,11 @@ import { RmbModule } from './rmb/rmb.module';
 import { Employee } from './entities/employee.entity';
 import { MiningCompany } from './entities/mining-company.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
-import { RMBEmployee } from './entities/rmb-employee';
-import { MiningCompanyEmployee } from './entities/mining_company-employee';
-import { RescueTeamEmployee } from './entities/rescue_team-employee';
+import { Organization } from './entities/organization.entity';
+import { MineralRecord } from './dtos/createMineral-record';
+import { MineralRecordModule } from './mineral-record/mineral-record.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -70,12 +70,9 @@ import { RescueTeamEmployee } from './entities/rescue_team-employee';
           Incident,
           Address,
           Mineral,
-          RescueTeam,
           Mineral,
+          Organization,
           MineralRecord,
-          RMBEmployee,
-          MiningCompanyEmployee,
-          RescueTeamEmployee,
         ],
         synchronize: true,
       }),
@@ -102,10 +99,9 @@ import { RescueTeamEmployee } from './entities/rescue_team-employee';
     JwtModule,
     MineralModule,
     NotificationModule,
+    MineralRecordModule,
     RmbModule,
-    RescueTeam,
-    MiningCompanyModule,
-    ,
+    forwardRef(() => MiningCompanyModule),
   ],
   controllers: [
     HomeController,
@@ -113,9 +109,8 @@ import { RescueTeamEmployee } from './entities/rescue_team-employee';
     CompanyController,
     MinesiteController,
     EmployeeController,
-    RescueteamsController,
   ],
-  // providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
+  providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })
 export class AppModule implements OnModuleInit, NestModule {
   constructor(

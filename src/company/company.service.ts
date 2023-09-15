@@ -17,7 +17,6 @@ import { Address } from 'src/entities/address.entity';
 import { Employee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
@@ -38,6 +37,7 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
   ) {}
@@ -61,11 +61,16 @@ export class CompanyService {
       dto.company.companyName,
       dto.company.email,
       dto.company.phoneNumber,
-      EOwnershipType[dto.company.ownership],
       dto.company.numberOfEmployees,
+      EOwnershipType[dto.company.ownership],
+      dto.company.productionCapacity,
       dto.company.licenseNumber,
     );
 
+    let address: Address = await this.addressService.createAddress(
+      dto.company.address,
+    );
+    company.address = address;
     let minerals: Mineral[] = [];
 
     for (let min of dto.company.minerals) {
@@ -101,9 +106,9 @@ export class CompanyService {
     employee.company = createdCompany;
     employee.address = adminAddress;
     employee.role = ECompanyRole.ADMIN;
-    employee.status = EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION];
+
     await this.employeeService.createEmp(employee);
-    return await this.companyRepo.save(company);
+    return createdCompany;
   }
 
   async saveCompany(company: MiningCompany) {
@@ -136,7 +141,6 @@ export class CompanyService {
     try {
       return await this.companyRepo.findOne({
         where: { email: email },
-        relations: ['employees', 'mineSites'],
       });
     } catch (error) {
       throw error;
