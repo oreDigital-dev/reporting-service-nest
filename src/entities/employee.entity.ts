@@ -1,4 +1,4 @@
-import { ChildEntity, Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from './us.entity';
 import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
@@ -39,7 +39,7 @@ export class Employee extends User {
       myGender,
       national_id,
       phonenumber,
-      '',
+      password,
       EAccountStatus.WAITING_EMAIL_VERIFICATION,
     );
     this.password = password;

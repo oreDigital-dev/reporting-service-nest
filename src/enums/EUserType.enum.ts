@@ -1,0 +1,3 @@
+export enum EUserType{
+    RMB_EMPLOYEE, RESCUE_EMPLOYEE, MINING_EMPLOYEE
+}
