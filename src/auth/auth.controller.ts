@@ -29,7 +29,6 @@ export class AuthController {
 
   @Post('/login')
   async login(@Body() dto: LoginDTO): Promise<ApiResponse> {
-    console.log(dto);
     return new ApiResponse(
       true,
       'User loggedInSucccessfully',

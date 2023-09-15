@@ -8,8 +8,11 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { LoginDTO } from 'src/dtos/login.dto';
+import { EmployeeService } from 'src/employee/employee.service';
+import { User } from 'src/entities/us.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { ERole } from 'src/enums/ERole.enum';
+import { EUserType } from 'src/enums/EUserType.enum';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 @Injectable()
@@ -18,7 +21,8 @@ export class AuthService {
     private userService: UsersService,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
-  ) {}
+    private employeeService: EmployeeService
+  ) { }
 
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
@@ -27,21 +31,20 @@ export class AuthService {
   }
 
   async login(dto: LoginDTO) {
-    const user = await this.userService.userRepo.findOne({
-      where: { email: dto.email },
-    });
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+    let user: any;
+    if (EUserType[dto.userType] == EUserType.RMB_EMPLOYEE) {
+       user = await this.employeeService.getEmployeeByEmail(dto.email);
     }
-    const arePasswordsMatch = await bcrypt.compare(
-      dto.password.toString(),
-      user.password.toString(),
-    );
-    if (!arePasswordsMatch)
+    const passwordMatch = await bcrypt.compare(
+      dto.password,
+      user.password,
+    )
+    console.log("PWD",passwordMatch)
+    if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
     if (
       user.status ==
-        EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
+      EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
       user.status == EAccountStatus[EAccountStatus.PENDING]
     )
       throw new BadRequestException(
@@ -86,7 +89,7 @@ export class AuthService {
     if (
       account.status === EAccountStatus[EAccountStatus.PENDING] ||
       account.status ==
-        EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
+      EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
     )
       throw new BadRequestException(
         "Please first verify your account and we'll help you to remember your password later",

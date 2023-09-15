@@ -18,4 +18,7 @@ export class LoginDTO {
   @IsString()
   @ApiProperty()
   password: string;
+
+  @IsNotEmpty()
+  userType: string;
 }

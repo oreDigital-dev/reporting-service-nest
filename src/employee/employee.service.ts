@@ -189,7 +189,7 @@ export class EmployeeService {
 
     if (!isEmployeeAvailable)
       throw new NotFoundException(
-        'The employe with the provided id is not found',
+        'The employee with the provided id is not found',
       );
     return isEmployeeAvailable;
   }
