@@ -1,12 +1,14 @@
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { MineSite } from './minesite.entity';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 
 @Entity('minerals')
 export class Mineral extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+
+  @PrimaryColumn()
+  id: UUID = randomUUID();
+
   @Column({
     unique: true,
     name: 'name',

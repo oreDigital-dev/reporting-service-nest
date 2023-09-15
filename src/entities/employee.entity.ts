@@ -1,4 +1,4 @@
-import { ChildEntity, Column, ManyToOne } from 'typeorm';
+import { ChildEntity, Column, Entity, ManyToOne } from 'typeorm';
 import { User } from './us.entity';
 import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
@@ -6,7 +6,7 @@ import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { MiningCompany } from './mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 
-@ChildEntity('employees')
+@Entity('employees')
 export class Employee extends User {
   @Column({default : 0})
   salary: number;

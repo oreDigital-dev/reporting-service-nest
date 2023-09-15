@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
+import { Exception } from 'handlebars';
 import { CreateMineralDTO } from 'src/dtos/create-mineral.dto';
 import { Mineral } from 'src/entities/mineral.entity';
 import { EMineralName } from 'src/enums/EMineralName.enum';
@@ -38,9 +39,14 @@ export class MineralService {
   }
 
   async getMineralById(id:UUID){
-    return await this.mineralRepo.findOneBy({
-      id
-    })
+    try{
+
+      return await this.mineralRepo.findOneBy({
+        id
+      })
+    }catch(err){
+      throw new Exception(err);
+    }
   }
 
   async createMinera() {

@@ -6,7 +6,6 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsEmail } from 'class-validator';
 import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
@@ -20,11 +19,8 @@ import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
-import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
-import { ERole } from 'src/enums/ERole.enum';
 import { MineralService } from 'src/mineral/mineral.service';
-import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 
@@ -39,6 +35,7 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
+    private authService : AuthService,
     private mineralService: MineralService,
   ) {}
   
@@ -66,6 +63,8 @@ export class CompanyService {
       dto.phoneNumber,
       dto.numberOfEmployees,
       ownership,
+      dto.productionCapacity,
+      dto.licenseNumber
     );
 
     let address: Address = await this.addressService.createAddress(dto.address);
@@ -73,9 +72,7 @@ export class CompanyService {
     let minerals: Mineral[] = [];
 
     for (let min of dto.minerals) {
-      let mineral: Mineral = await this.mineralService.getMineralById(
-        min
-      );
+      let mineral: Mineral = await this.mineralService.getMineralById(min);
       minerals.push(mineral);
     }
 
@@ -96,11 +93,9 @@ export class CompanyService {
     employee.company =  createdCompany;
     employee.role = ECompanyRole.ADMIN;
 
-    const createdEmployee = await this.employeeService.createEmp(employee);
-
-    createdCompany.employees.push(createdEmployee);
+    await this.employeeService.createEmp(employee);
     
-    return await this.companyRepo.save(company);
+    return createdCompany;
   }
 
   async saveCompany(company: MiningCompany) {
@@ -132,8 +127,7 @@ export class CompanyService {
   async getCompanyByEmail(email: string) {
     try {
       return await this.companyRepo.findOne({
-        where: { email: email },
-        relations: ['employees', 'mineSites'],
+        where: { email: email }
       });
     } catch (error) {
       throw error;
@@ -149,6 +143,7 @@ export class CompanyService {
       throw new Exception(err);
     }
   }
+  
 
   async getCompanyProfile(req: Request, res: Response) {
     try {

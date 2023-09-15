@@ -20,7 +20,6 @@ import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 
 @Entity('users')
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID;

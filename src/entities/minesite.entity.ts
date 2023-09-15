@@ -13,9 +13,7 @@ import { Address } from './address.entity';
 import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
-import { MineralRecord } from './mineralRecord.entity';
 import { MiningCompany } from './mining-company.entity';
-
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {
   @PrimaryGeneratedColumn()
@@ -32,13 +30,13 @@ export class MineSite extends InitiatorAudit {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  @OneToMany(() => MineralRecord, (record) => record.mineSite)
-  mineralRecords: MineralRecord[];
+  @ManyToMany(() => Mineral)
+  mineral: Mineral[];
 
   @OneToMany(() => Incident, (incident) => incident.mineSite)
   incidents: Incident[];
 
-  @ManyToOne(() => MiningCompany, (company) => company.mineSites)
+  @ManyToMany(() => MiningCompany)
   @JoinColumn({ name: 'company_id' })
   company: MiningCompany;
 

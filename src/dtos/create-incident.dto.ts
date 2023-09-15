@@ -7,6 +7,7 @@ import { EIncidentType } from "src/enums/EIncidentType.enum";
 export class CreateIncidentDTO {
   @IsNotEmpty()
   type: string;
+  
   @IsNotEmpty()
   measurement: number;
 

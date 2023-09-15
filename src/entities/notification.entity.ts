@@ -9,9 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './us.entity';
 import { UUID } from 'crypto';
-import { RescueTeam } from './rescue_team.entity';
 import { MiningCompany } from './mining-company.entity';
-
 @Entity('notifications')
 export class Notification {
   @PrimaryGeneratedColumn()
@@ -29,10 +27,6 @@ export class Notification {
   @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })
   user: User;
-
-  @ManyToOne(() => RescueTeam, (rescueTeam) => rescueTeam.notifications)
-  @JoinColumn({ name: 'rescue_team_id' })
-  rescueTeam: RescueTeam;
 
   @JoinColumn({ name: 'company_id' })
   @ManyToOne(() => MiningCompany, (company) => company.notifications)

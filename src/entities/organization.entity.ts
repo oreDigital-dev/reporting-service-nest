@@ -11,8 +11,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
-import { User } from './us.entity';
-import { Employee } from './employee.entity';
 import { Notification } from './notification.entity';
 
 @Entity('organizations')

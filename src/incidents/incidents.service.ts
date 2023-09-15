@@ -42,7 +42,7 @@ export class IncidentsService {
               `${minesite.name}'s temperature is at the lowest!`,
               'COMPANY',
             ),
-            minesite.company.id,
+          minesite.company.id,
           );
         } else if (dto.measurement > 18) {
           incident.status = EIncidentStatus.DANGER;
