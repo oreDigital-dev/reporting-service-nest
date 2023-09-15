@@ -23,6 +23,7 @@ import { RolesModule } from 'src/roles/roles.module';
     forwardRef(() => UtilsModule),
     forwardRef(() => EmployeeModule),
     RolesModule,
+    MailingModule,
   ],
   providers: [CompanyService],
   controllers: [CompanyController],

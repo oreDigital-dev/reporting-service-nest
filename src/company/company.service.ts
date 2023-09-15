@@ -11,6 +11,7 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
+import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
@@ -19,8 +20,10 @@ import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
+import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { ERole } from 'src/enums/ERole.enum';
+import { MailingService } from 'src/mailing/mailing.service';
 import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -40,6 +43,7 @@ export class CompanyService {
     private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
+    private mailingService: MailingService,
   ) {}
 
   async createCompany(dto: CreateMiningCompanyDTO) {
@@ -57,20 +61,24 @@ export class CompanyService {
         "The company's phone number or email is already registered!",
       );
     }
+
+    let ownership: any = EOwnershipType[dto.company.ownership];
     let company: MiningCompany = new MiningCompany(
       dto.company.companyName,
       dto.company.email,
       dto.company.phoneNumber,
       dto.company.numberOfEmployees,
-      EOwnershipType[dto.company.ownership],
+      ownership,
       dto.company.productionCapacity,
       dto.company.licenseNumber,
     );
 
-    let address: Address = await this.addressService.createAddress(
+    let companyAddress: Address = await this.addressService.createAddress(
       dto.company.address,
     );
-    company.address = address;
+    let adminAddress: Address = await this.addressService.createAddress(
+      dto.companyAdmin.address,
+    );
     let minerals: Mineral[] = [];
 
     for (let min of dto.company.minerals) {
@@ -88,26 +96,21 @@ export class CompanyService {
       dto.companyAdmin.password,
     );
 
-    let companyAddress: Address = await this.addressService.createAddress(
-      dto.company.address,
-    );
-    let adminAddress: Address = await this.addressService.createAddress(
-      dto.companyAdmin.address,
-    );
-
     company.minerals = minerals;
     company.address = companyAddress;
     company.employees = [employee];
+    company.status = EOrganizationStatus[EOrganizationStatus.PENDING];
     const createdCompany = await this.companyRepo.save(company);
     const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.COMPANY_ADMIN],
     );
+
     employee.roles = [adminRole];
     employee.company = createdCompany;
     employee.address = adminAddress;
     employee.role = ECompanyRole.ADMIN;
-
     await this.employeeService.createEmp(employee);
+    // await this.m;
     return createdCompany;
   }
 

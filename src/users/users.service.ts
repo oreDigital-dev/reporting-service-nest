@@ -14,7 +14,6 @@ import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
-import { admin } from 'googleapis/build/src/apis/admin';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
 
@@ -24,6 +23,7 @@ export class UsersService {
     @InjectRepository(User) public userRepo: Repository<User>,
     private roleService: RoleService,
     private mailService: MailingService,
+
     private utilsService: UtilsService,
   ) {}
 
