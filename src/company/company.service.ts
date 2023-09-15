@@ -168,4 +168,11 @@ export class CompanyService {
       throw new Exception(err);
     }
   }
+
+  async getAllCompaniesByStatus(status: string) {
+    try {
+    } catch (error) {
+      throw error;
+    }
+  }
 }
