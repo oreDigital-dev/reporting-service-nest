@@ -1,5 +1,5 @@
-import { ChildEntity } from 'typeorm';
+import { ChildEntity, Entity } from 'typeorm';
 import { Employee } from './employee.entity';
 
-@ChildEntity('rescue_team_employees')
-export class RescueTeamEmployee extends Employee {}
+@Entity('sdf')
+export class RescueTeamEmployee {}

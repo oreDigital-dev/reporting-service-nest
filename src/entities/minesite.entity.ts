@@ -20,7 +20,6 @@ import { MiningCompany } from './mining-company.entity';
 export class MineSite extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID;
-
   @Column()
   name: string;
 

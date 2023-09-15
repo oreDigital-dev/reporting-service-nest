@@ -1,11 +1,4 @@
-import {
-  ChildEntity,
-  Column,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { ChildEntity, Column, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { Organization } from './organization.entity';
 import { MineSite } from './minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';

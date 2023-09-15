@@ -1,6 +1,6 @@
-import { ChildEntity, OneToMany } from 'typeorm';
+import { ChildEntity, Entity, OneToMany } from 'typeorm';
 import { User } from './us.entity';
 import { Employee } from './employee.entity';
 
-@ChildEntity('rmb_employees')
-export class RMBEmployee extends Employee {}
+@Entity('sdf')
+export class RMBEmployee {}
