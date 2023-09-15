@@ -71,7 +71,6 @@ export class EmployeeService {
         hashedPassword
       );
 
-      emplyee.password = await this.utilsService.hashString(emplyee.password);
 
       let createdEmployee = await this.employeeRepo.save(emplyee);
 

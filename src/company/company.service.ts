@@ -40,6 +40,7 @@ export class CompanyService {
   ) {}
   
   async createCompany(dto: CreateCompanyDTO) {
+    
     const available = await this.companyRepo.find({
       where: [
         {
@@ -54,7 +55,6 @@ export class CompanyService {
         "The company's phone number or email is already registered!",
       );
     }
-    const hashedPassword = await this.utilsService.hashString(dto.password);
 
     let ownership: any = EOwnershipType[dto.ownership];
     let company: MiningCompany = new MiningCompany(
@@ -83,7 +83,7 @@ export class CompanyService {
       EGender[dto.gender],
       dto.ownerNID,
       dto.phoneNumber,
-      hashedPassword,
+      dto.password,
     );
 
     company.minerals = minerals;

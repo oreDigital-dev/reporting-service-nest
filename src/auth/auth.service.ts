@@ -5,12 +5,12 @@ import {
   forwardRef,
   Inject,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import *  as argon2d from "argon2";
+import {compare, hash} from "bcrypt";
 import { Request, Response } from 'express';
 import { LoginDTO } from 'src/dtos/login.dto';
 import { EmployeeService } from 'src/employee/employee.service';
-import { User } from 'src/entities/us.entity';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum'; 
 import { ERole } from 'src/enums/ERole.enum';
 import { EUserType } from 'src/enums/EUserType.enum';
 import { UsersService } from 'src/users/users.service';
@@ -25,8 +25,7 @@ export class AuthService {
   ) { }
 
   async hashPassword(password: string): Promise<string> {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await hash(password, 10);
     return hashedPassword;
   }
 
@@ -35,13 +34,12 @@ export class AuthService {
     if (EUserType[dto.userType] == EUserType.RMB_EMPLOYEE) {
        user = await this.employeeService.getEmployeeByEmail(dto.email);
     }
-    const passwordMatch = await bcrypt.compare(
-      dto.password,
-      user.password,
+    const passwordMatch = await compare(
+      dto.password,user.password    
     )
-    console.log("PWD",passwordMatch)
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
+
     if (
       user.status ==
       EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION] ||
