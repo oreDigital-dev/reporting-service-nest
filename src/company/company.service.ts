@@ -170,9 +170,10 @@ export class CompanyService {
   }
 
   async getAllCompaniesByStatus(status: string) {
-    try {
-    } catch (error) {
-      throw error;
-    }
+    // try {
+    //   switch(status.)
+    // } catch (error) {
+    //   throw error;
+    // }
   }
 }
