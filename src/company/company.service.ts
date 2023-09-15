@@ -11,6 +11,7 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
+import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
@@ -57,20 +58,24 @@ export class CompanyService {
         "The company's phone number or email is already registered!",
       );
     }
+
+    let ownership: any = EOwnershipType[dto.company.ownership];
     let company: MiningCompany = new MiningCompany(
       dto.company.companyName,
       dto.company.email,
       dto.company.phoneNumber,
       dto.company.numberOfEmployees,
-      EOwnershipType[dto.company.ownership],
+      ownership,
       dto.company.productionCapacity,
       dto.company.licenseNumber,
     );
 
-    let address: Address = await this.addressService.createAddress(
+    let companyAddress: Address = await this.addressService.createAddress(
       dto.company.address,
     );
-    company.address = address;
+    let adminAddress: Address = await this.addressService.createAddress(
+      dto.companyAdmin.address,
+    );
     let minerals: Mineral[] = [];
 
     for (let min of dto.company.minerals) {
@@ -86,13 +91,6 @@ export class CompanyService {
       dto.companyAdmin.national_id,
       dto.companyAdmin.phoneNumber,
       dto.companyAdmin.password,
-    );
-
-    let companyAddress: Address = await this.addressService.createAddress(
-      dto.company.address,
-    );
-    let adminAddress: Address = await this.addressService.createAddress(
-      dto.companyAdmin.address,
     );
 
     company.minerals = minerals;

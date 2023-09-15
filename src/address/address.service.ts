@@ -24,6 +24,19 @@ export class AddressService {
       dto.cell,
       dto.village,
     );
+
+    const isAddressRegistered = await this.addressRepo.findOne({
+      where: [
+        {
+          province: address.province,
+          district: dto.district,
+          sector: dto.sector,
+          cell: dto.cell,
+          village: dto.village,
+        },
+      ],
+    });
+    if (isAddressRegistered) return isAddressRegistered;
     return await this.addressRepo.save(address);
   }
 }

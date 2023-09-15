@@ -5,6 +5,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { UUID } from 'crypto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
+import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 
 @ApiTags('companies')
 @Controller('companies')
