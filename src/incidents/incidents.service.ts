@@ -29,11 +29,11 @@ export class IncidentsService {
     try {
       if (!this.utilService.idValidator(dto.mineSite))
         throw new BadRequestException('The provided id is invalid!');
-      let incident = new Incident(dto.type, dto.measurement);
+      let incident = new Incident(EIncidentType[dto.type], dto.measurement);
       let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
       incident.mineSite = minesite;
 
-      if (dto.type == EIncidentType[EIncidentType.AIR_QUALITY]) {
+      if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
         if (dto.measurement < 14) {
           incident.status = EIncidentStatus.DANGER;
           await this.notificationService.notify(
@@ -55,7 +55,7 @@ export class IncidentsService {
             minesite.company.id,
           );
         }
-      } else if (dto.type == EIncidentType[EIncidentType.LANDSLIDES]) {
+      } else if (dto.type == EIncidentType.LANDSLIDES.toString()) {
         if (dto.measurement < 14) {
           await this.notificationService.notify(
             ENotificationType['COMPANIES_AND_REPORTS'],
@@ -73,49 +73,142 @@ export class IncidentsService {
     }
   }
 
-  async getIncidentByLoggedInCompany(req: Request, res: Response) {
+  async createIncident(dto: CreateIncidentDTO) {
     try {
-      let owner: any = await this.utilService.getLoggedInProfile(req, res);
-      const loggedInCompany: any = this.companyService.getCompanyByEmail(
-        owner.email,
+      let incident = new Incident(EIncidentType[dto.type], dto.measurement);
+      incident.mineSite = await this.minesiteService.getMineSiteById(
+        dto.mineSite,
       );
-      let incidents = await this.incidentRepo.findBy({
-        mineSite: In(loggedInCompany.mineSites),
-      });
-      return incidents;
+      incident = await this.incidentRepo.save(incident);
+      await this.minesiteService.addIncident(dto.mineSite, incident);
+      return incident;
     } catch (err) {
       throw new Exception(err);
     }
   }
 
-  async getAllIncidents() {
-    try {
-      return await this.incidentRepo.find({});
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async CreateCombinedIncidents(dto: CombinedIncidentDTO) {
-    const mineSite = await this.minesiteService.getMineSiteById(
-      dto.originMineSiteId,
-    );
-    // if (!mineSite)
-    //   throw new BadRequestException(
-    //     'The mineSite with the provided id is not found',
-    //   );
-
-    const incidents: Incident[] = [
-      new Incident(EIncidentType[EIncidentType.HUMIDITY], dto.humidityVaue),
-      new Incident(EIncidentType[EIncidentType.HEATINDEX], dto.heatIndexValue),
-      new Incident(
-        EIncidentType[EIncidentType.TEMPERATURE],
-        dto.temperatureValue,
-      ),
+  async saveCombinedIncidents(dto: CombinedIncidentDTO) {
+    const incidents: CreateIncidentDTO[] = [
+      {
+        measurement: dto.temperature,
+        type: EIncidentType.TEMPERATURE.toString(),
+        mineSite: dto.origin,
+      },
+      {
+        measurement: dto.heatIndex,
+        type: EIncidentType.HEATINDEX.toString(),
+        mineSite: dto.origin,
+      },
+      {
+        measurement: dto.humidity,
+        type: EIncidentType.HUMIDITY.toString(),
+        mineSite: dto.origin,
+      },
     ];
 
-    incidents.forEach(async (incident) => {
-      await this.incidentRepo.save(incident);
-    });
+    let i = 0;
+    let createIncident: Incident;
+    while (i < incidents.length) {
+      createIncident = await this.createIncident(incidents[i]);
+      if (createIncident.type == EIncidentType.TEMPERATURE) {
+        if (createIncident.measurement > 17) {
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus.DANGER,
+            },
+          );
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at its highest temperature`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
+        } else if (createIncident.measurement < 17) {
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus.DANGER,
+            },
+          );
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a low temperature`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
+        }
+      } else if (createIncident.type == EIncidentType.HUMIDITY) {
+        if (createIncident.measurement < 14) {
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus.DANGER,
+            },
+          );
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a low humidity`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
+        } else if (createIncident.measurement > 18) {
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus.DANGER,
+            },
+          );
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a high humidity`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
+        } else {
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus.DANGER,
+            },
+          );
+        }
+        if (!createIncident || createIncident == null) {
+          break;
+        }
+        i++;
+      }
+    }
+    return await this.incidentRepo.find();
+  }
+
+  async getIncidentByLoggedInCompany(req: Request, res: Response) {
+    // try {
+    //   let loggedInCompany = await this.utilService.getLoggedInProfile(req, res);
+    //   let incidents = await this.incidentRepo.findBy({
+    //     mineSite: In(loggedInCompany.mineSites),
+    //   });
+    //   return incidents;
+    // } catch (err) {
+    //   throw new Exception(err);
+    // }
   }
 }

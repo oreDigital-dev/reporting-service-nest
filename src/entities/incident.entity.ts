@@ -10,7 +10,7 @@ export class Incident extends InitiatorAudit {
   id: number;
 
   @Column()
-  type: string;
+  type: EIncidentType;
 
   @Column()
   status: EIncidentStatus;
@@ -19,12 +19,15 @@ export class Incident extends InitiatorAudit {
     nullable: true,
     default: null,
   })
-  measurement: Number;
+  measurement: number;
 
   @ManyToOne(() => MineSite, (mineSite) => mineSite.incidents)
   mineSite: MineSite;
 
-  constructor(type: string, measurement: Number) {
+  constructor(
+    type: EIncidentType,
+    measurement: number,
+  ) {
     super();
     this.type = type;
     this.measurement = measurement;

@@ -39,9 +39,12 @@ import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
-import { Employee } from './entities/employee.enity';
+import { Employee } from './entities/employee.entity';
 import { MiningCompany } from './entities/mining-company.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
+import { RMBEmployee } from './entities/rmb-employee';
+import { MiningCompanyEmployee } from './entities/mining_company-employee';
+import { RescueTeamEmployee } from './entities/rescue_team-employee';
 
 @Module({
   imports: [
@@ -70,6 +73,9 @@ import { MiningCompanyModule } from './mining-company/mining-company.module';
           RescueTeam,
           Mineral,
           MineralRecord,
+          RMBEmployee,
+          MiningCompanyEmployee,
+          RescueTeamEmployee,
         ],
         synchronize: true,
       }),
@@ -99,6 +105,7 @@ import { MiningCompanyModule } from './mining-company/mining-company.module';
     RmbModule,
     RescueTeam,
     MiningCompanyModule,
+    ,
   ],
   controllers: [
     HomeController,

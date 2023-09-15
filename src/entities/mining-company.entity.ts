@@ -1,16 +1,25 @@
-import { ChildEntity, Column, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import {
+  ChildEntity,
+  Column,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 import { MineSite } from './minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { Mineral } from './mineral.entity';
+import { Employee } from './employee.entity';
 
 @ChildEntity('mining_companies')
 export class MiningCompany extends Organization {
   @Column({
     name: 'owner_ship_type',
-    default: EOwnershipType[EOwnershipType.PUBLIC],
+    default: EOwnershipType.PUBLIC,
   })
-  ownershipType: String;
+  ownershipType: EOwnershipType;
+
   @Column({ nullable: false })
   productionCapacity: number;
 
@@ -27,17 +36,20 @@ export class MiningCompany extends Organization {
   @JoinTable()
   minerals: Mineral[];
 
+  @OneToMany(() => Employee, (emp) => emp.company)
+  employees: Employee[];
+
   constructor(
     name: string,
     email: string,
     phoneNumber: string,
-    ownerShipType: string,
-    numberOfEmployes: number,
-    miniLicense: number,
+    ownershipType: EOwnershipType,
+    numberOfEmployees: number,
+    licenseNumber: number,
   ) {
     super(name, email, phoneNumber);
-    this.ownershipType = ownerShipType;
-    this.numberOfEmployees = numberOfEmployes;
-    this.miniLicense = miniLicense;
+    this.numberOfEmployees = numberOfEmployees;
+    this.ownershipType = ownershipType;
+    this.miniLicense = licenseNumber;
   }
 }

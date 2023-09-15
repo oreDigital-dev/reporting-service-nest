@@ -1,22 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { UUID } from 'crypto';
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
+import { UUID } from "crypto";
 
-export class CombinedIncidentDTO {
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty()
-  heatIndexValue: number;
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty()
-  temperatureValue: number;
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty()
-  humidityVaue: number;
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  originMineSiteId: UUID;
+export class CombinedIncidentDTO{
+    @IsNumber()
+    @IsNotEmpty()
+    heatIndex: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    temperature : number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    humidity: number;
+
+    @IsUUID()
+    @IsNotEmpty()
+    origin: UUID;
+    
+    constructor(heatIndex: number, temperature: number, humidity: number , origin: UUID){
+        this.heatIndex = heatIndex;
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.origin = origin;
+    }
 }

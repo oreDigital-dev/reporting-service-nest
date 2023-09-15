@@ -17,8 +17,7 @@ import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
-import { EOrganizationType } from 'src/enums/EOrganizationType';
-import { InitiatorAudit } from '../audits/Initiator.audit';
+import { InitiatorAudit } from 'src/audits/Initiator.audit';
 
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -34,9 +33,6 @@ export class User extends InitiatorAudit {
 
   @Column()
   email: string;
-
-  @Column()
-  username: string;
 
   @Column()
   phonenumber: string;
@@ -69,13 +65,6 @@ export class User extends InitiatorAudit {
   @Column()
   status: string;
 
-  @Column({
-    name: 'organization_type',
-    nullable: true,
-    default: EOrganizationType[EOrganizationType.MINING_COMPANY],
-  })
-  organizationType: string;
-
   @Column()
   national_id: string;
 
@@ -94,7 +83,6 @@ export class User extends InitiatorAudit {
     firstName: string,
     lastName: string,
     email: string,
-    username: string,
     myGender: EGender,
     national_id: string,
     phonenumber: string,
@@ -105,7 +93,6 @@ export class User extends InitiatorAudit {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
-    this.username = username;
     this.gender = EGender[myGender];
     this.national_id = national_id;
     this.phonenumber = phonenumber;

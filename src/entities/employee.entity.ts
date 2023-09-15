@@ -1,35 +1,41 @@
-import { ChildEntity, Column } from 'typeorm';
+import { ChildEntity, Column, ManyToOne } from 'typeorm';
 import { User } from './us.entity';
 import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { MiningCompany } from './mining-company.entity';
+import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 
 @ChildEntity('employees')
 export class Employee extends User {
-  @Column('numeric')
+  @Column({ default: 0 })
   salary: number;
+
   @Column({
     enum: EEmployeStatus,
     default: EEmployeStatus.ACTIVE,
   })
   employeeStatus: EEmployeStatus;
 
+  @ManyToOne(() => MiningCompany)
+  company: MiningCompany;
+
+  @Column({ default: ECompanyRole.EMPLOYEE })
+  role: ECompanyRole;
+
   constructor(
     firstName: string,
     lastName: string,
     email: string,
-    username: string,
     myGender: EGender,
     national_id: string,
     phonenumber: string,
-    salary: number,
     password: string,
   ) {
     super(
       firstName,
       lastName,
       email,
-      username,
       myGender,
       national_id,
       phonenumber,
@@ -37,6 +43,5 @@ export class Employee extends User {
       EAccountStatus.WAITING_EMAIL_VERIFICATION,
     );
     this.password = password;
-    this.salary = salary;
   }
 }

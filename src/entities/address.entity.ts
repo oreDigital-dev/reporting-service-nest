@@ -14,6 +14,7 @@ import { UUID } from 'crypto';
 import { RescueTeam } from './rescue_team.entity';
 import { Mineral } from './mineral.entity';
 import { MiningCompany } from './mining-company.entity';
+import { Organization } from './organization.entity';
 
 @Entity('address')
 export class Address extends InitiatorAudit {
@@ -44,9 +45,9 @@ export class Address extends InitiatorAudit {
   @ManyToOne(() => RescueTeam, (rescue_team) => rescue_team.address)
   rescueTeams: RescueTeam;
 
-  @OneToOne(() => MiningCompany)
+  @OneToOne(() => Organization)
   @JoinColumn({ name: 'company' })
-  company: MiningCompany;
+  company: Organization;
 
   constructor(
     province: string,

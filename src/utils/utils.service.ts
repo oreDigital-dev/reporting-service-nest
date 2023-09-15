@@ -13,7 +13,6 @@ import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/entities/us.entity';
-import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()

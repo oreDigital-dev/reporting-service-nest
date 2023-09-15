@@ -18,7 +18,7 @@ import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { Employee } from 'src/entities/employee.enity';
+import { Employee } from 'src/entities/employee.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -58,16 +58,16 @@ export class EmployeeService {
           throw new BadRequestException('The provided gender is invalid');
       }
 
+      const hashedPassword = await this.utilsService.hashString(dto.password);
+
       let emplyee: Employee = new Employee(
         dto.firstName,
         dto.lastName,
         dto.email,
-        dto.username,
         gender,
         dto.national_id,
         dto.phonenumber,
-        dto.salary,
-        `OreDigital@${new Date().getFullYear()}`,
+        hashedPassword,
       );
 
       emplyee.password = await this.utilsService.hashString(emplyee.password);
@@ -129,7 +129,6 @@ export class EmployeeService {
       delete createdEmployee.firstName;
       delete createdEmployee.lastName;
       delete createdEmployee.activationCode;
-      delete createdEmployee.username;
       this.mailingService.sendEmailToUser(
         employee.email,
         'employee-account-verification',
@@ -158,16 +157,16 @@ export class EmployeeService {
       default:
         throw new BadRequestException('The provided gender is invalid');
     }
+    const hashedPassword = await this.utilsService.hashString(dto.password);
+
     const emplyee: Employee = new Employee(
       dto.firstName,
       dto.lastName,
       dto.email,
-      dto.username,
       gender,
       dto.national_id,
       dto.phonenumber,
-      dto.salary,
-      dto.password,
+      hashedPassword,
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);

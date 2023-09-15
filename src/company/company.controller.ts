@@ -1,9 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { CompanyService } from './company.service';
 import { ApiResponse } from 'src/payload/apiResponse';
-import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { UUID } from 'crypto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
@@ -18,7 +16,7 @@ export class CompanyController {
     const company = await this.companyService.createCompany(body);
     return new ApiResponse(
       true,
-      'Company workspace created successfully',
+      `Thank you for request a workspace at oreDigital, please go and verifiy your email`,
       company,
     );
   }

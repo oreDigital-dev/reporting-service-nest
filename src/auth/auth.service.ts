@@ -72,10 +72,10 @@ export class AuthService {
     delete verifiedAccount2.password;
     return { tokens, user: verifiedAccount2 };
   }
+
   getUserByEmail(email: string) {
     throw new Error('Method not implemented.');
   }
-
   async resetPassword(
     email: string,
     activationCode: number,

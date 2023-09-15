@@ -6,7 +6,7 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { CompanyModule } from 'src/company/company.module';
 import { RolesModule } from 'src/roles/roles.module';
-import { Employee } from 'src/entities/employee.enity';
+import { Employee } from 'src/entities/employee.entity';
 
 @Module({
   imports: [

@@ -1,40 +1,17 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Address } from './address.entity';
+import { ChildEntity, Column, JoinTable, ManyToMany } from 'typeorm';
 import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
-import { Notification } from './notification.entity';
+import { Organization } from './organization.entity';
+import { RescueTeamEmployee } from './rescue_team-employee';
 
-@Entity('rescue_team')
-export class RescueTeam {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  name: string;
-
-  @Column()
-  email: string;
-
-  @Column()
-  password: string;
-
+@ChildEntity('rescue_teams')
+export class RescueTeam extends Organization {
   @Column()
   code: string;
-
-  @ManyToOne(() => Address, (address) => address.rescueTeams)
-  @JoinColumn({ name: 'address_id' })
-  address: Address;
 
   @Column()
   category: ERescueTeamCategory;
 
-  @OneToMany(() => Notification, (notification) => notification.rescueTeam)
-  notifications: Notification[];
+  @ManyToMany(() => RescueTeamEmployee)
+  @JoinTable()
+  employees: RescueTeamEmployee[];
 }

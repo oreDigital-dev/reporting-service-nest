@@ -14,11 +14,12 @@ import { AuthService } from 'src/auth/auth.service';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
+import { Employee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
-import { MiningCompanyEmployee } from 'src/entities/mining_company-employee';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
-import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { ERole } from 'src/enums/ERole.enum';
 import { MineralService } from 'src/mineral/mineral.service';
@@ -40,6 +41,7 @@ export class CompanyService {
     private mineralService: MineralService,
     private roleService: RoleService,
   ) {}
+
   async createCompany(dto: CreateMiningCompanyDTO) {
     const available = await this.companyRepo.find({
       where: [
@@ -52,67 +54,56 @@ export class CompanyService {
 
     if (available.length != 0) {
       throw new BadRequestException(
-        "The company's phone number or email or owner NID is already registered!",
+        "The company's phone number or email is already registered!",
       );
     }
-    const hashedPassword = await this.utilsService.hashString(
-      dto.companyAdmin.password,
-    );
-
-    let ownership: any = EOwnershipType[dto.company.ownership];
     let company: MiningCompany = new MiningCompany(
-      dto.company.name,
+      dto.company.companyName,
       dto.company.email,
       dto.company.phoneNumber,
-      dto.company.ownership,
+      EOwnershipType[dto.company.ownership],
       dto.company.numberOfEmployees,
       dto.company.licenseNumber,
+    );
+
+    let minerals: Mineral[] = [];
+
+    for (let min of dto.company.minerals) {
+      let mineral: Mineral = await this.mineralService.getMineralById(min);
+      minerals.push(mineral);
+    }
+
+    const employee: Employee = new Employee(
+      dto.companyAdmin.firstName,
+      dto.companyAdmin.lastName,
+      dto.companyAdmin.email,
+      EGender[dto.companyAdmin.myGender],
+      dto.companyAdmin.national_id,
+      dto.companyAdmin.phoneNumber,
+      dto.companyAdmin.password,
     );
 
     let companyAddress: Address = await this.addressService.createAddress(
       dto.company.address,
     );
-    company.address = companyAddress;
-
-    let userAddress: Address = await this.addressService.createAddress(
+    let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
-    let minerals: Mineral[] = [];
 
-    for (let min of dto.company.minerals) {
-      let mineral: Mineral = await this.mineralService.getMineralByName(
-        min.toUpperCase(),
-      );
-      minerals.push(mineral);
-    }
-    const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
-      dto.companyAdmin.firstName,
-      dto.companyAdmin.lastName,
-      dto.companyAdmin.email,
-      dto.companyAdmin.username,
-      EGender[dto.companyAdmin.myGender.toUpperCase()],
-      dto.companyAdmin.national_id,
-      dto.companyAdmin.phoneNumber,
-      0,
-      dto.companyAdmin.password,
-    );
     company.minerals = minerals;
+    company.address = companyAddress;
     company.employees = [employee];
-
     const createdCompany = await this.companyRepo.save(company);
-    employee.organizationType =
-      EOrganizationType[EOrganizationType.MINING_COMPANY];
-    const role = await this.roleService.getRoleByName(
+    const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.COMPANY_ADMIN],
     );
-    const createdEmployee = await this.employeeService.createEmp(employee);
-    const tokens = await this.utilsService.getTokens(createdEmployee);
-    // delete createdCompany.password;
-    return {
-      access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
-      user: createdEmployee,
-    };
+    employee.roles = [adminRole];
+    employee.company = createdCompany;
+    employee.address = adminAddress;
+    employee.role = ECompanyRole.ADMIN;
+    employee.status = EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION];
+    await this.employeeService.createEmp(employee);
+    return await this.companyRepo.save(company);
   }
 
   async saveCompany(company: MiningCompany) {

@@ -8,6 +8,7 @@ import { UUID } from 'crypto';
 import { AddressService } from 'src/address/address.service';
 import { CompanyService } from 'src/company/company.service';
 import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
+import { Incident } from 'src/entities/incident.entity';
 import { MineSite } from 'src/entities/minesite.entity';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
@@ -153,5 +154,10 @@ export class MinesiteService {
     } catch (error) {
       throw error;
     }
+  }
+  async addIncident(id: UUID, incident : Incident){
+    let minesite = await this.mineSiteRepo.findOneBy({id})
+    minesite.incidents.push(incident);
+    return await this.mineSiteRepo.save(minesite);
   }
 }
