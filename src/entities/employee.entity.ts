@@ -1,11 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { MiningCompany } from './mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { User } from './us.entity';
-import { Main } from './main.entity';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 
@@ -13,12 +10,7 @@ import { Address } from './address.entity';
 export class MiningCompanyEmployee extends User {
   @Column({ default: 0 })
   salary: number;
-  @Column({
-    enum: EEmployeStatus,
-    default: EEmployeStatus.ACTIVE,
-  })
-  employeeStatus: EEmployeStatus;
-
+ 
   @ManyToOne(() => MiningCompany)
   company: MiningCompany;
 
@@ -52,10 +44,9 @@ export class MiningCompanyEmployee extends User {
       myGender,
       national_id,
       phonenumber,
-      '',
-      EAccountStatus.WAITING_EMAIL_VERIFICATION,
-      activationNumber
+      password,
+      activationNumber,
+      
     );
-    this.password = password;
   }
 }

@@ -8,11 +8,11 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Role } from './role.entity';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { EUserStatus } from 'src/enums/EUserStatus.enum';
 
 @Entity('users')
 export class User extends InitiatorAudit {
@@ -58,14 +58,17 @@ export class User extends InitiatorAudit {
   activationCode: number;
 
   @Column()
-  status: string;
-
-  @Column()
   national_id: string;
 
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
+
+  @Column({
+    enum : EUserStatus,
+    default: EUserStatus[EUserStatus.PENDING],
+  })
+  status: string;
 
   constructor(
     firstName: string,
@@ -75,7 +78,6 @@ export class User extends InitiatorAudit {
     national_id: string,
     phonenumber: string,
     password: string,
-    status: EAccountStatus,
     activationCode: number
   ) {
     super();
@@ -86,7 +88,6 @@ export class User extends InitiatorAudit {
     this.national_id = national_id;
     this.phonenumber = phonenumber;
     this.password = password;
-    this.status = EAccountStatus[status];
     this.activationCode = activationCode;
   }
 }

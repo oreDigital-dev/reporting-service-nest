@@ -30,7 +30,9 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/api/swagger-docs.html' ||
       req.baseUrl == '/users/create' ||
       req.baseUrl == '/companies/create' ||
-      req.baseUrl == '/users/create/system-admin'
+      req.baseUrl == '/users/create/system-admin' ||
+      req.baseUrl == '/incidents/create' ||
+      req.baseUrl == '/incidents/create-combined' 
     ) {
       next();
     } else {
