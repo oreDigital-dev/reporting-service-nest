@@ -6,6 +6,7 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Organization } from './organization.entity';
@@ -16,10 +17,12 @@ import { Address } from './address.entity';
 import { UUID, randomUUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { MiningCompanyEmployee } from './employee.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('mining_companies')
 export class MiningCompany extends Organization {
-  @PrimaryGeneratedColumn()
+  
+  @PrimaryColumn()
   id: UUID = randomUUID();
 
   @Column()
@@ -49,9 +52,10 @@ export class MiningCompany extends Organization {
   @Column({ default: 0 })
   numberOfEmployees: number;
 
-  @OneToMany(() => MiningCompanyEmployee, (employee) => employee.company)
+  @OneToMany(() => MiningCompanyEmployee, (employee) => employee)
+  @Exclude()
   employees: MiningCompanyEmployee[];
-  
+
   @Column()
   miniLicense: number;
 

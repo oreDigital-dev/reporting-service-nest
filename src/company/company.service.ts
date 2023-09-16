@@ -19,15 +19,14 @@ import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
-import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { ERole } from 'src/enums/ERole.enum';
-import { MailingService } from 'src/mailing/mailing.service';
 import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { generate } from 'otp-generator';
+import { Role } from 'src/entities/role.entity';
 
 @Injectable()
 export class CompanyService {
@@ -40,11 +39,13 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
   ) { }
 
   async createCompany(dto: CreateMiningCompanyDTO) {
+
     const available = await this.companyRepo.find({
       where: [
         {
@@ -98,10 +99,12 @@ export class CompanyService {
       dto.companyAdmin.address,
     );
     company.employees = [employee];
-    const role = await this.roleService.getRoleByName(
+    const role = []
+    role.push(await this.roleService.getRoleByName(
       ERole[ERole.COMPANY_ADMIN],
-    );
-    employee.roles.push(role);
+    ));
+
+    employee.roles = role;
     employee.address = adminAddress;
 
     const createdCompany = await this.companyRepo.save(company);

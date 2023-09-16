@@ -6,6 +6,7 @@ import { MineSite } from './minesite.entity';
 
 @Entity('incident')
 export class Incident extends InitiatorAudit {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
