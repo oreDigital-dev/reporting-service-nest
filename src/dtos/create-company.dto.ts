@@ -6,9 +6,7 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
-import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { CreateAddressDTO } from './create-address.dto';
-import { CreateMineralDTO } from './create-mineral.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UUID } from 'crypto';
 
@@ -48,12 +46,6 @@ export class CreateCompanyDTO {
   @ApiProperty()
   @IsNotEmpty()
   ownerNID: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsStrongPassword()
-  @ApiProperty()
-  password: string;
 
   @IsString()
   @IsNotEmpty()

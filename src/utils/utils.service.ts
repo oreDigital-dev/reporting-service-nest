@@ -10,6 +10,7 @@ import { hash } from 'bcrypt';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
+import { Main } from 'src/entities/main.entity';
 import { User } from 'src/entities/us.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -27,7 +28,7 @@ export class UtilsService {
   ) {}
 
   async getTokens(
-    user: User,
+    user: Main,
   ): Promise<{ accessToken: String; refreshToken: String }> {
     const accessToken: String = await this.jwtService.signAsync(
       { roles: user.roles, id: user.id, national_id: user.national_id },
@@ -50,7 +51,7 @@ export class UtilsService {
     };
   }
 
-  async hashString(input : string) {
+  async hashString(input: string) {
     try {
       const hashed = await hash(input, 10);
       return hashed;

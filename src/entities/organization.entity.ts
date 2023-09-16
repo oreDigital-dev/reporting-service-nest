@@ -4,14 +4,13 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
 import { Notification } from './notification.entity';
+import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 
 @Entity('organizations')
 export class Organization extends InitiatorAudit {
@@ -24,6 +23,12 @@ export class Organization extends InitiatorAudit {
 
   @Column({ name: 'phone_number' })
   phoneNumber: string;
+
+  @Column({
+    nullable: false,
+    default: EOrganizationStatus[EOrganizationStatus.PENDING],
+  })
+  status: string;
 
   @ManyToOne(() => Address, (address) => address.company)
   @JoinColumn({ name: 'address_id' })

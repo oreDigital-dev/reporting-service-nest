@@ -4,6 +4,7 @@ import {
   Module,
   NestModule,
   OnModuleInit,
+  forwardRef,
 } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -36,10 +37,12 @@ import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
-import { Employee } from './entities/employee.entity';
 import { MiningCompany } from './entities/mining-company.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
 import { Organization } from './entities/organization.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { MiningCompanyEmployee } from './entities/employee.entity';
 
 @Module({
   imports: [
@@ -59,15 +62,15 @@ import { Organization } from './entities/organization.entity';
           MiningCompany,
           User,
           Role,
-          Employee,
           Notification,
           MineSite,
           Incident,
           Address,
           Mineral,
           Mineral,
-          Organization
-          ],
+          Organization,
+          MiningCompanyEmployee,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -94,7 +97,7 @@ import { Organization } from './entities/organization.entity';
     MineralModule,
     NotificationModule,
     RmbModule,
-    MiningCompanyModule,
+    forwardRef(() => MiningCompanyModule),
   ],
   controllers: [
     HomeController,
@@ -103,7 +106,7 @@ import { Organization } from './entities/organization.entity';
     MinesiteController,
     EmployeeController,
   ],
-  // providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
+  providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })
 export class AppModule implements OnModuleInit, NestModule {
   constructor(

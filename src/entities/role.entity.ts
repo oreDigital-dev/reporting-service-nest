@@ -2,7 +2,7 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './us.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { ERole } from 'src/enums/ERole.enum';
+import { ERole } from '../enums/ERole.enum';
 
 @Entity('roles')
 export class Role extends InitiatorAudit {
@@ -14,5 +14,5 @@ export class Role extends InitiatorAudit {
   })
   roleName: String;
   @ManyToMany(() => User)
-  users: User[];
+  employees: User[];
 }

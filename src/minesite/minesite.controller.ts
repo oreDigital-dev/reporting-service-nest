@@ -14,7 +14,6 @@ import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ApiResponse } from 'src/payload/apiResponse';
-import { async } from 'rxjs';
 import { UUID } from 'crypto';
 import { UpdateMineSiteDTO } from 'src/dtos/update-minesite.dtp';
 import { Roles } from 'src/utils/decorators/roles.decorator';

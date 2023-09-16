@@ -5,8 +5,10 @@ import {
   IsEmail,
   IsStrongPassword,
   IsPhoneNumber,
+  IsObject,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateAddressDTO } from './create-address.dto';
 
 export class CreateUserDto {
   @IsString()
@@ -37,7 +39,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  registercode: string;
+  registrationKey: string;
 
   @IsString()
   @IsNotEmpty()
@@ -47,12 +49,17 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  @IsPhoneNumber()
-  phonenumber: string;
+  @IsStrongPassword()
+  password: string;
 
   @IsString()
   @IsNotEmpty()
+  @IsPhoneNumber()
   @ApiProperty()
-  @IsStrongPassword()
-  password: string;
+  phoneNumber: string;
+
+  @IsObject()
+  @IsNotEmpty()
+  @ApiProperty()
+  address: CreateAddressDTO;
 }

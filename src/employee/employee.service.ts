@@ -11,7 +11,6 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
-import { Employee } from 'src/entities/employee.entity';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
 import { MailingService } from 'src/mailing/mailing.service';
@@ -20,11 +19,15 @@ import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { generate } from 'otp-generator';
+import { MiningCompanyEmployee } from 'src/entities/employee.entity';
+import { User } from 'src/entities/us.entity';
+import { Main } from 'src/entities/main.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectRepository(Employee) public employeeRepo: Repository<Employee>,
+    @InjectRepository(MiningCompanyEmployee)
+    public employeeRepo: Repository<MiningCompanyEmployee>,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
     @Inject(forwardRef(() => CompanyService))
@@ -62,18 +65,16 @@ export class EmployeeService {
       const hashedPassword = await this.utilsService.hashString(dto.password);
       let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
-
-      let emplyee: Employee = new Employee(
+      let emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
         dto.firstName,
         dto.lastName,
         dto.email,
         gender,
         dto.national_id,
-        dto.phonenumber,
+        dto.phoneNumber,
         hashedPassword,
         Number(otp)
       );
-
 
       let createdEmployee = await this.employeeRepo.save(emplyee);
 
@@ -110,7 +111,7 @@ export class EmployeeService {
     }
   }
 
-  async createEmp(employee: Employee) {
+  async createEmp(employee: Main) {
     try {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: employee.email },
@@ -124,8 +125,6 @@ export class EmployeeService {
       const company = await this.companyService.getCompanyByEmail(
         employee.email,
       );
-      employee.company = company;
-      employee.status = EAccountStatus[EAccountStatus.ACTIVE];
       employee.password = await this.utilsService.hashString(employee.password);
       let createdEmployee = await this.employeeRepo.save(employee);
       delete createdEmployee.password;
@@ -162,13 +161,13 @@ export class EmployeeService {
     let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
 
-    const emplyee: Employee = new Employee(
+    const emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.firstName,
       dto.lastName,
       dto.email,
       gender,
       dto.national_id,
-      dto.phonenumber,
+      dto.phoneNumber,
       hashedPassword,
       Number(otp)
     );
@@ -214,7 +213,7 @@ export class EmployeeService {
 
   async getAllEmployees() {
     let employees = this.employeeRepo.find({});
-    let newEmployees: Employee[] = [];
+    let newEmployees: MiningCompanyEmployee[] = [];
     (await employees).forEach((employee) => {
       delete employee.password;
       delete employee.activationCode;

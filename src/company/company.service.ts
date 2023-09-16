@@ -11,20 +11,23 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
-import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
+import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
-import { Employee } from 'src/entities/employee.entity';
+import { MiningCompanyEmployee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
+import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
+import { ERole } from 'src/enums/ERole.enum';
+import { MailingService } from 'src/mailing/mailing.service';
 import { MineralService } from 'src/mineral/mineral.service';
+import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import {generate} from 'otp-generator';
-// import { generator} from 'otp-generator';
 
 @Injectable()
 export class CompanyService {
@@ -37,17 +40,16 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
-    private authService : AuthService,
     private mineralService: MineralService,
+    private roleService: RoleService,
   ) {}
-  
-  async createCompany(dto: CreateCompanyDTO) {
-    
+
+  async createCompany(dto: CreateMiningCompanyDTO) {
     const available = await this.companyRepo.find({
       where: [
         {
-          email: dto.email,
-          phoneNumber: dto.phoneNumber,
+          email: dto.company.email,
+          phoneNumber: dto.company.phoneNumber,
         },
       ],
     });
@@ -58,47 +60,57 @@ export class CompanyService {
       );
     }
 
-    let ownership: any = EOwnershipType[dto.ownership];
+    let ownership: any = EOwnershipType[dto.company.ownership];
     let company: MiningCompany = new MiningCompany(
-      dto.companyName,
-      dto.email,
-      dto.phoneNumber,
-      dto.numberOfEmployees,
+      dto.company.companyName,
+      dto.company.email,
+      dto.company.phoneNumber,
+      dto.company.numberOfEmployees,
       ownership,
-      dto.productionCapacity,
-      dto.licenseNumber
+      dto.company.productionCapacity,
+      dto.company.licenseNumber,
     );
 
-    let address: Address = await this.addressService.createAddress(dto.address);
-    company.address = address;
+    let companyAddress: Address = await this.addressService.createAddress(
+      dto.company.address,
+    );
+    let adminAddress: Address = await this.addressService.createAddress(
+      dto.companyAdmin.address,
+    );
     let minerals: Mineral[] = [];
 
-    for (let min of dto.minerals) {
+    for (let min of dto.company.minerals) {
       let mineral: Mineral = await this.mineralService.getMineralById(min);
       minerals.push(mineral);
     }
     let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  });
 
-    const employee: Employee = new Employee(
-      dto.firstName,
-      dto.lastName,
-      dto.email,
-      EGender[dto.gender],
-      dto.ownerNID,
-      dto.phoneNumber,
-      dto.password,
+    const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
+      dto.companyAdmin.firstName,
+      dto.companyAdmin.lastName,
+      dto.companyAdmin.email,
+      EGender[dto.companyAdmin.myGender],
+      dto.companyAdmin.national_id,
+      dto.companyAdmin.phoneNumber,
+      dto.companyAdmin.password,
       Number(otp)
     );
 
     company.minerals = minerals;
-    
+    company.address = companyAddress;
+    company.employees = [employee];
+    company.status = EOrganizationStatus[EOrganizationStatus.PENDING];
     const createdCompany = await this.companyRepo.save(company);
+    const adminRole = await this.roleService.getRoleByName(
+      ERole[ERole.COMPANY_ADMIN],
+    );
 
-    employee.company =  createdCompany;
+    employee.roles = [adminRole];
+    employee.company = createdCompany;
+    // employee.address = adminAddress;
     employee.role = ECompanyRole.ADMIN;
-
     await this.employeeService.createEmp(employee);
-    
+    // await this.m;
     return createdCompany;
   }
 
@@ -131,7 +143,7 @@ export class CompanyService {
   async getCompanyByEmail(email: string) {
     try {
       return await this.companyRepo.findOne({
-        where: { email: email }
+        where: { email: email },
       });
     } catch (error) {
       throw error;
@@ -147,7 +159,6 @@ export class CompanyService {
       throw new Exception(err);
     }
   }
-  
 
   async getCompanyProfile(req: Request, res: Response) {
     try {
@@ -156,5 +167,13 @@ export class CompanyService {
     } catch (err) {
       throw new Exception(err);
     }
+  }
+
+  async getAllCompaniesByStatus(status: string) {
+    // try {
+    //   switch(status.)
+    // } catch (error) {
+    //   throw error;
+    // }
   }
 }

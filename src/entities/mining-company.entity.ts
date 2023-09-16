@@ -1,19 +1,27 @@
-import { ChildEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 import { MineSite } from './minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { Mineral } from './mineral.entity';
-import { Employee } from './employee.entity';
 import { Address } from './address.entity';
 import { UUID, randomUUID } from 'crypto';
 import { Notification } from './notification.entity';
+import { MiningCompanyEmployee } from './employee.entity';
 
 @Entity('mining_companies')
-export class MiningCompany {
-
-  @PrimaryColumn()
+export class MiningCompany extends Organization {
+  @PrimaryGeneratedColumn()
   id: UUID = randomUUID();
-  
+
   @Column()
   name: string;
   @Column()
@@ -41,6 +49,8 @@ export class MiningCompany {
   @Column({ default: 0 })
   numberOfEmployees: number;
 
+  @OneToMany(() => MiningCompanyEmployee, (employee) => employee.company)
+  employees: MiningCompanyEmployee[];
   @Column()
   miniLicense: number;
 
@@ -51,15 +61,19 @@ export class MiningCompany {
   @JoinTable()
   minerals: Mineral[];
 
-
-  constructor(name: string, email: string, phoneNumber: string, numberOfEmployees: number, ownershipType: EOwnershipType, productionCapacity: number, miniLicense : number ) {
-    this.name = name;
-    this.email = email;
-    this.phoneNumber = phoneNumber
+  constructor(
+    name: string,
+    email: string,
+    phoneNumber: string,
+    numberOfEmployees: number,
+    ownershipType: EOwnershipType,
+    productionCapacity: number,
+    miniLicense: number,
+  ) {
+    super(name, email, phoneNumber);
     this.numberOfEmployees = numberOfEmployees;
     this.ownershipType = ownershipType;
     this.productionCapacity = productionCapacity;
     this.miniLicense = miniLicense;
   }
-
 }
