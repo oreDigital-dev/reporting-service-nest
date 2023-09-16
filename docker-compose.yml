@@ -43,10 +43,10 @@ services:
       NODE_ENV: development
       PORT: 3000
     ports:
-      - "8040:3000"
+      - "8030:3000"
     networks:
-      - oreD-network
+      - ore-network
 
 networks:
-  oreD-network:
+  ore-network:
     driver: bridge

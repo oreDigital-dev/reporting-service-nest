@@ -11,7 +11,6 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
-import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
@@ -23,7 +22,6 @@ import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { ERole } from 'src/enums/ERole.enum';
-import { MailingService } from 'src/mailing/mailing.service';
 import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -40,10 +38,8 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
-    private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
-    private mailingService: MailingService,
   ) {}
 
   async createCompany(dto: CreateMiningCompanyDTO) {
