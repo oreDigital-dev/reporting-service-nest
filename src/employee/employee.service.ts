@@ -17,7 +17,6 @@ import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
-import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/employee.entity';
 import { Main } from 'src/entities/main.entity';
 
@@ -32,7 +31,7 @@ export class EmployeeService {
     private companyService: CompanyService,
     private mailingService: MailingService,
     private roleService: RoleService,
-  ) { }
+  ) {}
 
   async createEmployee(dto: CreateEmployeeDTO) {
     try {
@@ -61,7 +60,12 @@ export class EmployeeService {
       }
 
       const hashedPassword = await this.utilsService.hashString(dto.password);
-      let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+      let otp = generate(6, {
+        digits: true,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false,
+      });
 
       let emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
         dto.firstName,
@@ -71,7 +75,7 @@ export class EmployeeService {
         dto.national_id,
         dto.phoneNumber,
         hashedPassword,
-        Number(otp)
+        Number(otp),
       );
 
       let createdEmployee = await this.employeeRepo.save(emplyee);
@@ -154,8 +158,12 @@ export class EmployeeService {
         throw new BadRequestException('The provided gender is invalid');
     }
     const hashedPassword = await this.utilsService.hashString(dto.password);
-    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
-
+    let otp = generate(6, {
+      digits: true,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
 
     const emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.firstName,
@@ -165,7 +173,7 @@ export class EmployeeService {
       dto.national_id,
       dto.phoneNumber,
       hashedPassword,
-      Number(otp)
+      Number(otp),
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);
@@ -225,4 +233,15 @@ export class EmployeeService {
     let employee = await this.getEmployeeById(id);
     this.employeeRepo.remove(employee);
   }
+}
+function generate(
+  arg0: number,
+  arg1: {
+    digits: boolean;
+    lowerCaseAlphabets: boolean;
+    upperCaseAlphabets: boolean;
+    specialChars: boolean;
+  },
+) {
+  throw new Error('Function not implemented.');
 }

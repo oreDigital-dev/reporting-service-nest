@@ -15,7 +15,6 @@ import { ERole } from 'src/enums/ERole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { generate } from 'otp-generator';
 
 @Injectable()
 export class UsersService {
@@ -45,7 +44,12 @@ export class UsersService {
         'The user with that email or phoneNumber already exist',
       );
     }
-    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  });
+    let otp = generate(6, {
+      digits: true,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
 
     let systemAdmin = new User(
       dto.firstName,
@@ -55,7 +59,7 @@ export class UsersService {
       dto.national_id,
       dto.phoneNumber,
       dto.password,
-      Number(otp)
+      Number(otp),
     );
     const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.SYSTEM_ADMIN],
@@ -115,4 +119,15 @@ export class UsersService {
     const max = 9999;
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
+}
+function generate(
+  arg0: number,
+  arg1: {
+    digits: boolean;
+    lowerCaseAlphabets: boolean;
+    upperCaseAlphabets: boolean;
+    specialChars: boolean;
+  },
+) {
+  throw new Error('Function not implemented.');
 }

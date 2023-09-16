@@ -26,7 +26,6 @@ import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import {generate} from 'otp-generator';
 
 @Injectable()
 export class CompanyService {
@@ -73,14 +72,14 @@ export class CompanyService {
       dto.company.address,
     );
     let minerals: Mineral[] = [];
-    
+
     for (let min of dto.company.minerals) {
       let mineral: Mineral = await this.mineralService.getMineralById(min);
       minerals.push(mineral);
     }
     company.minerals = minerals;
     company.address = companyAddress;
-    
+
     const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.companyAdmin.firstName,
       dto.companyAdmin.lastName,
@@ -89,13 +88,20 @@ export class CompanyService {
       dto.companyAdmin.national_id,
       dto.companyAdmin.phoneNumber,
       dto.companyAdmin.password,
-      Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  }))
-      );
-      
-      let adminAddress: Address = await this.addressService.createAddress(
-        dto.companyAdmin.address,
-      );
-      company.employees = [employee];
+      Number(
+        generate(6, {
+          digits: true,
+          lowerCaseAlphabets: false,
+          upperCaseAlphabets: false,
+          specialChars: false,
+        }),
+      ),
+    );
+
+    let adminAddress: Address = await this.addressService.createAddress(
+      dto.companyAdmin.address,
+    );
+    company.employees = [employee];
     const createdCompany = await this.companyRepo.save(company);
     const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.COMPANY_ADMIN],
@@ -170,4 +176,15 @@ export class CompanyService {
     //   throw error;
     // }
   }
+}
+function generate(
+  arg0: number,
+  arg1: {
+    digits: boolean;
+    lowerCaseAlphabets: boolean;
+    upperCaseAlphabets: boolean;
+    specialChars: boolean;
+  },
+): any {
+  throw new Error('Function not implemented.');
 }
