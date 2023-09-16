@@ -16,7 +16,7 @@ import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
 import { MiningCompanyEmployee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
-import { MiningCompany } from 'src/entities/mining-company.entity';
+import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
@@ -60,13 +60,12 @@ export class CompanyService {
       );
     }
 
-    let ownership: any = EOwnershipType[dto.company.ownership];
     let company: MiningCompany = new MiningCompany(
       dto.company.companyName,
       dto.company.email,
       dto.company.phoneNumber,
       dto.company.numberOfEmployees,
-      ownership,
+      EOwnershipType[dto.company.ownership],
       dto.company.productionCapacity,
       dto.company.licenseNumber,
     );
@@ -74,17 +73,15 @@ export class CompanyService {
     let companyAddress: Address = await this.addressService.createAddress(
       dto.company.address,
     );
-    let adminAddress: Address = await this.addressService.createAddress(
-      dto.companyAdmin.address,
-    );
     let minerals: Mineral[] = [];
-
+    
     for (let min of dto.company.minerals) {
       let mineral: Mineral = await this.mineralService.getMineralById(min);
       minerals.push(mineral);
     }
-    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  });
-
+    company.minerals = minerals;
+    company.address = companyAddress;
+    
     const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.companyAdmin.firstName,
       dto.companyAdmin.lastName,
@@ -93,13 +90,13 @@ export class CompanyService {
       dto.companyAdmin.national_id,
       dto.companyAdmin.phoneNumber,
       dto.companyAdmin.password,
-      Number(otp)
-    );
-
-    company.minerals = minerals;
-    company.address = companyAddress;
-    company.employees = [employee];
-    company.status = EOrganizationStatus[EOrganizationStatus.PENDING];
+      Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  }))
+      );
+      
+      let adminAddress: Address = await this.addressService.createAddress(
+        dto.companyAdmin.address,
+      );
+      company.employees = [employee];
     const createdCompany = await this.companyRepo.save(company);
     const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.COMPANY_ADMIN],
@@ -107,10 +104,8 @@ export class CompanyService {
 
     employee.roles = [adminRole];
     employee.company = createdCompany;
-    // employee.address = adminAddress;
     employee.role = ECompanyRole.ADMIN;
     await this.employeeService.createEmp(employee);
-    // await this.m;
     return createdCompany;
   }
 

@@ -39,9 +39,9 @@ export class MiningCompany extends Organization {
 
   @Column({
     name: 'owner_ship_type',
-    default: EOwnershipType.PUBLIC,
+    default: EOwnershipType[EOwnershipType.PUBLIC],
   })
-  ownershipType: EOwnershipType;
+  ownershipType: string;
 
   @Column({ nullable: true })
   productionCapacity: number;
@@ -51,6 +51,7 @@ export class MiningCompany extends Organization {
 
   @OneToMany(() => MiningCompanyEmployee, (employee) => employee.company)
   employees: MiningCompanyEmployee[];
+  
   @Column()
   miniLicense: number;
 
@@ -72,7 +73,7 @@ export class MiningCompany extends Organization {
   ) {
     super(name, email, phoneNumber);
     this.numberOfEmployees = numberOfEmployees;
-    this.ownershipType = ownershipType;
+    this.ownershipType = EOwnershipType[ownershipType];
     this.productionCapacity = productionCapacity;
     this.miniLicense = miniLicense;
   }

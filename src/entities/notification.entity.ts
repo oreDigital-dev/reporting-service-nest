@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './us.entity';
 import { UUID } from 'crypto';
-import { MiningCompany } from './mining-company.entity';
+import { MiningCompany } from './miningCompany.entity';
 import { MiningCompanyEmployee } from './employee.entity';
 @Entity('notifications')
 export class Notification {

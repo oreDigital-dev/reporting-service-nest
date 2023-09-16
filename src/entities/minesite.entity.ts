@@ -13,7 +13,7 @@ import { Address } from './address.entity';
 import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
-import { MiningCompany } from './mining-company.entity';
+import { MiningCompany } from './miningCompany.entity';
 
 @Entity('incidents')
 export class MineSite extends InitiatorAudit {

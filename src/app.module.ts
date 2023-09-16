@@ -37,7 +37,7 @@ import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
-import { MiningCompany } from './entities/mining-company.entity';
+import { MiningCompany } from './entities/miningCompany.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
 import { Organization } from './entities/organization.entity';
 import { APP_GUARD } from '@nestjs/core';

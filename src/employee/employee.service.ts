@@ -17,10 +17,8 @@ import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/employee.entity';
-import { User } from 'src/entities/us.entity';
 import { Main } from 'src/entities/main.entity';
 
 @Injectable()
@@ -122,9 +120,7 @@ export class EmployeeService {
           'The employee with the provided email is already registered',
         );
       }
-      const company = await this.companyService.getCompanyByEmail(
-        employee.email,
-      );
+
       employee.password = await this.utilsService.hashString(employee.password);
       let createdEmployee = await this.employeeRepo.save(employee);
       delete createdEmployee.password;

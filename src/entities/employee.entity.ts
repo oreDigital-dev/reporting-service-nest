@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { EGender } from 'src/enums/EGender.enum';
-import { MiningCompany } from './mining-company.entity';
+import { MiningCompany } from './miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { User } from './us.entity';
 import { Notification } from './notification.entity';

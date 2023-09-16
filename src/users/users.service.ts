@@ -12,7 +12,6 @@ import { UUID } from 'crypto';
 import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -56,7 +55,6 @@ export class UsersService {
       dto.national_id,
       dto.phoneNumber,
       dto.password,
-      EAccountStatus.WAITING_EMAIL_VERIFICATION,
       Number(otp)
     );
     const adminRole = await this.roleService.getRoleByName(

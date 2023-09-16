@@ -8,7 +8,7 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { MineralModule } from 'src/mineral/mineral.module';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { EmployeeModule } from 'src/employee/employee.module';
-import { MiningCompany } from 'src/entities/mining-company.entity';
+import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { RolesModule } from 'src/roles/roles.module';
 
 @Global()
