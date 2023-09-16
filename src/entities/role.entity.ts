@@ -14,5 +14,5 @@ export class Role extends InitiatorAudit {
   })
   roleName: String;
   @ManyToMany(() => User)
-  users: User[];
+  employees: User[];
 }

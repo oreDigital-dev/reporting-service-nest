@@ -10,6 +10,7 @@ import {
 import { User } from './us.entity';
 import { UUID } from 'crypto';
 import { MiningCompany } from './mining-company.entity';
+import { MiningCompanyEmployee } from './employee.entity';
 @Entity('notifications')
 export class Notification {
   @PrimaryGeneratedColumn()
@@ -24,9 +25,9 @@ export class Notification {
   @Column()
   message: string;
 
-  @ManyToOne(() => User, (user) => user.notifications)
+  @ManyToOne(() => MiningCompanyEmployee, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  companyEmployee0: MiningCompanyEmployee;
 
   @JoinColumn({ name: 'company_id' })
   @ManyToOne(() => MiningCompany, (company) => company.notifications)

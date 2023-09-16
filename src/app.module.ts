@@ -37,13 +37,12 @@ import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
-import { Employee } from './entities/employee.entity';
 import { MiningCompany } from './entities/mining-company.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
 import { Organization } from './entities/organization.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
-import { MiningCompanyEmployee } from './entities/mining_company-employee';
+import { MiningCompanyEmployee } from './entities/employee.entity';
 
 @Module({
   imports: [
@@ -63,7 +62,6 @@ import { MiningCompanyEmployee } from './entities/mining_company-employee';
           MiningCompany,
           User,
           Role,
-          Employee,
           Notification,
           MineSite,
           Incident,

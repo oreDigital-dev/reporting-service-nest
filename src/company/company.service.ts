@@ -11,11 +11,10 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
-import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Address } from 'src/entities/address.entity';
-import { Employee } from 'src/entities/employee.entity';
+import { MiningCompanyEmployee } from 'src/entities/employee.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
@@ -40,10 +39,8 @@ export class CompanyService {
     private companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
-    private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
-    private mailingService: MailingService,
   ) {}
 
   async createCompany(dto: CreateMiningCompanyDTO) {
@@ -86,7 +83,7 @@ export class CompanyService {
       minerals.push(mineral);
     }
 
-    const employee: Employee = new Employee(
+    const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.companyAdmin.firstName,
       dto.companyAdmin.lastName,
       dto.companyAdmin.email,
@@ -107,7 +104,7 @@ export class CompanyService {
 
     employee.roles = [adminRole];
     employee.company = createdCompany;
-    employee.address = adminAddress;
+    // employee.address = adminAddress;
     employee.role = ECompanyRole.ADMIN;
     await this.employeeService.createEmp(employee);
     // await this.m;
