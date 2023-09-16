@@ -22,7 +22,6 @@ import { EGender } from 'src/enums/EGender.enum';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { ERole } from 'src/enums/ERole.enum';
-import { MailingService } from 'src/mailing/mailing.service';
 import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
