@@ -62,7 +62,7 @@ export class User extends InitiatorAudit {
 
   @ManyToMany(() => Role)
   @JoinTable()
-  roles: Role[];
+  roles: Role[] = [];
 
   @Column({
     enum : EUserStatus,

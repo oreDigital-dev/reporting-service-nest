@@ -14,8 +14,8 @@ export class MiningCompanyEmployee extends User {
   @ManyToOne(() => MiningCompany)
   company: MiningCompany;
 
-  @Column({ default: ECompanyRole.EMPLOYEE })
-  role: ECompanyRole;
+  @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })
+  role: string;
 
   @ManyToOne(() => Address, (address) => address.companyEmployees)
   @JoinColumn({ name: 'address_id' })
@@ -35,7 +35,8 @@ export class MiningCompanyEmployee extends User {
     national_id: string,
     phonenumber: string,
     password: string,
-    activationNumber: number
+    activationNumber: number, 
+    role: ECompanyRole
   ) {
     super(
       firstName,
@@ -46,7 +47,7 @@ export class MiningCompanyEmployee extends User {
       phonenumber,
       password,
       activationNumber,
-      
     );
+      this.role = ECompanyRole[role];
   }
 }

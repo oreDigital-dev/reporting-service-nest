@@ -20,6 +20,7 @@ import { ERole } from 'src/enums/ERole.enum';
 import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/employee.entity';
 import { Main } from 'src/entities/main.entity';
+import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -71,7 +72,8 @@ export class EmployeeService {
         dto.national_id,
         dto.phoneNumber,
         hashedPassword,
-        Number(otp)
+        Number(otp),
+        ECompanyRole[dto.employeeRole]
       );
 
       let createdEmployee = await this.employeeRepo.save(emplyee);
@@ -109,7 +111,7 @@ export class EmployeeService {
     }
   }
 
-  async createEmp(employee: Main) {
+  async createEmp(employee: MiningCompanyEmployee) {
     try {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: employee.email },
@@ -165,7 +167,8 @@ export class EmployeeService {
       dto.national_id,
       dto.phoneNumber,
       hashedPassword,
-      Number(otp)
+      Number(otp),
+      ECompanyRole[dto.employeeRole]
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);

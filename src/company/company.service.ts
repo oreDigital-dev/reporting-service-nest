@@ -27,7 +27,7 @@ import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import {generate} from 'otp-generator';
+import { generate } from 'otp-generator';
 
 @Injectable()
 export class CompanyService {
@@ -42,7 +42,7 @@ export class CompanyService {
     @Inject(forwardRef(() => AuthService))
     private mineralService: MineralService,
     private roleService: RoleService,
-  ) {}
+  ) { }
 
   async createCompany(dto: CreateMiningCompanyDTO) {
     const available = await this.companyRepo.find({
@@ -74,14 +74,14 @@ export class CompanyService {
       dto.company.address,
     );
     let minerals: Mineral[] = [];
-    
+
     for (let min of dto.company.minerals) {
       let mineral: Mineral = await this.mineralService.getMineralById(min);
       minerals.push(mineral);
     }
     company.minerals = minerals;
     company.address = companyAddress;
-    
+
     const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.companyAdmin.firstName,
       dto.companyAdmin.lastName,
@@ -90,22 +90,24 @@ export class CompanyService {
       dto.companyAdmin.national_id,
       dto.companyAdmin.phoneNumber,
       dto.companyAdmin.password,
-      Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  }))
-      );
-      
-      let adminAddress: Address = await this.addressService.createAddress(
-        dto.companyAdmin.address,
-      );
-      company.employees = [employee];
-    const createdCompany = await this.companyRepo.save(company);
-    const adminRole = await this.roleService.getRoleByName(
-      ERole[ERole.COMPANY_ADMIN],
+      Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })),
+      ECompanyRole.ADMIN
     );
 
-    employee.roles = [adminRole];
+    let adminAddress: Address = await this.addressService.createAddress(
+      dto.companyAdmin.address,
+    );
+    company.employees = [employee];
+    const role = await this.roleService.getRoleByName(
+      ERole[ERole.COMPANY_ADMIN],
+    );
+    employee.roles.push(role);
+    employee.address = adminAddress;
+
+    const createdCompany = await this.companyRepo.save(company);
     employee.company = createdCompany;
-    employee.role = ECompanyRole.ADMIN;
     await this.employeeService.createEmp(employee);
+
     return createdCompany;
   }
 
