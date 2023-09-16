@@ -31,6 +31,7 @@ export class Employee extends User {
     national_id: string,
     phonenumber: string,
     password: string,
+    activationNumber: number
   ) {
     super(
       firstName,
@@ -41,6 +42,7 @@ export class Employee extends User {
       phonenumber,
       password,
       EAccountStatus.WAITING_EMAIL_VERIFICATION,
+      activationNumber
     );
     this.password = password;
   }

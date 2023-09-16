@@ -19,6 +19,7 @@ import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { generate } from 'otp-generator';
 
 @Injectable()
 export class EmployeeService {
@@ -30,7 +31,7 @@ export class EmployeeService {
     private companyService: CompanyService,
     private mailingService: MailingService,
     private roleService: RoleService,
-  ) {}
+  ) { }
 
   async createEmployee(dto: CreateEmployeeDTO) {
     try {
@@ -56,9 +57,10 @@ export class EmployeeService {
           break;
         default:
           throw new BadRequestException('The provided gender is invalid');
-        }
+      }
 
-    const hashedPassword = await this.utilsService.hashString(dto.password);
+      const hashedPassword = await this.utilsService.hashString(dto.password);
+      let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
 
       let emplyee: Employee = new Employee(
@@ -68,7 +70,8 @@ export class EmployeeService {
         gender,
         dto.national_id,
         dto.phonenumber,
-        hashedPassword
+        hashedPassword,
+        Number(otp)
       );
 
 
@@ -127,10 +130,6 @@ export class EmployeeService {
       let createdEmployee = await this.employeeRepo.save(employee);
       delete createdEmployee.password;
       delete createdEmployee.activationCode;
-      delete createdEmployee.password;
-      delete createdEmployee.firstName;
-      delete createdEmployee.lastName;
-      delete createdEmployee.activationCode;
       this.mailingService.sendEmailToUser(
         employee.email,
         'employee-account-verification',
@@ -160,6 +159,8 @@ export class EmployeeService {
         throw new BadRequestException('The provided gender is invalid');
     }
     const hashedPassword = await this.utilsService.hashString(dto.password);
+    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+
 
     const emplyee: Employee = new Employee(
       dto.firstName,
@@ -168,7 +169,8 @@ export class EmployeeService {
       gender,
       dto.national_id,
       dto.phonenumber,
-      hashedPassword
+      hashedPassword,
+      Number(otp)
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);

@@ -23,6 +23,8 @@ import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { MineralService } from 'src/mineral/mineral.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
+import {generate} from 'otp-generator';
+// import { generator} from 'otp-generator';
 
 @Injectable()
 export class CompanyService {
@@ -75,6 +77,7 @@ export class CompanyService {
       let mineral: Mineral = await this.mineralService.getMineralById(min);
       minerals.push(mineral);
     }
+    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  });
 
     const employee: Employee = new Employee(
       dto.firstName,
@@ -84,6 +87,7 @@ export class CompanyService {
       dto.ownerNID,
       dto.phoneNumber,
       dto.password,
+      Number(otp)
     );
 
     company.minerals = minerals;

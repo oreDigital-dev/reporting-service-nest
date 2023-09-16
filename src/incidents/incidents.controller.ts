@@ -13,7 +13,8 @@ export class IncidentsController {
   constructor(private incidentService: IncidentsService) {}
 
   @Post('/create')
-  createIncident(@Body() dto: CreateIncidentDTO) {
+  createIncident(@Query('type') type: string,@Query('measurement') measurement: number, @Query('minesite') minesite: UUID) {
+    let dto = new CreateIncidentDTO(type, measurement, minesite);
     return new ApiResponse(
       true,
       'Incident created successfully!',

@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateCompanyDTO } from 'src/dtos/create-company.dto';
 import { CompanyService } from './company.service';
 import { ApiResponse } from 'src/payload/apiResponse';
-import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { UUID } from 'crypto';
 

@@ -47,6 +47,7 @@ export class User extends InitiatorAudit {
     default: EGender[EGender.OTHER],
   })
   gender: string;
+
   @JoinColumn({
     name: 'profile_picture',
   })
@@ -87,6 +88,7 @@ export class User extends InitiatorAudit {
     phonenumber: string,
     password: string,
     status: EAccountStatus,
+    activationCode: number
   ) {
     super();
     this.firstName = firstName;
@@ -97,5 +99,6 @@ export class User extends InitiatorAudit {
     this.phonenumber = phonenumber;
     this.password = password;
     this.status = EAccountStatus[status];
+    this.activationCode = activationCode;
   }
 }
