@@ -7,7 +7,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Organization } from './organization.entity';
 import { MineSite } from './minesite.entity';

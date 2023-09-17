@@ -16,6 +16,7 @@ import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { generate } from 'otp-generator';
+import { EmployeeService } from 'src/employee/employee.service';
 
 @Injectable()
 export class UsersService {
@@ -23,9 +24,9 @@ export class UsersService {
     @InjectRepository(User) public userRepo: Repository<User>,
     private roleService: RoleService,
     private mailService: MailingService,
-
     private utilsService: UtilsService,
-  ) {}
+    private employeeService: EmployeeService
+  ) { }
 
   async createSytemAdmin(dto: CreateUserDto) {
     if (dto.registrationKey != 'admin@oreDigital')
@@ -45,7 +46,7 @@ export class UsersService {
         'The user with that email or phoneNumber already exist',
       );
     }
-    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false  });
+    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
     let systemAdmin = new User(
       dto.firstName,
@@ -84,12 +85,16 @@ export class UsersService {
   }
 
   async getUserByEmail(email: any) {
-    const user = await this.userRepo.findOne({
+    let user = null
+    user = await this.userRepo.findOne({
       where: {
         email: email,
       },
       relations: ['roles'],
     });
+    if (user == null) {
+      user = await this.employeeService.getEmployeeByEmail(email)
+    }
     if (!user)
       throw new NotFoundException(
         'The user with the provided email is not found',

@@ -3,6 +3,8 @@ import {
   Injectable,
   forwardRef,
   Inject,
+  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { Request, Response } from 'express';
@@ -37,14 +39,13 @@ export class AuthService {
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
 
-    if (
-      user.status ==
-        EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION] ||
-      user.status == EUserStatus[EUserStatus.PENDING]
-    )
+    if (user.status == EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION])
       throw new BadRequestException(
-        'This account is not yet verified, please check your gmail inbox for verification details',
+        'This account is not yet verified, please check your gmail for verification details',
       );
+    if(user.status == EUserStatus[EUserStatus.PENDING]){
+      throw new ForbiddenException("Your account has not yet been proven, please wait for approval!")
+    }
     const tokens = this.utilsService.getTokens(user);
     delete user.password;
     return {
@@ -55,16 +56,17 @@ export class AuthService {
   }
 
   async verifyAccount(email: string) {
-    const verifiedAccount = await this.userService.getUserByEmail(email);
-    if (verifiedAccount.status === EUserStatus[EUserStatus.ACTIVE])
-      throw new BadRequestException('This is already verified');
+    let verifiedAccount = null;
+    verifiedAccount =  await this.userService.getUserByEmail(email);
+    if (verifiedAccount.status === EUserStatus[EUserStatus.ACTIVE] || verifiedAccount.status === EUserStatus[EUserStatus.PENDING])
+      throw new BadRequestException('This email is already verified');
     verifiedAccount.status = EUserStatus[EUserStatus.PENDING];
     verifiedAccount.roles.forEach((role) => {
       if (role.roleName == ERole[ERole.SYSTEM_ADMIN]) {
         verifiedAccount.status = EUserStatus[EUserStatus.ACTIVE];
       }
     });
-    const verifiedAccount2 = await this.userService.userRepo.save(
+    let  verifiedAccount2 = await this.userService.userRepo.save(
       verifiedAccount,
     );
     const tokens = await this.utilsService.getTokens(verifiedAccount2);

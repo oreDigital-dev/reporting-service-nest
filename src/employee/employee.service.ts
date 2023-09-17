@@ -19,7 +19,6 @@ import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/employee.entity';
-import { Main } from 'src/entities/main.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 
 @Injectable()
@@ -27,10 +26,13 @@ export class EmployeeService {
   constructor(
     @InjectRepository(MiningCompanyEmployee)
     public employeeRepo: Repository<MiningCompanyEmployee>,
+    
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
+
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
+
     private mailingService: MailingService,
     private roleService: RoleService,
   ) { }

@@ -17,7 +17,7 @@ import { EUserStatus } from 'src/enums/EUserStatus.enum';
 
 @Entity('users')
 export class User extends InitiatorAudit {
-  
+
   @PrimaryColumn()
   id: UUID= randomUUID();
 
@@ -68,7 +68,7 @@ export class User extends InitiatorAudit {
 
   @Column({
     enum : EUserStatus,
-    default: EUserStatus[EUserStatus.PENDING],
+    default: EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION],
   })
   status: string;
 

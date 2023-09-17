@@ -6,6 +6,7 @@ import { User } from 'src/entities/us.entity';
 import { RolesModule } from 'src/roles/roles.module';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { UtilsModule } from 'src/utils/utils.module';
+import { EmployeeModule } from 'src/employee/employee.module';
 
 @Global()
 @Module({
@@ -13,6 +14,7 @@ import { UtilsModule } from 'src/utils/utils.module';
     TypeOrmModule.forFeature([User]),
     RolesModule,
     MailingModule,
+    EmployeeModule,
     UtilsModule,
   ],
   providers: [UsersService],

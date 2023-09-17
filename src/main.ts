@@ -12,7 +12,14 @@ async function bootstrap() {
     .setDescription('Reduce the risk and improve productivity')
     .setVersion('1.0')
     .addTag('oreDigital')
-    .addBearerAuth()
+    .addBearerAuth({
+      description: `[just text field] Please enter token in following format: Bearer <JWT>`,
+      name: 'Authorization',
+      bearerFormat: 'Bearer', 
+      scheme: 'Bearer',
+      type: 'http', 
+      in: 'Header'
+    }, 'Authorization')
     .build();
 
   app.use(
