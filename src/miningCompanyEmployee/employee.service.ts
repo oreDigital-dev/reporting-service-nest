@@ -36,7 +36,7 @@ export class EmployeeService {
 
     private mailingService: MailingService,
     private roleService: RoleService,
-    private addressService : AddressService
+    private addressService: AddressService,
   ) {}
 
   async createEmployee(dto: CreateEmployeeDTO) {
@@ -44,7 +44,7 @@ export class EmployeeService {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: dto.email },
       });
-      console.log(availableEmployee)
+      console.log(availableEmployee);
 
       if (availableEmployee) {
         throw new BadRequestException(
@@ -83,7 +83,7 @@ export class EmployeeService {
         dto.phoneNumber,
         hashedPassword,
         Number(otp),
-        ECompanyRole[dto.employeeRole]
+        ECompanyRole[dto.employeeRole],
       );
 
       let company = await this.companyService.getCompanyById(dto.company);
@@ -93,8 +93,8 @@ export class EmployeeService {
         dto.address,
       );
 
-      emplyee.address = address
-      
+      emplyee.address = address;
+
       let createdEmployee = await this.employeeRepo.save(emplyee);
 
       delete createdEmployee.password;
@@ -116,7 +116,6 @@ export class EmployeeService {
         savedEmployee,
       );
 
-
       savedEmployee = await this.employeeRepo.save(employee);
       return {
         access_token: tokens.accessToken,
@@ -131,8 +130,6 @@ export class EmployeeService {
       throw error;
     }
   }
-
-  
 
   async createEmp(employee: MiningCompanyEmployee) {
     try {
@@ -149,12 +146,11 @@ export class EmployeeService {
       employee.password = await this.utilsService.hashString(employee.password);
       let createdEmployee = await this.employeeRepo.save(employee);
       delete createdEmployee.password;
-      delete createdEmployee.activationCode;
-      this.mailingService.sendEmailToUser(
-        employee.email,
-        'employee-account-verification',
-        'OreDigital account verification',
-      );
+      // this.mailingService.sendEmailToUser(
+      //   employee.email,
+      //   'employee-account-verification',
+      //   'OreDigital account verification',
+      // );
       return createdEmployee;
     } catch (error) {
       console.error('Error creating employee: ', error);
@@ -195,7 +191,7 @@ export class EmployeeService {
       dto.phoneNumber,
       hashedPassword,
       Number(otp),
-      ECompanyRole[dto.employeeRole]
+      ECompanyRole[dto.employeeRole],
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);
@@ -256,4 +252,3 @@ export class EmployeeService {
     this.employeeRepo.remove(employee);
   }
 }
-

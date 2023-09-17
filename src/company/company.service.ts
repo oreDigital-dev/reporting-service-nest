@@ -28,6 +28,7 @@ import { Role } from 'src/entities/role.entity';
 import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
+import { MailingService } from 'src/mailing/mailing.service';
 
 @Injectable()
 export class CompanyService {
@@ -43,6 +44,7 @@ export class CompanyService {
     private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
+    private mailingService: MailingService,
   ) {}
 
   async createCompany(dto: CreateMiningCompanyDTO) {
@@ -55,11 +57,11 @@ export class CompanyService {
       ],
     });
 
-    if (available.length != 0) {
-      throw new BadRequestException(
-        "The company's phone number or email is already registered!",
-      );
-    }
+    // if (available.length != 0) {
+    //   throw new BadRequestException(
+    //     "The company's phone number or email is already registered!",
+    //   );
+    // }
 
     let company: MiningCompany = new MiningCompany(
       dto.company.companyName,
@@ -105,7 +107,7 @@ export class CompanyService {
     let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
-    company.employees = [employee];
+    // company.employees = [employee];
     const role = [];
     role.push(await this.roleService.getRoleByName(ERole[ERole.COMPANY_ADMIN]));
 
@@ -114,8 +116,13 @@ export class CompanyService {
 
     const createdCompany = await this.companyRepo.save(company);
     employee.company = createdCompany;
-    await this.employeeService.createEmp(employee);
-
+    employee.activationCode =
+      await this.utilsService.generateRandomFourDigitNumber();
+    const createdEm = await this.employeeService.createEmp(employee);
+    await this.mailingService.sendPhoneSMSTOUser(
+      employee.phonenumber,
+      `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
+    );
     return createdCompany;
   }
 
@@ -187,10 +194,18 @@ export class CompanyService {
       case 'APPROVE':
         availableCompany.status =
           EOrganizationStatus[EOrganizationStatus.APPROVED];
+        await this.mailingService.sendPhoneSMSTOUser(
+          availableCompany.email,
+          `Hello ${availableCompany.name} we are proudly appy to let you know that your request to register as company was approved by RMB.!! happy reducing the risk and improve productivity`,
+        );
         break;
       case 'REJECT':
         availableCompany.status =
           EOrganizationStatus[EOrganizationStatus.REJECTED];
+        await this.mailingService.sendPhoneSMSTOUser(
+          availableCompany.email,
+          `Hello ${availableCompany.name} we are kindly regretting  to let you know that your request to register as company was rejected by RMB due to different parameter .!! happy reducing the risk and improve productivity`,
+        );
         break;
       default:
         throw new BadRequestException(
