@@ -30,13 +30,15 @@ export class RoleService {
     });
   }
 
-  async assignRoleToEmployee(roleName: any, user: MainUser) {
+   async assignRoleToEmployee(roleName: any, user: MainUser) {
     const role: Role = await this.roleRepo.findOne({
       where: {
         roleName: roleName,
       },
     });
-    user.roles.push(role);
+    let roles = [];
+    roles.push(role);
+    user.roles = roles;
     return user;
   }
 

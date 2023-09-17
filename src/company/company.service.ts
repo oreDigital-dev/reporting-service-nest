@@ -223,4 +223,15 @@ export class CompanyService {
     }
     return companies;
   }
+
+  async addEmployee(emp: MiningCompanyEmployee, id: UUID){
+    let company = await this.companyRepo.findOneBy({
+      id: id 
+    })
+    let employees = company.employees;
+    employees.push(emp)
+    emp.company = company;
+    this.employeeService.employeeRepo.save(emp);
+    return this.companyRepo.save(company);
+  }
 }

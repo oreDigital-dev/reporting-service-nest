@@ -25,7 +25,7 @@ export class UserMiddleWare implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     let context: ExecutionContext;
     const request = req;
-    console.log(request.header.toString());
+    console.log(request.headers);
     const authorization = req.headers.authorization;
     console.log("Authorization", authorization)
     if (
@@ -40,8 +40,7 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/users/create/system-admin' ||
       req.baseUrl == '/incidents/create' ||
       req.baseUrl == '/incidents/create-combined' ||
-      req.baseUrl == '/employees/create' ||
-      req.baseUrl == '/employees/all' 
+      req.baseUrl == '/employees/create'
     ) {
       next();
     } else {

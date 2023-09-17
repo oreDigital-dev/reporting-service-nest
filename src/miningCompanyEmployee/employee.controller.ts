@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { UUID } from 'crypto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { MailingService } from 'src/mailing/mailing.service';
+import { Role } from 'src/entities/role.entity';
 
 @Controller('employees')
 @ApiTags('company-employees')
@@ -24,7 +26,7 @@ export class EmployeeController {
   constructor(
     private empService: EmployeeService,
     private mailService: MailingService,
-  ) {}
+  ) { }
 
   @Post('/create')
   async createEmployee(@Body() dto: CreateEmployeeDTO) {
@@ -106,6 +108,18 @@ export class EmployeeController {
     } catch (error) {
       console.error(error);
       throw error;
+    }
+
+  }
+
+  @Post('/approve-or-reject/:id/:action')
+  @Roles('COMPANY_ADMIN')
+  async approveOrReject(@Query('id') id: UUID, @Query('action') action: string) {
+    try {
+      return new ApiResponse(true, 'Updating account successfull', this.empService.approveAndRejectEmp(id, action))
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
   }
 
