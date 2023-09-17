@@ -4,12 +4,14 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthService } from './auth.service';
 import { UtilsModule } from 'src/utils/utils.module';
 import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
+import { RmbModule } from 'src/rmb/rmb.module';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     forwardRef(() => UtilsModule),
     EmployeeModule,
+    forwardRef(() => RmbModule),
   ],
   controllers: [AuthController],
   providers: [AuthService],

@@ -17,14 +17,6 @@ import { MainUser } from './MainUser.entity';
 
 @Entity('mining_company_employees')
 export class MiningCompanyEmployee extends MainUser {
-  @Column({ default: 0 })
-  salary: number;
-  @Column({
-    enum: EEmployeStatus,
-    default: EEmployeStatus.ACTIVE,
-  })
-  employeeStatus: EEmployeStatus;
-
   @ManyToOne(() => MiningCompany)
   company: MiningCompany;
 

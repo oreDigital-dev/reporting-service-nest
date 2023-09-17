@@ -90,6 +90,12 @@ export class UtilsService {
     }
   }
 
+  generateRandomFourDigitNumber(): number {
+    const min = 1000;
+    const max = 9999;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   idValidator(id: String): boolean {
     const regex = /^[0-9a-fA-F]{24}$/;
     return regex.test(id.toString());

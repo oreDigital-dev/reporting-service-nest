@@ -13,6 +13,8 @@ import { ERole } from 'src/enums/ERole.enum';
 import { EUserType } from 'src/enums/EUserType.enum';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
+import { EAccountType } from 'src/enums/EAccountType.enum';
+import { RmbService } from 'src/rmb/rmb.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,6 +23,8 @@ export class AuthService {
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => RmbService))
+    private rmbService: RmbService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -30,11 +34,28 @@ export class AuthService {
 
   async login(dto: LoginDTO) {
     let user: any;
-    console.log(dto);
-    if (dto.userType.toUpperCase() == EUserType[EUserType.MINING_EMPLOYEE]) {
-      user = await this.employeeService.employeeRepo.findOne({
-        where: { email: dto.email },
-      });
+    let type: string;
+    switch (dto.userType.toUpperCase()) {
+      case EAccountType[EAccountType.COMPANY]:
+        user = await this.employeeService.employeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        type = 'company';
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        user = await this.employeeService.employeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        type = 'rescue_team';
+        break;
+      case EAccountType[EAccountType.RMB]:
+        user = await this.rmbService.rmbRepo.findOne({
+          where: { email: dto.email },
+        });
+        type = 'rmb';
+        break;
+      default:
+        throw new BadRequestException('The provided account type is invalid');
     }
     const passwordMatch = await compare(dto.password, user.password);
     if (!passwordMatch)
@@ -48,7 +69,7 @@ export class AuthService {
       throw new BadRequestException(
         'This account is not yet verified, please check your gmail inbox for verification details',
       );
-    const tokens = this.utilsService.getTokens(user, 'company');
+    const tokens = this.utilsService.getTokens(user, type);
     delete user.password;
     return {
       access_token: (await tokens).accessToken,

@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/us.entity';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -22,6 +23,7 @@ export class RolesGuard implements CanActivate {
     @Inject(ConfigService) private configService: ConfigService,
     @Inject(UsersService) private userService: UsersService,
     @Inject(EmployeeService) private employeeService: EmployeeService,
+    @Inject(RmbService) private rmbService: RmbService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<String[]>('roles', [
@@ -49,7 +51,10 @@ export class RolesGuard implements CanActivate {
           user = await this.employeeService.getEmployeeById(details.id);
           break;
         case 'RMB':
-          user = await this.employeeService.getEmployeeById(details.id);
+          user = await this.rmbService.rmbRepo.findOne({
+            where: { id: details.id },
+            relations: ['roles'],
+          });
           break;
         case 'RESCUE_TEAM':
           user = await this.employeeService.getEmployeeById(details.id);

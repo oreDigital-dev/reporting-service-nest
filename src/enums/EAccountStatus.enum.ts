@@ -4,4 +4,5 @@ export enum EAccountStatus {
   PENDING,
   GRANTED,
   REJECTED,
+  APPROVED,
 }

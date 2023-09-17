@@ -18,6 +18,7 @@ import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
+import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 
 @Entity('users')
 export class MainUser extends InitiatorAudit {
@@ -35,6 +36,9 @@ export class MainUser extends InitiatorAudit {
 
   @Column()
   phonenumber: string;
+
+  @Column({ default: 0 })
+  salary: number;
 
   @Column({
     nullable: true,
@@ -61,7 +65,9 @@ export class MainUser extends InitiatorAudit {
   })
   activationCode: number;
 
-  @Column()
+  @Column({
+    default: EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION],
+  })
   status: string;
 
   @Column()
@@ -70,6 +76,11 @@ export class MainUser extends InitiatorAudit {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
+  @Column({
+    enum: EEmployeStatus,
+    default: EEmployeStatus.ACTIVE,
+  })
+  employeeStatus: EEmployeStatus;
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];

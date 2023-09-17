@@ -136,7 +136,7 @@ export class CompanyService {
 
   async getAllCompanies() {
     return this.companyRepo.find({
-      relations: ['address', 'mineSites', 'minerals'],
+      relations: ['address', 'minerals'],
     });
   }
   async getCompanyByEmail(email: string) {
