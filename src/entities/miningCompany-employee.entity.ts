@@ -1,11 +1,4 @@
-import {
-  ChildEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { EGender } from 'src/enums/EGender.enum';
 import { MiningCompany } from './miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';

@@ -20,6 +20,8 @@ import { ERole } from 'src/enums/ERole.enum';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { generate } from 'otp-generator';
+import { Address } from 'src/entities/address.entity';
+import { AddressService } from 'src/address/address.service';
 
 @Injectable()
 export class EmployeeService {
@@ -34,6 +36,7 @@ export class EmployeeService {
 
     private mailingService: MailingService,
     private roleService: RoleService,
+    private addressService : AddressService
   ) {}
 
   async createEmployee(dto: CreateEmployeeDTO) {
@@ -41,6 +44,7 @@ export class EmployeeService {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: dto.email },
       });
+      console.log(availableEmployee)
 
       if (availableEmployee) {
         throw new BadRequestException(
@@ -82,6 +86,15 @@ export class EmployeeService {
         ECompanyRole[dto.employeeRole]
       );
 
+      let company = await this.companyService.getCompanyById(dto.company);
+      emplyee.company = company;
+
+      let address: Address = await this.addressService.createAddress(
+        dto.address,
+      );
+
+      emplyee.address = address
+      
       let createdEmployee = await this.employeeRepo.save(emplyee);
 
       delete createdEmployee.password;
@@ -102,6 +115,8 @@ export class EmployeeService {
         ERole[ERole.COMPANY_OWNER],
         savedEmployee,
       );
+
+
       savedEmployee = await this.employeeRepo.save(employee);
       return {
         access_token: tokens.accessToken,
@@ -116,6 +131,8 @@ export class EmployeeService {
       throw error;
     }
   }
+
+  
 
   async createEmp(employee: MiningCompanyEmployee) {
     try {
