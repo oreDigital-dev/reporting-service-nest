@@ -38,6 +38,7 @@ export class AuthService {
     let type: string;
     switch (dto.userType.toUpperCase()) {
       case EAccountType[EAccountType.COMPANY]:
+        console.log(dto.email);
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
         });
@@ -58,6 +59,8 @@ export class AuthService {
       default:
         throw new BadRequestException('The provided account type is invalid');
     }
+
+    if (!user) throw new BadRequestException('Invalid email or password');
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
