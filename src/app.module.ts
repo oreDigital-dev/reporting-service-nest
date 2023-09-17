@@ -45,6 +45,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
 import { MiningCompanyEmployee } from './entities/miningCompany-employee.entity';
 import { RMBEmployee } from './entities/rmb-employee';
 import { MainUser } from './entities/MainUser.entity';
+import { MailingService } from './mailing/mailing.service';
 
 @Module({
   imports: [
@@ -117,6 +118,7 @@ export class AppModule implements OnModuleInit, NestModule {
   constructor(
     private readonly roleService: RoleService,
     private readonly mineralService: MineralService,
+    private readonly mailingService: MailingService,
   ) {}
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(UserMiddleWare).forRoutes('*');

@@ -6,14 +6,13 @@ import { MineSite } from './minesite.entity';
 
 @Entity('incident')
 export class Incident extends InitiatorAudit {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   type: EIncidentType;
 
-  @Column()
+  @Column({ nullable: false, default: EIncidentStatus.FINE })
   status: EIncidentStatus;
 
   @Column({

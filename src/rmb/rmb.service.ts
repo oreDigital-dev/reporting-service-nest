@@ -85,6 +85,10 @@ export class RmbService {
     systemAdmin.activationCode =
       this.utilsService.generateRandomFourDigitNumber();
     let createdAdmin = await this.rmbRepo.save(systemAdmin);
+    await this.mailService.sendPhoneSMSTOUser(
+      systemAdmin.phonenumber,
+      `Hello! Your account as a system admin has been created successfully! your account verification code is ${systemAdmin.activationCode}`,
+    );
     this.mailService.sendEmailToUser(
       createdAdmin.email,
       'verify-account',
@@ -135,9 +139,17 @@ export class RmbService {
     switch (action.toUpperCase()) {
       case 'REJECT':
         availableEmployee.status = EAccountStatus[EAccountStatus.REJECTED];
+        await this.mailService.sendPhoneSMSTOUser(
+          availableEmployee.phonenumber,
+          'Hello! as oreDigital, we are kindly regretting that your request to create account as RMB employee has been  rejected due to many different reasons!!! Happy risk reducing and improve productivity',
+        );
         break;
       case 'APPROVE':
         availableEmployee.status = EAccountStatus[EAccountStatus.APPROVED];
+        await this.mailService.sendPhoneSMSTOUser(
+          availableEmployee.phonenumber,
+          'Hello! as oreDigital, we are proudly happy to let you know that  that your request to create account as RMB employee has been  approved! Reduce the risk and improve productivity',
+        );
         break;
       default:
         throw new BadRequestException(

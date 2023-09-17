@@ -31,7 +31,7 @@ export class IncidentsController {
   }
 
   @Post('/create-combined')
-  createCombinedIncidents(
+  async createCombinedIncidents(
     @Query('heatIndex') heatIndex: number,
     @Query('temperature') temperature: number,
     @Query('humidity') humidity: number,
@@ -43,10 +43,12 @@ export class IncidentsController {
       humidity,
       minesite,
     );
+
+    console.log(dto);
     return new ApiResponse(
       true,
       'Successfully saved!',
-      this.incidentService.saveCombinedIncidents(dto),
+      await this.incidentService.saveCombinedIncidents(dto),
     );
   }
 
