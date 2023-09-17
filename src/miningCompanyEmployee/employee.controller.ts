@@ -20,7 +20,6 @@ import { MailingService } from 'src/mailing/mailing.service';
 
 @Controller('employees')
 @ApiTags('company-employees')
-@Roles('COMPANY_OWNER')
 export class EmployeeController {
   constructor(
     private empService: EmployeeService,

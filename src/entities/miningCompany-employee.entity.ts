@@ -20,10 +20,8 @@ export class MiningCompanyEmployee extends MainUser {
   @ManyToOne(() => MiningCompany)
   company: MiningCompany;
 
-  @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })
+  @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE]})
   role: string;
-
-
 
   constructor(
     firstName: string,
@@ -34,7 +32,7 @@ export class MiningCompanyEmployee extends MainUser {
     phonenumber: string,
     password: string,
     activationNumber: number,
-    role: ECompanyRole
+    role: ECompanyRole,
   ) {
     super(
       firstName,

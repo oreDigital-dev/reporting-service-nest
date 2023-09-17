@@ -60,7 +60,7 @@ export class MainUser extends InitiatorAudit {
   })
   activationCode: number;
 
-  @Column()
+  @Column({enum : EUserStatus, default: EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION]})
   status: string;
 
   @Column()
@@ -85,7 +85,7 @@ export class MainUser extends InitiatorAudit {
     national_id: string,
     phonenumber: string,
     password: string,
-    status: EUserStatus,
+    activationCode: number
   ) {
     super();
     this.firstName = firstName;
@@ -95,6 +95,6 @@ export class MainUser extends InitiatorAudit {
     this.national_id = national_id;
     this.phonenumber = phonenumber;
     this.password = password;
-    this.status = EUserStatus[status];
+    this.activationCode = activationCode
   }
 }
