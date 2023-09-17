@@ -32,7 +32,7 @@ export class MiningCompany extends Organization {
   phoneNumber: string;
 
   @ManyToOne(() => Address, (address) => address.company)
-  @JoinColumn({name:'joinColumn'})
+  @JoinColumn({name:'address_id'})
   address: Address;
 
   @OneToMany(() => Notification, (notification) => notification.miningCompany)

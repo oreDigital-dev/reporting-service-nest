@@ -15,7 +15,7 @@ import { Mineral } from './mineral.entity';
 import { UUID } from 'crypto';
 import { MiningCompany } from './miningCompany.entity';
 
-@Entity('incidents')
+@Entity('minesite')
 export class MineSite extends InitiatorAudit {
   @PrimaryGeneratedColumn()
   id: UUID;

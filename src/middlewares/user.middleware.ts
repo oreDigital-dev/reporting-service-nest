@@ -23,11 +23,7 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(RmbService) private readonly rmbService: RmbService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    let context: ExecutionContext;
-    const request = req;
-    console.log(request.headers);
     const authorization = req.headers.authorization;
-    console.log("Authorization", authorization)
     if (
       req.baseUrl == '' ||
       req.baseUrl == '/favicon.ico' ||

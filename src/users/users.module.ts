@@ -7,6 +7,7 @@ import { MailingModule } from 'src/mailing/mailing.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RmbModule } from 'src/rmb/rmb.module';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     MailingModule,
     EmployeeModule,
     UtilsModule,
+    RmbModule
   ],
   providers: [UsersService],
   controllers: [UsersController],

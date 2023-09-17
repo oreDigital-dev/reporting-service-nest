@@ -107,7 +107,6 @@ export class CompanyService {
     let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
-    // company.employees = [employee];
     const role = [];
     role.push(await this.roleService.getRoleByName(ERole[ERole.COMPANY_ADMIN]));
 

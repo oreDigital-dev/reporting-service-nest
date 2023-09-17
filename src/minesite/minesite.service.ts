@@ -30,41 +30,41 @@ export class MinesiteService {
 
   async createMineSite(dto: createMineSiteDTO, req: Request, res: Response) {
     let mineSite: MineSite = new MineSite(dto.name);
-    let owner: any = await this.utilService.getLoggedInProfile(req, res);
-    let company: any = await this.companyService.getCompanyByEmail(owner.email);
-    let isAvailable = await this.mineSiteRepo.findOne({
-      where: {
-        name: dto.name,
-        company: company,
-      },
-    });
-    if (isAvailable)
-      throw new BadRequestException(
-        `${mineSite.name} minesite is already registered!`,
-      );
-    const address = await this.addressService.addressRepo.save(
-      new Address(
-        dto.address.province,
-        dto.address.district,
-        dto.address.sector,
-        dto.address.cell,
-        dto.address.village,
-      ),
-    );
-    let minerals: Mineral[] = [];
-    for (let min of dto.minerals) {
-      let mineral: Mineral = await this.mineralService.getMineralByName(
-        min.toUpperCase(),
-      );
-      minerals.push(mineral);
-    }
-    mineSite.minerals = minerals;
-    mineSite.address = address;
-    mineSite.company = company;
-    company.mineSites = [company.mineSites, mineSite];
-    await this.companyService.saveCompany(company);
-    let mineSite2 = await this.mineSiteRepo.save(mineSite);
-    return mineSite2;
+    let company: any = await this.companyService.getCompanyById(dto.company);
+
+    // let isAvailable = await this.mineSiteRepo.findOne({
+    //   where: {
+    //     name: dto.name,
+    //     company: company,
+    //   },
+    // });
+    // if (isAvailable)
+    //   throw new BadRequestException(
+    //     `${mineSite.name} minesite is already registered!`,
+    //   );
+    // const address = await this.addressService.addressRepo.save(
+    //   new Address(
+    //     dto.address.province,
+    //     dto.address.district,
+    //     dto.address.sector,
+    //     dto.address.cell,
+    //     dto.address.village,
+    //   ),
+    // );
+    // let minerals: Mineral[] = [];
+    // for (let min of dto.minerals) {
+    //   let mineral: Mineral = await this.mineralService.getMineralByName(
+    //     min.toUpperCase(),
+    //   );
+    //   minerals.push(mineral);
+    // }
+    // mineSite.minerals = minerals;
+    // mineSite.address = address;
+    // mineSite.company = company;
+    // company.mineSites = [company.mineSites, mineSite];
+    // await this.companyService.saveCompany(company);
+    // let mineSite2 = await this.mineSiteRepo.save(mineSite);
+    return null;
   }
 
   async getAllMineSite() {

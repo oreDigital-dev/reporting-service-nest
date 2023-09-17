@@ -4,7 +4,6 @@ import { MiningCompany } from './miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { Address } from './address.entity';
 import { MainUser } from './MainUser.entity';
-import { EUserStatus } from 'src/enums/EUserStatus.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Entity('mining_company_employees')
