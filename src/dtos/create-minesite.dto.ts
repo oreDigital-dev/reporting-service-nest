@@ -1,6 +1,7 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { CreateAddressDTO } from './create-address.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { UUID } from 'crypto';
 
 export class createMineSiteDTO {
   @IsString()
@@ -16,4 +17,8 @@ export class createMineSiteDTO {
   @IsNotEmpty()
   @ApiProperty()
   address: CreateAddressDTO;
+
+  @IsUUID()
+  @IsNotEmpty()
+  company: UUID;
 }

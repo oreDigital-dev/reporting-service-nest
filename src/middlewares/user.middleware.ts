@@ -23,8 +23,6 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(RmbService) private readonly rmbService: RmbService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    let context: ExecutionContext;
-    const request = req;
     const authorization = req.headers.authorization;
     if (
       req.baseUrl == '' ||

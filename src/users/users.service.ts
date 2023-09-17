@@ -16,16 +16,23 @@ import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RmbService } from 'src/rmb/rmb.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) public userRepo: Repository<User>,
+
     private roleService: RoleService,
     private mailService: MailingService,
 
     private utilsService: UtilsService,
-  ) {}
+
+    private employeeService: EmployeeService,
+
+    private rmbService : RmbService
+  ) { }
 
   async createSytemAdmin(dto: CreateUserDto) {
     if (dto.registrationKey != 'admin@oreDigital')
@@ -83,12 +90,13 @@ export class UsersService {
   }
 
   async getUserByEmail(email: any) {
-    const user = await this.userRepo.findOne({
-      where: {
-        email: email,
-      },
-      relations: ['roles'],
-    });
+    let user : any;
+    user = await this.employeeService.getEmployeeByEmail(email);  
+    if(!user){
+      user = await this.rmbService.getRMBEmployeeByEmail(email)
+    }
+
+ 
     if (!user)
       throw new NotFoundException(
         'The user with the provided email is not found',

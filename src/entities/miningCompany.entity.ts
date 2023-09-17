@@ -32,7 +32,7 @@ export class MiningCompany extends Organization {
   phoneNumber: string;
 
   @ManyToOne(() => Address, (address) => address.company)
-  @JoinColumn({name:'joinColumn'})
+  @JoinColumn({name:'address_id'})
   address: Address;
 
   @OneToMany(() => Notification, (notification) => notification.miningCompany)
@@ -51,7 +51,6 @@ export class MiningCompany extends Organization {
   numberOfEmployees: number;
 
   @OneToMany(() => MiningCompanyEmployee, (employee) => employee)
-  @Exclude()
   employees: MiningCompanyEmployee[];
 
   @Column()

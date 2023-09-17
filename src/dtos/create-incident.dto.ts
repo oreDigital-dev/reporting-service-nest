@@ -11,7 +11,6 @@ export class CreateIncidentDTO {
   measurement: number;
 
   @IsNotEmpty()
-  @IsUUID()
   mineSite: UUID;
 
   constructor(type: string, measurement : number, minesite :UUID){

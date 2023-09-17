@@ -107,7 +107,6 @@ export class CompanyService {
     let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
-    // company.employees = [employee];
     const role = [];
     role.push(await this.roleService.getRoleByName(ERole[ERole.COMPANY_ADMIN]));
 
@@ -127,14 +126,14 @@ export class CompanyService {
   }
 
   async saveCompany(company: MiningCompany) {
-    return this.companyRepo.save(company);
+    return await this.companyRepo.save(company);
   }
 
   async getCompanyById(id: UUID) {
     try {
       const isCompanyAvailable = await this.companyRepo.findOne({
         where: { id: id },
-        relations: ['employees', 'notifications', 'address'],
+        relations: ['notifications', 'address'],
       });
 
       if (isCompanyAvailable == null)

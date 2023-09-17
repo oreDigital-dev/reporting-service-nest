@@ -28,8 +28,8 @@ export class Notification {
   @JoinColumn({ name: 'user_id' })
   user: MainUser;
 
-  @JoinColumn({ name: 'company_id' })
   @ManyToOne(() => MiningCompany, (company) => company.notifications)
+  @JoinColumn({ name: 'company_id' })
   miningCompany: MiningCompany;
 
   constructor(message: string, type: ENotificationType) {
