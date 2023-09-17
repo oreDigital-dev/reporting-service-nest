@@ -25,13 +25,11 @@ export class MinesiteController {
   @Post('create')
   async createMineSite(
     @Body() body: createMineSiteDTO,
-    @Req() req: Request,
-    @Res() res: Response,
+
   ) {
     const createdMineSite = await this.mineSiteService.createMineSite(
       body,
-      req,
-      res,
+  
     );
     return new ApiResponse(
       true,

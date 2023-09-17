@@ -26,9 +26,6 @@ export class IncidentsService {
   ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
-    try {
-      if (!this.utilService.idValidator(dto.mineSite))
-        throw new BadRequestException('The provided id is invalid!');
       let incident = new Incident(EIncidentType[dto.type], dto.measurement);
       let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
       incident.mineSite = minesite;
@@ -68,9 +65,7 @@ export class IncidentsService {
         }
       }
       this.incidentRepo.save(incident);
-    } catch (err) {
-      throw new Exception(err);
-    }
+  
   }
 
   async createIncident(dto: CreateIncidentDTO) {

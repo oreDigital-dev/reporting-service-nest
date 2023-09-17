@@ -126,14 +126,14 @@ export class CompanyService {
   }
 
   async saveCompany(company: MiningCompany) {
-    return this.companyRepo.save(company);
+    return await this.companyRepo.save(company);
   }
 
   async getCompanyById(id: UUID) {
     try {
       const isCompanyAvailable = await this.companyRepo.findOne({
         where: { id: id },
-        relations: ['employees', 'notifications', 'address'],
+        relations: ['notifications', 'address'],
       });
 
       if (isCompanyAvailable == null)

@@ -7,18 +7,20 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
 import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { MiningCompany } from './miningCompany.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('minesite')
 export class MineSite extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column()
   name: string;
@@ -36,6 +38,7 @@ export class MineSite extends InitiatorAudit {
 
   @ManyToOne(() => MiningCompany, (company) => company.mineSites)
   @JoinColumn({ name: 'company_id' })
+  @Exclude()
   company: MiningCompany;
 
   constructor(name: string) {
