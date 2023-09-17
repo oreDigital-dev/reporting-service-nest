@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CompanyService } from './company.service';
 import { ApiResponse } from 'src/payload/apiResponse';
@@ -55,6 +55,29 @@ export class CompanyController {
       true,
       'Data retrieval successfull',
       await this.companyService.getCompanyProfile,
+    );
+  }
+
+  @Put('approve-or-reject/:action/:id')
+  @Roles('SYSTEM_ADMIN')
+  async approveOrRejectCompany(
+    @Param('action') action: string,
+    @Param('id') id: UUID,
+  ) {
+    return new ApiResponse(
+      true,
+      'companies retrieved successfully',
+      await this.companyService.approveOrRejectCompany(action, id),
+    );
+  }
+
+  @Get('by-status/:status')
+  @Roles('SYSTEM_ADMIN')
+  async getCompaniesByStatus(@Param('status') status: string) {
+    return new ApiResponse(
+      true,
+      'Companies retrieved successfully',
+      await this.companyService.getCompaniesByStatus(status),
     );
   }
 }

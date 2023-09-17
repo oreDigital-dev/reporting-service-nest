@@ -5,8 +5,7 @@ import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 import { ERole } from 'src/enums/ERole.enum';
 import { Role } from 'src/entities/role.entity';
-import { User } from 'src/entities/us.entity';
-import { Main } from 'src/entities/main.entity';
+import { MainUser } from 'src/entities/MainUser.entity';
 
 @Injectable()
 export class RoleService {
@@ -31,7 +30,7 @@ export class RoleService {
     });
   }
 
-  async assignRoleToEmployee(roleName: any, user: Main) {
+  async assignRoleToEmployee(roleName: any, user: MainUser) {
     const role: Role = await this.roleRepo.findOne({
       where: {
         roleName: roleName,

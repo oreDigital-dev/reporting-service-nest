@@ -15,8 +15,8 @@ import { ERole } from 'src/enums/ERole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { EmployeeService } from 'src/employee/employee.service';
 import { generate } from 'otp-generator';
+import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 
 @Injectable()
 export class UsersService {

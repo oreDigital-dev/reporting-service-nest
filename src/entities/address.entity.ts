@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -10,7 +11,9 @@ import { MineSite } from './minesite.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { UUID } from 'crypto';
 import { Organization } from './organization.entity';
-import { MiningCompanyEmployee } from './employee.entity';
+import { MiningCompanyEmployee } from './miningCompany-employee.entity';
+import { MiningCompany } from './miningCompany.entity';
+import { MainUser } from './MainUser.entity';
 
 @Entity('address')
 export class Address extends InitiatorAudit {
@@ -45,9 +48,12 @@ export class Address extends InitiatorAudit {
   @OneToMany(() => MineSite, (minesite) => minesite.address)
   mineSites: MineSite[];
 
-  @OneToOne(() => Organization)
-  @JoinColumn({ name: 'company' })
-  company: Organization;
+  @OneToMany(() => MainUser, (address) => address.address)
+  miningCompanyEmployees: MainUser[];
+
+  @OneToMany(() => MiningCompany, (address) => address.address)
+  @JoinColumn({ name: 'address_id' })
+  company: MiningCompany[];
 
   constructor(
     province: string,

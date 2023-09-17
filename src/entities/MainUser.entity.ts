@@ -1,24 +1,27 @@
 /* eslint-disable */
 import {
   Entity,
+  PrimaryGeneratedColumn,
   Column,
   JoinColumn,
   ManyToMany,
   JoinTable,
-  PrimaryColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
 import { File } from 'src/file/File';
-import { UUID, randomUUID } from 'crypto';
+import { UUID } from 'crypto';
+import { Notification } from './notification.entity';
+import { Address } from './address.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EUserStatus } from 'src/enums/EUserStatus.enum';
 
 @Entity('users')
-export class User extends InitiatorAudit {
-
-  @PrimaryColumn()
-  id: UUID= randomUUID();
+export class MainUser extends InitiatorAudit {
+  @PrimaryGeneratedColumn()
+  id: UUID;
 
   @Column()
   firstName: string;
@@ -43,7 +46,6 @@ export class User extends InitiatorAudit {
     default: EGender[EGender.OTHER],
   })
   gender: string;
-
   @JoinColumn({
     name: 'profile_picture',
   })
@@ -59,17 +61,21 @@ export class User extends InitiatorAudit {
   activationCode: number;
 
   @Column()
+  status: string;
+
+  @Column()
   national_id: string;
 
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
 
-  @Column({
-    enum : EUserStatus,
-    default: EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION],
-  })
-  status: string;
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
+  @ManyToOne(() => Address, (address) => address.miningCompanyEmployees)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
   constructor(
     firstName: string,
@@ -79,7 +85,7 @@ export class User extends InitiatorAudit {
     national_id: string,
     phonenumber: string,
     password: string,
-    activationCode: number
+    status: EUserStatus,
   ) {
     super();
     this.firstName = firstName;
@@ -89,6 +95,6 @@ export class User extends InitiatorAudit {
     this.national_id = national_id;
     this.phonenumber = phonenumber;
     this.password = password;
-    this.activationCode = activationCode;
+    this.status = EUserStatus[status];
   }
 }

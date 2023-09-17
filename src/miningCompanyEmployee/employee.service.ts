@@ -17,15 +17,15 @@ import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
-import { MiningCompanyEmployee } from 'src/entities/employee.entity';
+import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
+import { generate } from 'otp-generator';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectRepository(MiningCompanyEmployee)
     public employeeRepo: Repository<MiningCompanyEmployee>,
-    
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
 
@@ -92,7 +92,7 @@ export class EmployeeService {
         'employee-account-verification',
         'OreDigital account verification',
       );
-      const tokens = await this.utilsService.getTokens(emplyee);
+      const tokens = await this.utilsService.getTokens(emplyee, 'company');
       let savedEmployee = await this.employeeRepo.findOne({
         where: { email: emplyee.email },
         relations: ['roles'],
@@ -239,14 +239,4 @@ export class EmployeeService {
     this.employeeRepo.remove(employee);
   }
 }
-function generate(
-  arg0: number,
-  arg1: {
-    digits: boolean;
-    lowerCaseAlphabets: boolean;
-    upperCaseAlphabets: boolean;
-    specialChars: boolean;
-  },
-) {
-  throw new Error('Function not implemented.');
-}
+

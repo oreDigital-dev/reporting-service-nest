@@ -15,12 +15,11 @@ import { Mineral } from './mineral.entity';
 import { Address } from './address.entity';
 import { UUID, randomUUID } from 'crypto';
 import { Notification } from './notification.entity';
-import { MiningCompanyEmployee } from './employee.entity';
+import { MiningCompanyEmployee } from './miningCompany-employee.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('mining_companies')
 export class MiningCompany extends Organization {
-  
   @PrimaryColumn()
   id: UUID = randomUUID();
 

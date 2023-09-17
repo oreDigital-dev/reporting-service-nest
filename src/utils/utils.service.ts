@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -12,6 +13,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
 import { Main } from 'src/entities/main.entity';
 import { User } from 'src/entities/us.entity';
+import { EAccountType } from 'src/enums/EAccountType.enum';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -28,17 +30,45 @@ export class UtilsService {
   ) {}
 
   async getTokens(
-    user: Main,
+    user: User,
+    entity: string,
   ): Promise<{ accessToken: String; refreshToken: String }> {
+    let type: string;
+
+    switch (entity.toUpperCase()) {
+      case 'RMB':
+        type = EAccountType[EAccountType.RMB];
+        break;
+      case 'COMPANY':
+        type = EAccountType[EAccountType.COMPANY];
+        break;
+      case 'RESCUE_TEAM':
+        type = EAccountType[EAccountType.RESCUE_TEAM];
+        break;
+      default:
+        throw new BadRequestException(
+          'The provided entity type is not defined',
+        );
+    }
     const accessToken: String = await this.jwtService.signAsync(
-      { roles: user.roles, id: user.id, national_id: user.national_id },
+      {
+        type: type,
+        roles: user.roles,
+        id: user.id,
+        national_id: user.national_id,
+      },
       {
         expiresIn: '10m',
         secret: this.configService.get('SECRET_KEY'),
       },
     );
     const refreshToken: String = await this.jwtService.signAsync(
-      { roles: user.roles, id: user.id, national_id: user.national_id },
+      {
+        type: type,
+        roles: user.roles,
+        id: user.id,
+        national_id: user.national_id,
+      },
       {
         expiresIn: '1d',
         secret: this.configService.get('SECRET_KEY'),

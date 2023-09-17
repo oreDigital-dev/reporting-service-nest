@@ -6,7 +6,7 @@ import { User } from 'src/entities/us.entity';
 import { RolesModule } from 'src/roles/roles.module';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { UtilsModule } from 'src/utils/utils.module';
-import { EmployeeModule } from 'src/employee/employee.module';
+import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
 
 @Global()
 @Module({
