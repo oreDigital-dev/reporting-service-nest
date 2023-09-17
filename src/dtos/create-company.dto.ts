@@ -11,7 +11,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UUID } from 'crypto';
 
 export class CreateCompanyDTO {
-
   @IsString()
   @IsNotEmpty()
   companyName: string;
@@ -20,7 +19,6 @@ export class CreateCompanyDTO {
   @IsNotEmpty()
   @ApiProperty()
   firstName: string;
-
 
   @IsString()
   @IsNotEmpty()
@@ -31,7 +29,6 @@ export class CreateCompanyDTO {
   @IsNotEmpty()
   @ApiProperty()
   gender: string;
-
 
   @IsNotEmpty()
   @ApiProperty()
