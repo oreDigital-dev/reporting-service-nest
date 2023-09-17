@@ -38,21 +38,23 @@ export class AuthService {
     let type: string;
     switch (dto.userType.toUpperCase()) {
       case EAccountType[EAccountType.COMPANY]:
-        console.log(dto.email);
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
+          relations: ['roles'],
         });
         type = 'company';
         break;
       case EAccountType[EAccountType.RESCUE_TEAM]:
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
+          relations: ['roles'],
         });
         type = 'rescue_team';
         break;
       case EAccountType[EAccountType.RMB]:
         user = await this.rmbService.rmbRepo.findOne({
           where: { email: dto.email },
+          relations: ['roles'],
         });
         type = 'rmb';
         break;
