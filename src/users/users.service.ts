@@ -15,8 +15,8 @@ import { ERole } from 'src/enums/ERole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { generate } from 'otp-generator';
 import { EmployeeService } from 'src/employee/employee.service';
+import { generate } from 'otp-generator';
 
 @Injectable()
 export class UsersService {
@@ -56,7 +56,7 @@ export class UsersService {
       dto.national_id,
       dto.phoneNumber,
       dto.password,
-      Number(otp)
+      Number(otp),
     );
     const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.SYSTEM_ADMIN],
@@ -65,7 +65,7 @@ export class UsersService {
       systemAdmin.password,
     );
     systemAdmin.roles = [adminRole];
-    systemAdmin.activationCode = this.generateRandomFourDigitNumber();
+    systemAdmin.activationCode = Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false }));
     let createdAdmin = await this.userRepo.save(systemAdmin);
     // this.mailService.sendEmailToUser(
     //   createdAdmin.email,
@@ -115,9 +115,5 @@ export class UsersService {
     return response;
   }
 
-  generateRandomFourDigitNumber(): number {
-    const min = 1000;
-    const max = 9999;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
 }
+

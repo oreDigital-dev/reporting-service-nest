@@ -25,8 +25,8 @@ import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { generate } from 'otp-generator';
 import { Role } from 'src/entities/role.entity';
+import { generate } from 'otp-generator';
 
 @Injectable()
 export class CompanyService {
@@ -177,3 +177,4 @@ export class CompanyService {
     // }
   }
 }
+
