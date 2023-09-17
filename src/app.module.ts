@@ -43,6 +43,7 @@ import { Organization } from './entities/organization.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { MiningCompanyEmployee } from './entities/miningCompany-employee.entity';
+import { RMBEmployee } from './entities/rmb-employee';
 import { MainUser } from './entities/MainUser.entity';
 
 @Module({
@@ -72,6 +73,7 @@ import { MainUser } from './entities/MainUser.entity';
           Mineral,
           Organization,
           MiningCompanyEmployee,
+          RMBEmployee,
         ],
         synchronize: true,
       }),
@@ -98,6 +100,7 @@ import { MainUser } from './entities/MainUser.entity';
     JwtModule,
     MineralModule,
     NotificationModule,
+    RmbModule,
     RmbModule,
     forwardRef(() => MiningCompanyModule),
   ],

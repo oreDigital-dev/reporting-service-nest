@@ -5,7 +5,7 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
@@ -16,9 +16,8 @@ import { EUserStatus } from 'src/enums/EUserStatus.enum';
 
 @Entity('users')
 export class User extends InitiatorAudit {
-
-  @PrimaryColumn()
-  id: UUID= randomUUID();
+  @PrimaryGeneratedColumn()
+  id: UUID;
 
   @Column()
   firstName: string;
@@ -66,7 +65,7 @@ export class User extends InitiatorAudit {
   roles: Role[];
 
   @Column({
-    enum : EUserStatus,
+    enum: EUserStatus,
     default: EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION],
   })
   status: string;
@@ -79,7 +78,7 @@ export class User extends InitiatorAudit {
     national_id: string,
     phonenumber: string,
     password: string,
-    activationCode: number
+    activationCode: number,
   ) {
     super();
     this.firstName = firstName;

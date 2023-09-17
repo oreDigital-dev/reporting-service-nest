@@ -3,18 +3,19 @@ import {
   Injectable,
   forwardRef,
   Inject,
-  UnauthorizedException,
-  ForbiddenException,
 } from '@nestjs/common';
-import { compare, hash } from 'bcrypt';
-import { Request, Response } from 'express';
+
 import { LoginDTO } from 'src/dtos/login.dto';
 import { ERole } from 'src/enums/ERole.enum';
 import { EUserStatus } from 'src/enums/EUserStatus.enum';
-import { EUserType } from 'src/enums/EUserType.enum';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
+import { EAccountType } from 'src/enums/EAccountType.enum';
+import { RmbService } from 'src/rmb/rmb.service';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { Request, Response } from 'express';
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,22 +24,41 @@ export class AuthService {
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => RmbService))
+    private rmbService: RmbService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {
-    const hashedPassword = await hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     return hashedPassword;
   }
 
   async login(dto: LoginDTO) {
     let user: any;
-    console.log(dto);
-    if (dto.userType.toUpperCase() == EUserType[EUserType.MINING_EMPLOYEE]) {
-      user = await this.employeeService.employeeRepo.findOne({
-        where: { email: dto.email },
-      });
+    let type: string;
+    switch (dto.userType.toUpperCase()) {
+      case EAccountType[EAccountType.COMPANY]:
+        user = await this.employeeService.employeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        type = 'company';
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        user = await this.employeeService.employeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        type = 'rescue_team';
+        break;
+      case EAccountType[EAccountType.RMB]:
+        user = await this.rmbService.rmbRepo.findOne({
+          where: { email: dto.email },
+        });
+        type = 'rmb';
+        break;
+      default:
+        throw new BadRequestException('The provided account type is invalid');
     }
-    const passwordMatch = await compare(dto.password, user.password);
+    const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
 
@@ -46,10 +66,7 @@ export class AuthService {
       throw new BadRequestException(
         'This account is not yet verified, please check your gmail for verification details',
       );
-    if(user.status == EUserStatus[EUserStatus.PENDING]){
-      throw new ForbiddenException("Your account has not yet been proven, please wait for approval!")
-    }
-    const tokens = this.utilsService.getTokens(user, dto.userType);
+    const tokens = this.utilsService.getTokens(user, type);
     delete user.password;
     return {
       access_token: (await tokens).accessToken,
@@ -59,17 +76,16 @@ export class AuthService {
   }
 
   async verifyAccount(email: string) {
-    let verifiedAccount = null;
-    verifiedAccount =  await this.userService.getUserByEmail(email);
-    if (verifiedAccount.status === EUserStatus[EUserStatus.ACTIVE] || verifiedAccount.status === EUserStatus[EUserStatus.PENDING])
-      throw new BadRequestException('This email is already verified');
-    verifiedAccount.status = EUserStatus[EUserStatus.PENDING];
+    const verifiedAccount = await this.userService.getUserByEmail(email);
+    if (verifiedAccount.status === EAccountStatus[EAccountStatus.ACTIVE])
+      throw new BadRequestException('This is already verified');
+    verifiedAccount.status = EAccountStatus[EAccountStatus.PENDING];
     verifiedAccount.roles.forEach((role) => {
       if (role.roleName == ERole[ERole.SYSTEM_ADMIN]) {
         verifiedAccount.status = EUserStatus[EUserStatus.ACTIVE];
       }
     });
-    let  verifiedAccount2 = await this.userService.userRepo.save(
+    const verifiedAccount2 = await this.userService.userRepo.save(
       verifiedAccount,
     );
     const tokens = await this.utilsService.getTokens(
@@ -91,9 +107,9 @@ export class AuthService {
     const account = await this.userService.getUserByEmail(email);
     if (!account) throw new BadRequestException('This account does not exist');
     if (
-      account.status === EUserStatus[EUserStatus.PENDING] ||
+      account.status === EAccountStatus[EAccountStatus.PENDING] ||
       account.status ==
-        EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION]
+        EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
     )
       throw new BadRequestException(
         "Please first verify your account and we'll help you to remember your password later",

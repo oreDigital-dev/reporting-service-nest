@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 import { ERole } from 'src/enums/ERole.enum';
 import { Role } from 'src/entities/role.entity';
@@ -50,6 +50,11 @@ export class RoleService {
         roleName: name,
       },
     });
+  }
+
+  async getRolesByNames(names: string[]) {
+    const roles = await this.roleRepo.find({ where: { roleName: In(names) } });
+    return roles;
   }
 
   async getRoleById(id: number) {

@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request } from 'express';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(UsersService) private readonly userService: UsersService,
     @Inject(EmployeeService) private readonly employeeService: EmployeeService,
+    @Inject(RmbService) private readonly rmbService: RmbService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
     let context: ExecutionContext;
@@ -33,7 +35,7 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/auth/verify_account' ||
       req.baseUrl == '/auth/reset_password' ||
       req.baseUrl == '/api/swagger-docs.html' ||
-      req.baseUrl == '/users/create' ||
+      req.baseUrl == '/rmb/create/system-admin' ||
       req.baseUrl == '/companies/create' ||
       req.baseUrl == '/users/create/system-admin' ||
       req.baseUrl == '/incidents/create' ||
@@ -58,7 +60,9 @@ export class UserMiddleWare implements NestMiddleware {
             user = await this.employeeService.getEmployeeById(details.id);
             break;
           case 'RMB':
-            user = await this.employeeService.getEmployeeById(details.id);
+            user = await this.rmbService.rmbRepo.findOne({
+              where: { id: details.id },
+            });
             break;
           case 'RESCUE_TEAM':
             user = await this.employeeService.getEmployeeById(details.id);

@@ -1,7 +1,6 @@
 /* eslint-disable */
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm/dist';
 import {
   BadRequestException,
   ForbiddenException,
@@ -12,11 +11,11 @@ import { UUID } from 'crypto';
 import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { generate } from 'otp-generator';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
@@ -24,9 +23,9 @@ export class UsersService {
     @InjectRepository(User) public userRepo: Repository<User>,
     private roleService: RoleService,
     private mailService: MailingService,
+
     private utilsService: UtilsService,
-    private employeeService: EmployeeService
-  ) { }
+  ) {}
 
   async createSytemAdmin(dto: CreateUserDto) {
     if (dto.registrationKey != 'admin@oreDigital')
@@ -46,8 +45,6 @@ export class UsersService {
         'The user with that email or phoneNumber already exist',
       );
     }
-    let otp = generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
-
     let systemAdmin = new User(
       dto.firstName,
       dto.lastName,
@@ -56,7 +53,7 @@ export class UsersService {
       dto.national_id,
       dto.phoneNumber,
       dto.password,
-      Number(otp),
+      EAccountStatus.WAITING_EMAIL_VERIFICATION,
     );
     const adminRole = await this.roleService.getRoleByName(
       ERole[ERole.SYSTEM_ADMIN],
@@ -65,7 +62,7 @@ export class UsersService {
       systemAdmin.password,
     );
     systemAdmin.roles = [adminRole];
-    systemAdmin.activationCode = Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false }));
+    systemAdmin.activationCode = this.generateRandomFourDigitNumber();
     let createdAdmin = await this.userRepo.save(systemAdmin);
     // this.mailService.sendEmailToUser(
     //   createdAdmin.email,
@@ -79,22 +76,19 @@ export class UsersService {
       admin: createdAdmin,
     };
   }
+
   async getUsers() {
     const response = await this.userRepo.find({ relations: ['roles'] });
     return response;
   }
 
   async getUserByEmail(email: any) {
-    let user = null
-    user = await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: {
         email: email,
       },
       relations: ['roles'],
     });
-    if (user == null) {
-      user = await this.employeeService.getEmployeeByEmail(email)
-    }
     if (!user)
       throw new NotFoundException(
         'The user with the provided email is not found',
@@ -115,5 +109,9 @@ export class UsersService {
     return response;
   }
 
+  generateRandomFourDigitNumber(): number {
+    const min = 1000;
+    const max = 9999;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 }
-

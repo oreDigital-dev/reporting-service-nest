@@ -11,19 +11,20 @@ import { MiningCompany } from './miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { Address } from './address.entity';
 import { MainUser } from './MainUser.entity';
+import { EUserStatus } from 'src/enums/EUserStatus.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Entity('mining_company_employees')
 export class MiningCompanyEmployee extends MainUser {
-  @Column({ default: 0 })
-  salary: number;
-
   @ManyToOne(() => MiningCompany)
   company: MiningCompany;
 
   @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })
   role: string;
 
-
+  @OneToMany(() => Address, (address) => address.miningCompanyEmployees)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
   constructor(
     firstName: string,
@@ -33,8 +34,8 @@ export class MiningCompanyEmployee extends MainUser {
     national_id: string,
     phonenumber: string,
     password: string,
-    activationNumber: number,
-    role: ECompanyRole
+    status: EAccountStatus,
+    role: string,
   ) {
     super(
       firstName,
@@ -44,7 +45,7 @@ export class MiningCompanyEmployee extends MainUser {
       national_id,
       phonenumber,
       password,
-      activationNumber,
+      status,
     );
     this.role = ECompanyRole[role];
   }

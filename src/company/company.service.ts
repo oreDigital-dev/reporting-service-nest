@@ -43,10 +43,9 @@ export class CompanyService {
     private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
-  ) { }
+  ) {}
 
   async createCompany(dto: CreateMiningCompanyDTO) {
-
     const available = await this.companyRepo.find({
       where: [
         {
@@ -92,18 +91,23 @@ export class CompanyService {
       dto.companyAdmin.national_id,
       dto.companyAdmin.phoneNumber,
       dto.companyAdmin.password,
-      Number(generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })),
-      ECompanyRole.ADMIN
+      Number(
+        generate(6, {
+          digits: true,
+          lowerCaseAlphabets: false,
+          upperCaseAlphabets: false,
+          specialChars: false,
+        }),
+      ),
+      ECompanyRole[ECompanyRole.ADMIN],
     );
 
     let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
     company.employees = [employee];
-    const role = []
-    role.push(await this.roleService.getRoleByName(
-      ERole[ERole.COMPANY_ADMIN],
-    ));
+    const role = [];
+    role.push(await this.roleService.getRoleByName(ERole[ERole.COMPANY_ADMIN]));
 
     employee.roles = role;
     employee.address = adminAddress;
@@ -138,7 +142,7 @@ export class CompanyService {
 
   async getAllCompanies() {
     return this.companyRepo.find({
-      relations: ['address', 'mineSites', 'minerals'],
+      relations: ['address', 'minerals'],
     });
   }
   async getCompanyByEmail(email: string) {
@@ -220,4 +224,3 @@ export class CompanyService {
     return companies;
   }
 }
-

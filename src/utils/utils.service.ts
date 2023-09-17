@@ -7,11 +7,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { hash } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
-import { Main } from 'src/entities/main.entity';
 import { User } from 'src/entities/us.entity';
 import { EAccountType } from 'src/enums/EAccountType.enum';
 import { UsersService } from 'src/users/users.service';
@@ -83,12 +82,18 @@ export class UtilsService {
 
   async hashString(input: string) {
     try {
-      const hashed = await hash(input, 10);
+      const hashed = await bcrypt.hash(input, 10);
       return hashed;
     } catch (error) {
       console.error('Error occurred while hashing:', error.message);
       throw error;
     }
+  }
+
+  generateRandomFourDigitNumber(): number {
+    const min = 1000;
+    const max = 9999;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   idValidator(id: String): boolean {

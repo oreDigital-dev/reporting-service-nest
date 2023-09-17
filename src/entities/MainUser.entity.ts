@@ -17,6 +17,8 @@ import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EUserStatus } from 'src/enums/EUserStatus.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 
 @Entity('users')
 export class MainUser extends InitiatorAudit {
@@ -34,6 +36,9 @@ export class MainUser extends InitiatorAudit {
 
   @Column()
   phonenumber: string;
+
+  @Column({ default: 0 })
+  salary: number;
 
   @Column({
     nullable: true,
@@ -60,7 +65,9 @@ export class MainUser extends InitiatorAudit {
   })
   activationCode: number;
 
-  @Column()
+  @Column({
+    default: EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION],
+  })
   status: string;
 
   @Column()
@@ -69,6 +76,11 @@ export class MainUser extends InitiatorAudit {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
+  @Column({
+    enum: EEmployeeStatus,
+    default: EEmployeeStatus.ACTIVE,
+  })
+  employeeStatus: EEmployeeStatus;
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
@@ -85,7 +97,7 @@ export class MainUser extends InitiatorAudit {
     national_id: string,
     phonenumber: string,
     password: string,
-    status: EUserStatus,
+    status: EAccountStatus,
   ) {
     super();
     this.firstName = firstName;
