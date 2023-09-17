@@ -22,29 +22,22 @@ export class MineralService {
   }
 
   async getMineralByName(name: string) {
-    try {
-      const mineral = await this.mineralRepo.findOne({
-        where: {
-          name: name,
-        },
-      });
-      return mineral;
-    } catch (error) {
-      throw error;
-    }
+    const mineral = await this.mineralRepo.findOne({
+      where: {
+        name: name,
+      },
+    });
+    return mineral;
   }
 
   async getAllMinerals() {
     return await this.mineralRepo.find({});
   }
 
-  async getMineralById(id:UUID){
-    try{
-
-      return await this.mineralRepo.findOneBy({
-        id
-      })
-    }catch(err){
+  async getMineralById(id: UUID) {
+    try {
+      return await this.mineralRepo.findOne({ where: { id: id } });
+    } catch (err) {
       throw new Exception(err);
     }
   }
@@ -63,5 +56,4 @@ export class MineralService {
       }
     });
   }
-  
 }

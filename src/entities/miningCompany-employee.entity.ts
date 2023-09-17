@@ -1,13 +1,22 @@
-import { ChildEntity, Column, Entity, ManyToOne } from 'typeorm';
+import {
+  ChildEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { User } from './us.entity';
 import { EEmployeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { MiningCompany } from './mining-company.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
+import { Address } from './address.entity';
+import { MainUser } from './MainUser.entity';
 
-@Entity('employees')
-export class Employee extends User {
+@Entity('mining_company_employees')
+export class MiningCompanyEmployee extends MainUser {
   @Column({ default: 0 })
   salary: number;
   @Column({
@@ -21,6 +30,10 @@ export class Employee extends User {
 
   @Column({ default: ECompanyRole.EMPLOYEE })
   role: ECompanyRole;
+
+  @OneToMany(() => Address, (address) => address.miningCompanyEmployees)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
   constructor(
     firstName: string,

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ExecutionContext,
   Inject,
   Injectable,
@@ -8,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request } from 'express';
+import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -16,6 +18,7 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(UsersService) private readonly userService: UsersService,
+    @Inject(EmployeeService) private readonly employeeService: EmployeeService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
     let context: ExecutionContext;
@@ -43,7 +46,23 @@ export class UserMiddleWare implements NestMiddleware {
         });
         if (error) throw new UnauthorizedException(error.message);
         const details: any = await this.jwtService.decode(token);
-        const user = await this.userService.getUserById(details.id, 'User');
+
+        let user: any;
+        switch (details.type.toUpperCase()) {
+          case 'COMPANY':
+            user = await this.employeeService.getEmployeeById(details.id);
+            break;
+          case 'RMB':
+            user = await this.employeeService.getEmployeeById(details.id);
+            break;
+          case 'RESCUE_TEAM':
+            user = await this.employeeService.getEmployeeById(details.id);
+            break;
+          default:
+            throw new BadRequestException(
+              'The provided  entity type is not defined',
+            );
+        }
         req['user'] = user;
         next();
       } else {

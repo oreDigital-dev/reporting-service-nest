@@ -3,7 +3,7 @@ import { UtilsService } from './utils.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { EmployeeModule } from 'src/employee/employee.module';
+import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({

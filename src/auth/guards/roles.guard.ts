@@ -4,12 +4,14 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Inject,
+  BadRequestException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/us.entity';
+import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -19,6 +21,7 @@ export class RolesGuard implements CanActivate {
     @Inject(JwtService) private jwtService: JwtService,
     @Inject(ConfigService) private configService: ConfigService,
     @Inject(UsersService) private userService: UsersService,
+    @Inject(EmployeeService) private employeeService: EmployeeService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<String[]>('roles', [
@@ -40,7 +43,22 @@ export class RolesGuard implements CanActivate {
       });
       if (error) throw new UnauthorizedException(error.message);
       const details: any = await this.jwtService.decode(token);
-      user = await this.userService.getUserById(details.id, 'User');
+
+      switch (details.type.toUpperCase()) {
+        case 'COMPANY':
+          user = await this.employeeService.getEmployeeById(details.id);
+          break;
+        case 'RMB':
+          user = await this.employeeService.getEmployeeById(details.id);
+          break;
+        case 'RESCUE_TEAM':
+          user = await this.employeeService.getEmployeeById(details.id);
+          break;
+        default:
+          throw new BadRequestException(
+            'The provided  entity type is not defined',
+          );
+      }
     }
 
     let type: boolean = false;

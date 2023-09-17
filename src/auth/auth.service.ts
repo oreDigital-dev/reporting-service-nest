@@ -7,7 +7,7 @@ import {
 import { compare, hash } from 'bcrypt';
 import { Request, Response } from 'express';
 import { LoginDTO } from 'src/dtos/login.dto';
-import { EmployeeService } from 'src/employee/employee.service';
+import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { ERole } from 'src/enums/ERole.enum';
 import { EUserType } from 'src/enums/EUserType.enum';
@@ -30,8 +30,11 @@ export class AuthService {
 
   async login(dto: LoginDTO) {
     let user: any;
-    if (EUserType[dto.userType] == EUserType.RMB_EMPLOYEE) {
-      user = await this.employeeService.getEmployeeByEmail(dto.email);
+    console.log(dto);
+    if (dto.userType.toUpperCase() == EUserType[EUserType.MINING_EMPLOYEE]) {
+      user = await this.employeeService.employeeRepo.findOne({
+        where: { email: dto.email },
+      });
     }
     const passwordMatch = await compare(dto.password, user.password);
     if (!passwordMatch)
@@ -45,7 +48,7 @@ export class AuthService {
       throw new BadRequestException(
         'This account is not yet verified, please check your gmail inbox for verification details',
       );
-    const tokens = this.utilsService.getTokens(user);
+    const tokens = this.utilsService.getTokens(user, 'company');
     delete user.password;
     return {
       access_token: (await tokens).accessToken,
@@ -67,7 +70,10 @@ export class AuthService {
     const verifiedAccount2 = await this.userService.userRepo.save(
       verifiedAccount,
     );
-    const tokens = await this.utilsService.getTokens(verifiedAccount2);
+    const tokens = await this.utilsService.getTokens(
+      verifiedAccount2,
+      'company',
+    );
     delete verifiedAccount2.password;
     return { tokens, user: verifiedAccount2 };
   }
@@ -98,7 +104,7 @@ export class AuthService {
       newPassword.toString(),
     );
     const savedUser = await this.userService.userRepo.save(account);
-    const tokens = await this.utilsService.getTokens(account);
+    const tokens = await this.utilsService.getTokens(account, 'company');
     delete savedUser.password;
     delete savedUser.activationCode;
     return { tokens, user: savedUser };

@@ -18,12 +18,13 @@ import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { Employee } from 'src/entities/employee.entity';
+import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectRepository(Employee) public employeeRepo: Repository<Employee>,
+    @InjectRepository(MiningCompanyEmployee)
+    public employeeRepo: Repository<MiningCompanyEmployee>,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
     @Inject(forwardRef(() => CompanyService))
@@ -60,7 +61,7 @@ export class EmployeeService {
 
       const hashedPassword = await this.utilsService.hashString(dto.password);
 
-      let emplyee: Employee = new Employee(
+      let emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
         dto.firstName,
         dto.lastName,
         dto.email,
@@ -69,7 +70,6 @@ export class EmployeeService {
         dto.phoneNumber,
         hashedPassword,
       );
-
 
       let createdEmployee = await this.employeeRepo.save(emplyee);
 
@@ -81,7 +81,7 @@ export class EmployeeService {
         'employee-account-verification',
         'OreDigital account verification',
       );
-      const tokens = await this.utilsService.getTokens(emplyee);
+      const tokens = await this.utilsService.getTokens(emplyee, 'company');
       let savedEmployee = await this.employeeRepo.findOne({
         where: { email: emplyee.email },
         relations: ['roles'],
@@ -106,7 +106,7 @@ export class EmployeeService {
     }
   }
 
-  async createEmp(employee: Employee) {
+  async createEmp(employee: MiningCompanyEmployee) {
     try {
       const availableEmployee = await this.employeeRepo.findOne({
         where: { email: employee.email },
@@ -158,7 +158,7 @@ export class EmployeeService {
     }
     const hashedPassword = await this.utilsService.hashString(dto.password);
 
-    const emplyee: Employee = new Employee(
+    const emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.firstName,
       dto.lastName,
       dto.email,
@@ -209,7 +209,7 @@ export class EmployeeService {
 
   async getAllEmployees() {
     let employees = this.employeeRepo.find({});
-    let newEmployees: Employee[] = [];
+    let newEmployees: MiningCompanyEmployee[] = [];
     (await employees).forEach((employee) => {
       delete employee.password;
       delete employee.activationCode;

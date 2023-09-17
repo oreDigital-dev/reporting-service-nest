@@ -22,8 +22,8 @@ import { MinesiteModule } from './minesite/minesite.module';
 import { HomeController } from './home/home.controller';
 import { AuthController } from './auth/auth.controller';
 import { MinesiteController } from './minesite/minesite.controller';
-import { EmployeeController } from './employee/employee.controller';
-import { EmployeeModule } from './employee/employee.module';
+import { EmployeeController } from './miningCompanyEmployee/employee.controller';
+import { EmployeeModule } from './miningCompanyEmployee/employee.module';
 import { Notification } from './entities/notification.entity';
 import { MineSite } from './entities/minesite.entity';
 import { Incident } from './entities/incident.entity';
@@ -37,13 +37,12 @@ import { MineralService } from './mineral/mineral.service';
 import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
-import { Employee } from './entities/employee.entity';
 import { MiningCompany } from './entities/mining-company.entity';
 import { MiningCompanyModule } from './mining-company/mining-company.module';
 import { Organization } from './entities/organization.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
-import { MiningCompanyEmployee } from './entities/mining_company-employee';
+import { MiningCompanyEmployee } from './entities/miningCompany-employee.entity';
 
 @Module({
   imports: [
@@ -63,7 +62,6 @@ import { MiningCompanyEmployee } from './entities/mining_company-employee';
           MiningCompany,
           User,
           Role,
-          Employee,
           Notification,
           MineSite,
           Incident,
