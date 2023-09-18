@@ -61,14 +61,13 @@ export class MinesiteService {
     }
     mineSite.minerals = minerals;
     mineSite.address = address;
-    let minesites =  company.mineSites || [];
+    let minesites = company.mineSites || [];
     mineSite.company = company;
     let mineSite2 = await this.mineSiteRepo.save(mineSite);
-    minesites.push(mineSite2)
+    minesites.push(mineSite2);
     company.minesites = minesites;
     this.companyService.saveCompany(company);
     return mineSite2;
-  
   }
 
   async getAllMineSite() {
@@ -97,7 +96,7 @@ export class MinesiteService {
     }
   }
 
-  async getMineSiteById(id: UUID) {
+  async getMineSiteById(id: any) {
     let minesite = await this.mineSiteRepo.findOne({
       where: {
         id: id,
@@ -159,9 +158,9 @@ export class MinesiteService {
       throw error;
     }
   }
-  async addIncident(id: UUID, incident : Incident){
-    let minesite = await this.mineSiteRepo.findOneBy({id})
-    let incidents  = minesite.incidents || [];
+  async addIncident(id: UUID, incident: Incident) {
+    let minesite = await this.mineSiteRepo.findOneBy({ id });
+    let incidents = minesite.incidents || [];
     incidents.push(incident);
     minesite.incidents = incidents;
     return await this.mineSiteRepo.save(minesite);

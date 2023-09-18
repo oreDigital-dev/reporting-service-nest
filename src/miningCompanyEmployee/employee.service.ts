@@ -49,7 +49,9 @@ export class EmployeeService {
       console.log(availableEmployee);
 
       if (availableEmployee) {
-        throw new BadRequestException('The employee with the provided email is already registered');
+        throw new BadRequestException(
+          'The employee with the provided email is already registered',
+        );
       }
       let gender;
       switch (dto.myGender.toUpperCase()) {
@@ -93,72 +95,68 @@ export class EmployeeService {
         dto.address,
       );
 
-      emp.address = address
-      const employee =  await this.roleService.assignRoleToEmployee(
+      emp.address = address;
+      const employee = await this.roleService.assignRoleToEmployee(
         ERole[ERole.COMPANY_OWNER],
         emp,
       );
-      
+
       await this.employeeRepo.save(employee);
 
-      this.mailingService.sendEmailToUser(
-        emp.email,
-        'employee-account-verification',
-        'OreDigital account verification',
-      );
-      const tokens = await this.utilsService.getTokens(emp, 'company');
-
-      return await this.employeeRepo.findOne({where: { email: emp.email },relations: ['roles', 'company']});
-    } catch (error) {
-      console.error('Error creating employee: ', error);
-      throw error;
-    }
-  }
-
-
-  async approveAndRejectEmp(id: UUID,  action : string ){
-    let employee = await this.employeeRepo.findOneBy({
-      id
-    })
-
-    if(employee.status == EUserStatus[EUserStatus.ACTIVE]){
-      throw new BadRequestException("The Account has not yet been verified!");
-    }
-
-    if(action == EActionType[EActionType.APPROVE]){
-      employee.status = EActionType[EActionType.APPROVE]
-    }else{
-      employee.status = EActionType[EActionType.REJECT]
-    }
-    return this.employeeRepo.save(employee);
-  }
-  
-
-  async createEmp(employee: MiningCompanyEmployee) {
-    try {
-      const availableEmployee = await this.employeeRepo.findOne({
-        where: { email: employee.email },
-      });
-
-      if (availableEmployee) {
-        throw new BadRequestException(
-          'The employee with the provided email is already registered',
-        );
-      }
-
-      employee.password = await this.utilsService.hashString(employee.password);
-      let createdEmployee = await this.employeeRepo.save(employee);
-      delete createdEmployee.password;
       // this.mailingService.sendEmailToUser(
-      //   employee.email,
+      //   emp.email,
       //   'employee-account-verification',
       //   'OreDigital account verification',
       // );
-      return createdEmployee;
+      const tokens = await this.utilsService.getTokens(emp, 'company');
+
+      return await this.employeeRepo.findOne({
+        where: { email: emp.email },
+        relations: ['roles', 'company'],
+      });
     } catch (error) {
       console.error('Error creating employee: ', error);
       throw error;
     }
+  }
+
+  async approveAndRejectEmp(id: UUID, action: string) {
+    let employee = await this.employeeRepo.findOneBy({
+      id,
+    });
+
+    if (employee.status == EUserStatus[EUserStatus.ACTIVE]) {
+      throw new BadRequestException('The Account has not yet been verified!');
+    }
+
+    if (action == EActionType[EActionType.APPROVE]) {
+      employee.status = EActionType[EActionType.APPROVE];
+    } else {
+      employee.status = EActionType[EActionType.REJECT];
+    }
+    return this.employeeRepo.save(employee);
+  }
+
+  async createEmp(employee: MiningCompanyEmployee) {
+    const availableEmployee = await this.employeeRepo.findOne({
+      where: { email: employee.email },
+    });
+
+    if (availableEmployee) {
+      throw new BadRequestException(
+        'The employee with the provided email is already registered',
+      );
+    }
+
+    employee.password = await this.utilsService.hashString(employee.password);
+    let createdEmployee = await this.employeeRepo.save(employee);
+    delete createdEmployee.password;
+    // this.mailingService.sendEmailToUser(
+    //   employee.email,
+    //   'employee-account-verification',
+    //   'OreDigital account verification',
+    // );
+    return createdEmployee;
   }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {
@@ -254,6 +252,4 @@ export class EmployeeService {
     let employee = await this.getEmployeeById(id);
     this.employeeRepo.remove(employee);
   }
-
-  
 }

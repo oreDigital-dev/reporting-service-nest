@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { CompanyService } from 'src/company/company.service';
@@ -12,7 +12,7 @@ import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { MinesiteService } from 'src/minesite/minesite.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { UtilsService } from 'src/utils/utils.service';
-import {  Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class IncidentsService {
@@ -22,7 +22,7 @@ export class IncidentsService {
     private minesiteService: MinesiteService,
     private notificationService: NotificationService,
     private companyService: CompanyService,
-  ) { }
+  ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
     let incident = new Incident(EIncidentType[dto.type], dto.measurement);
@@ -31,7 +31,7 @@ export class IncidentsService {
 
     if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
       if (dto.measurement < 14) {
-        incident.status =EIncidentStatus[EIncidentStatus.DANGER];
+        incident.status = EIncidentStatus[EIncidentStatus.DANGER];
         await this.notificationService.notify(
           ENotificationType['COMPANIES_AND_REPORTS'],
           new CreateNotificationDTO(
@@ -41,7 +41,7 @@ export class IncidentsService {
           minesite.company.id,
         );
       } else if (dto.measurement > 18) {
-        incident.status =EIncidentStatus[EIncidentStatus.DANGER];
+        incident.status = EIncidentStatus[EIncidentStatus.DANGER];
         await this.notificationService.notify(
           ENotificationType['COMPANIES_AND_REPORTS'],
           new CreateNotificationDTO(
@@ -64,7 +64,6 @@ export class IncidentsService {
       }
     }
     return await this.incidentRepo.save(incident);
-
   }
 
   async createIncident(dto: CreateIncidentDTO) {
@@ -75,19 +74,18 @@ export class IncidentsService {
     incident = await this.incidentRepo.save(incident);
     await this.minesiteService.addIncident(dto.mineSite, incident);
     return incident;
-
   }
 
   async saveCombinedIncidents(dto: CombinedIncidentDTO) {
     const incidents: CreateIncidentDTO[] = [
       {
         measurement: dto.temperature,
-        type:EIncidentType[EIncidentType.TEMPERATURE],
+        type: EIncidentType[EIncidentType.TEMPERATURE],
         mineSite: dto.origin,
       },
       {
         measurement: dto.heatIndex,
-        type:EIncidentType[EIncidentType.HEATINDEX],
+        type: EIncidentType[EIncidentType.HEATINDEX],
         mineSite: dto.origin,
       },
       {
@@ -119,7 +117,6 @@ export class IncidentsService {
           //   ),
           //   createIncident.mineSite.company.id,
           // );
-
         } else if (createIncident.measurement < 17) {
           await this.incidentRepo.update(
             {
@@ -156,7 +153,7 @@ export class IncidentsService {
           //   ),
           //   createIncident.mineSite.company.id,
           // );
-        } else if (createIncident.measurement > 18) { 
+        } else if (createIncident.measurement > 18) {
           await this.incidentRepo.update(
             {
               id: createIncident.id,
@@ -209,7 +206,6 @@ export class IncidentsService {
             ),
             createIncident.mineSite.company.id,
           );
-
         } else {
           await this.incidentRepo.update(
             {

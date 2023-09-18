@@ -10,19 +10,20 @@ import { Request, Response } from 'express';
 @ApiTags('incidents')
 @Controller('incidents')
 export class IncidentsController {
-  constructor(private incidentService: IncidentsService) { }
+  constructor(private incidentService: IncidentsService) {}
 
   @Post('/create')
-  async createIncident(@Body() dto: CreateIncidentDTO) {
-    try {
-      return new ApiResponse(
-        true,
-        'Incident created successfully!',
-        await this.incidentService.saveIncident(dto),
-      );
-    } catch (err) {
-      throw new Error(err)
-    }
+  async createIncident(
+    @Query('type') type: string,
+    @Query('measurement') measurement: number,
+    @Query('mineSiteId') mineSite: UUID,
+  ) {
+    const dto = new CreateIncidentDTO(type, measurement, mineSite);
+    return new ApiResponse(
+      true,
+      'Incident created successfully!',
+      await this.incidentService.saveIncident(dto),
+    );
   }
 
   @Get('/all/by-company')
@@ -47,7 +48,6 @@ export class IncidentsController {
       humidity,
       minesite,
     );
-
     return new ApiResponse(
       true,
       'Successfully saved!',

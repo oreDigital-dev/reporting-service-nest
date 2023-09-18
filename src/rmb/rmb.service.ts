@@ -89,11 +89,11 @@ export class RmbService {
       systemAdmin.phonenumber,
       `Hello! Your account as a system admin has been created successfully! your account verification code is ${systemAdmin.activationCode}`,
     );
-    this.mailService.sendEmailToUser(
-      createdAdmin.email,
-      'verify-account',
-      'OreDigital account verification',
-    );
+    // this.mailService.sendEmailToUser(
+    //   createdAdmin.email,
+    //   'verify-account',
+    //   'OreDigital account verification',
+    // );
     delete createdAdmin.password;
     return {
       message:
