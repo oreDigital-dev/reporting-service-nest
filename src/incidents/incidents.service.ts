@@ -64,12 +64,11 @@ export class IncidentsService {
           );
         }
       }
-      this.incidentRepo.save(incident);
+    return await this.incidentRepo.save(incident);
   
   }
 
   async createIncident(dto: CreateIncidentDTO) {
-    try {
       let incident = new Incident(EIncidentType[dto.type], dto.measurement);
       incident.mineSite = await this.minesiteService.getMineSiteById(
         dto.mineSite,
@@ -77,9 +76,7 @@ export class IncidentsService {
       incident = await this.incidentRepo.save(incident);
       await this.minesiteService.addIncident(dto.mineSite, incident);
       return incident;
-    } catch (err) {
-      throw new Exception(err);
-    }
+
   }
 
   async saveCombinedIncidents(dto: CombinedIncidentDTO) {
@@ -105,7 +102,7 @@ export class IncidentsService {
     let createIncident: Incident;
     while (i < incidents.length) {
       createIncident = await this.createIncident(incidents[i]);
-      if (createIncident.type == EIncidentType.TEMPERATURE) {
+      if (createIncident.type == EIncidentType[EIncidentType.TEMPERATURE]) {
         if (createIncident.measurement > 17) {
           await this.incidentRepo.update(
             {
@@ -115,14 +112,14 @@ export class IncidentsService {
               status: EIncidentStatus.DANGER,
             },
           );
-          this.notificationService.notify(
-            'COMPANY',
-            new CreateNotificationDTO(
-              `${createIncident.mineSite.name} minesite is at its highest temperature`,
-              'COMPANY',
-            ),
-            createIncident.mineSite.company.id,
-          );
+          // this.notificationService.notify(
+          //   'COMPANY',
+          //   new CreateNotificationDTO(
+          //     `${createIncident.mineSite.name} minesite is at its highest temperature`,
+          //     'COMPANY',
+          //   ),
+          //   createIncident.mineSite.company.id,
+          // );
         } else if (createIncident.measurement < 17) {
           await this.incidentRepo.update(
             {
@@ -132,16 +129,16 @@ export class IncidentsService {
               status: EIncidentStatus.DANGER,
             },
           );
-          this.notificationService.notify(
-            'COMPANY',
-            new CreateNotificationDTO(
-              `${createIncident.mineSite.name} minesite is at a low temperature`,
-              'COMPANY',
-            ),
-            createIncident.mineSite.company.id,
-          );
+          // this.notificationService.notify(
+          //   'COMPANY',
+          //   new CreateNotificationDTO(
+          //     `${createIncident.mineSite.name} minesite is at a low temperature`,
+          //     'COMPANY',
+          //   ),
+          //   createIncident.mineSite.company.id,
+          // );
         }
-      } else if (createIncident.type == EIncidentType.HUMIDITY) {
+      } else if (createIncident.type == EIncidentType[EIncidentType.HUMIDITY]) {
         if (createIncident.measurement < 14) {
           await this.incidentRepo.update(
             {
@@ -151,14 +148,14 @@ export class IncidentsService {
               status: EIncidentStatus.DANGER,
             },
           );
-          this.notificationService.notify(
-            'COMPANY',
-            new CreateNotificationDTO(
-              `${createIncident.mineSite.name} minesite is at a low humidity`,
-              'COMPANY',
-            ),
-            createIncident.mineSite.company.id,
-          );
+          // this.notificationService.notify(
+          //   'COMPANY',
+          //   new CreateNotificationDTO(
+          //     `${createIncident.mineSite.name} minesite is at a low humidity`,
+          //     'COMPANY',
+          //   ),
+          //   createIncident.mineSite.company.id,
+          // );
         } else if (createIncident.measurement > 18) {
           await this.incidentRepo.update(
             {
