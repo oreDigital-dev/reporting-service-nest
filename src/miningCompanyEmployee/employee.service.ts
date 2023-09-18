@@ -138,30 +138,25 @@ export class EmployeeService {
   }
 
   async createEmp(employee: MiningCompanyEmployee) {
-    try {
-      const availableEmployee = await this.employeeRepo.findOne({
-        where: { email: employee.email },
-      });
+    const availableEmployee = await this.employeeRepo.findOne({
+      where: { email: employee.email },
+    });
 
-      if (availableEmployee) {
-        throw new BadRequestException(
-          'The employee with the provided email is already registered',
-        );
-      }
-
-      employee.password = await this.utilsService.hashString(employee.password);
-      let createdEmployee = await this.employeeRepo.save(employee);
-      delete createdEmployee.password;
-      // this.mailingService.sendEmailToUser(
-      //   employee.email,
-      //   'employee-account-verification',
-      //   'OreDigital account verification',
-      // );
-      return createdEmployee;
-    } catch (error) {
-      console.error('Error creating employee: ', error);
-      throw error;
+    if (availableEmployee) {
+      throw new BadRequestException(
+        'The employee with the provided email is already registered',
+      );
     }
+
+    employee.password = await this.utilsService.hashString(employee.password);
+    let createdEmployee = await this.employeeRepo.save(employee);
+    delete createdEmployee.password;
+    // this.mailingService.sendEmailToUser(
+    //   employee.email,
+    //   'employee-account-verification',
+    //   'OreDigital account verification',
+    // );
+    return createdEmployee;
   }
 
   async updateEmployee(dto: UpdateEmployeeDTO) {

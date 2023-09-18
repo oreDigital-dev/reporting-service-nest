@@ -13,17 +13,18 @@ import { CreateMiniIncidentDTO } from 'src/dtos/create_mini-incident.dto';
 @Controller('incidents')
 export class IncidentsController {
   constructor(private incidentService: IncidentsService) {}
+
   @Post('/create')
-  createIncident(
+  async createIncident(
     @Query('type') type: string,
     @Query('measurement') measurement: number,
-    @Query('originMineSiteId') mineSiteId: UUID,
+    @Query('mineSiteId') mineSite: UUID,
   ) {
-    const dto = new CreateIncidentDTO(type, measurement, mineSiteId);
+    const dto = new CreateIncidentDTO(type, measurement, mineSite);
     return new ApiResponse(
       true,
       'Incident created successfully!',
-      this.incidentService.saveIncident(dto),
+      await this.incidentService.saveIncident(dto),
     );
   }
 
@@ -63,8 +64,6 @@ export class IncidentsController {
       humidity,
       minesite,
     );
-
-    console.log(dto);
     return new ApiResponse(
       true,
       'Successfully saved!',
