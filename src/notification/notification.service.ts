@@ -4,7 +4,6 @@ import { UUID } from 'crypto';
 import { CompanyService } from 'src/company/company.service';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
 import { Notification } from 'src/entities/notification.entity';
-import { ENotificationStatus } from 'src/enums/ENotificationStatus.enum';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { Repository } from 'typeorm';
 

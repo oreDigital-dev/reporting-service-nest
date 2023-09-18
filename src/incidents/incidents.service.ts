@@ -5,7 +5,9 @@ import { CompanyService } from 'src/company/company.service';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
+import { CreateMiniIncidentDTO } from 'src/dtos/create_mini-incident.dto';
 import { Incident } from 'src/entities/incident.entity';
+import { MiniIncident } from 'src/entities/mini-incident.entity';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
@@ -18,6 +20,8 @@ import { Repository } from 'typeorm';
 export class IncidentsService {
   constructor(
     @InjectRepository(Incident) public incidentRepo: Repository<Incident>,
+    @InjectRepository(MiniIncident)
+    public minIncidentRepo: Repository<MiniIncident>,
     private utilService: UtilsService,
     private minesiteService: MinesiteService,
     private notificationService: NotificationService,
@@ -64,6 +68,68 @@ export class IncidentsService {
       }
     }
     return await this.incidentRepo.save(incident);
+  }
+
+  async saveMiniIncident(dto: CreateMiniIncidentDTO) {
+    let incident = new MiniIncident(EIncidentType[dto.type], dto.isHappened);
+    let minesite = await this.minesiteService.getMineSiteById(
+      dto.originMineSite,
+    );
+    incident.mineSite = minesite;
+
+    if (dto.isHappened) {
+      switch (dto.type.toUpperCase()) {
+        case EIncidentType[EIncidentType.LANDSLIDES]:
+          await this.notificationService.notify(
+            ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
+            new CreateNotificationDTO(
+              `At ${incident.createdAt} in  ${minesite.name}' happened landslides which might cause loss of lives of peaples !`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
+          break;
+        case EIncidentType[EIncidentType.AIR_QUALITY]:
+        case EIncidentType[EIncidentType.LANDSLIDES]:
+          await this.notificationService.notify(
+            ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
+            new CreateNotificationDTO(
+              `At ${incident.createdAt} in  ${minesite.name}'  has law air quality  might cause loss of lives of employees, please seriuos measures are needed !`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
+          break;
+        case EIncidentType[EIncidentType.LIGHT]:
+          await this.notificationService.notify(
+            ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
+            new CreateNotificationDTO(
+              `${minesite.name}'  mine site  has law light intensity! this  might cause loss of lives of employees, please seriuos measures are needed !`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
+          break;
+        case EIncidentType[EIncidentType.WATER_LEVEL]:
+          await this.notificationService.notify(
+            ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
+            new CreateNotificationDTO(
+              `Water level at ${minesite.name}'  mine site is increasing ! this  might cause loss of lives of employees, please seriuos measures are needed !`,
+              'COMPANY',
+            ),
+            minesite.company.id,
+          );
+          break;
+        default:
+          throw new BadRequestException(
+            'The provided incident type is invalid',
+          );
+      }
+    }
+
+    const createdIncident = await this.minIncidentRepo.save(incident);
+    console.log(createdIncident);
+    return createdIncident;
   }
 
   async createIncident(dto: CreateIncidentDTO) {

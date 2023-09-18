@@ -36,7 +36,8 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/users/create/system-admin' ||
       req.baseUrl == '/incidents/create' ||
       req.baseUrl == '/incidents/create-combined' ||
-      req.baseUrl == '/employees/create'
+      req.baseUrl == '/employees/create' ||
+      req.baseUrl == '/incidents/min-incidents/create'
     ) {
       next();
     } else {
@@ -71,6 +72,7 @@ export class UserMiddleWare implements NestMiddleware {
         req['user'] = user;
         next();
       } else {
+        console.log(req.baseUrl);
         throw new UnauthorizedException('Please get authenticated first');
       }
     }
