@@ -26,59 +26,56 @@ export class IncidentsService {
   ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
-    try {
-      if (!this.utilService.idValidator(dto.mineSite))
-        throw new BadRequestException('The provided id is invalid!');
-      let incident = new Incident(EIncidentType[dto.type], dto.measurement);
-      let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
-      incident.mineSite = minesite;
+    let incident = new Incident(EIncidentType[dto.type], dto.measurement);
+    let minesite = await this.minesiteService.mineSiteRepo.findOne({
+      where: { id: dto.mineSite },
+    });
 
-      if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
-        if (dto.measurement < 14) {
-          incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(
-            ENotificationType['COMPANIES_AND_REPORTS'],
-            new CreateNotificationDTO(
-              `${minesite.name}'s temperature is at the lowest!`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-        } else if (dto.measurement > 18) {
-          incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(
-            ENotificationType['COMPANIES_AND_REPORTS'],
-            new CreateNotificationDTO(
-              `${minesite.name}'s temperature is at the highest!`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-        }
-      } else if (dto.type == EIncidentType.LANDSLIDES.toString()) {
-        if (dto.measurement < 14) {
-          await this.notificationService.notify(
-            ENotificationType['COMPANIES_AND_REPORTS'],
-            new CreateNotificationDTO(
-              `${minesite.name} reports landslide occurrence!`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-        }
+    incident.mineSite = minesite;
+
+    if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
+      if (dto.measurement < 14) {
+        incident.status = EIncidentStatus.DANGER;
+        await this.notificationService.notify(
+          ENotificationType['COMPANIES_AND_REPORTS'],
+          new CreateNotificationDTO(
+            `${minesite.name}'s temperature is at the lowest!`,
+            'COMPANY',
+          ),
+          minesite.company.id,
+        );
+      } else if (dto.measurement > 18) {
+        incident.status = EIncidentStatus.DANGER;
+        await this.notificationService.notify(
+          ENotificationType['COMPANIES_AND_REPORTS'],
+          new CreateNotificationDTO(
+            `${minesite.name}'s temperature is at the highest!`,
+            'COMPANY',
+          ),
+          minesite.company.id,
+        );
       }
-      this.incidentRepo.save(incident);
-    } catch (err) {
-      throw new Exception(err);
+    } else if (dto.type == EIncidentType.LANDSLIDES.toString()) {
+      if (dto.measurement < 14) {
+        await this.notificationService.notify(
+          ENotificationType['COMPANIES_AND_REPORTS'],
+          new CreateNotificationDTO(
+            `${minesite.name} reports landslide occurrence!`,
+            'COMPANY',
+          ),
+          minesite.company.id,
+        );
+      }
     }
+    this.incidentRepo.save(incident);
   }
 
   async createIncident(dto: CreateIncidentDTO) {
     try {
       let incident = new Incident(EIncidentType[dto.type], dto.measurement);
-      incident.mineSite = await this.minesiteService.getMineSiteById(
-        dto.mineSite,
-      );
+      // incident.mineSite = await this.minesiteService.getMineSiteById(
+      //   dto.mineSite,
+      // );
       incident = await this.incidentRepo.save(incident);
       await this.minesiteService.addIncident(dto.mineSite, incident);
       return incident;

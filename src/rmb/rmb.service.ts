@@ -89,11 +89,11 @@ export class RmbService {
       systemAdmin.phonenumber,
       `Hello! Your account as a system admin has been created successfully! your account verification code is ${systemAdmin.activationCode}`,
     );
-    this.mailService.sendEmailToUser(
-      createdAdmin.email,
-      'verify-account',
-      'OreDigital account verification',
-    );
+    // this.mailService.sendEmailToUser(
+    //   createdAdmin.email,
+    //   'verify-account',
+    //   'OreDigital account verification',
+    // );
     delete createdAdmin.password;
     return {
       message:
@@ -114,6 +114,17 @@ export class RmbService {
     return availableEmployee;
   }
 
+  async getRMBEmployeeByEmail(email: string) {
+    const availableEmployee = await this.rmbRepo.findOne({
+      where: { email },
+      relations: ['roles'],
+    });
+    if (!availableEmployee)
+      throw new NotFoundException(
+        'The rmb employee with the provided email is not found',
+      );
+    return availableEmployee;
+  }
   async getAllRMBEmployees() {
     return await this.rmbRepo.find({});
   }

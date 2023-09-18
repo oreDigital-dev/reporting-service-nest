@@ -17,6 +17,7 @@ import { Address } from 'src/entities/address.entity';
 import { UpdateMineSiteDTO } from 'src/dtos/update-minesite.dtp';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MineralService } from 'src/mineral/mineral.service';
+import { MiningCompany } from 'src/entities/miningCompany.entity';
 
 @Injectable()
 export class MinesiteService {
@@ -28,10 +29,10 @@ export class MinesiteService {
     private mineralService: MineralService,
   ) {}
 
-  async createMineSite(dto: createMineSiteDTO, req: Request, res: Response) {
+  async createMineSite(dto: createMineSiteDTO) {
     let mineSite: MineSite = new MineSite(dto.name);
-    let owner: any = await this.utilService.getLoggedInProfile(req, res);
-    let company: any = await this.companyService.getCompanyByEmail(owner.email);
+    let company: any = await this.companyService.getCompanyById(dto.company);
+
     let isAvailable = await this.mineSiteRepo.findOne({
       where: {
         name: dto.name,
@@ -60,11 +61,14 @@ export class MinesiteService {
     }
     mineSite.minerals = minerals;
     mineSite.address = address;
+    let minesites =  company.mineSites || [];
     mineSite.company = company;
-    company.mineSites = [company.mineSites, mineSite];
-    await this.companyService.saveCompany(company);
     let mineSite2 = await this.mineSiteRepo.save(mineSite);
+    minesites.push(mineSite2)
+    company.minesites = minesites;
+    this.companyService.saveCompany(company);
     return mineSite2;
+  
   }
 
   async getAllMineSite() {

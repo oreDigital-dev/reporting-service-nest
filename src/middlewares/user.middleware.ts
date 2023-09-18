@@ -23,11 +23,7 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(RmbService) private readonly rmbService: RmbService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    let context: ExecutionContext;
-    const request = req;
-    console.log(request.header.toString());
     const authorization = req.headers.authorization;
-    console.log("Authorization", authorization)
     if (
       req.baseUrl == '' ||
       req.baseUrl == '/favicon.ico' ||
@@ -40,14 +36,12 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/users/create/system-admin' ||
       req.baseUrl == '/incidents/create' ||
       req.baseUrl == '/incidents/create-combined' ||
-      req.baseUrl == '/employees/create' ||
-      req.baseUrl == '/employees/all' 
+      req.baseUrl == '/employees/create'
     ) {
       next();
     } else {
       if (authorization) {
         const token = authorization.toString().split(' ')[1];
-        console.log("token", token )
         if (!authorization.toString().startsWith('Bearer '))
           throw new UnauthorizedException('The provided token is invalid');
         const { tokenVerified, error } = this.jwtService.verify(token, {

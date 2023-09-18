@@ -45,8 +45,8 @@ services:
     ports:
       - "8090:3000"
     networks:
-      - ornetwork
+      - onetwork
 
 networks:
-  ornetwork:
+  onetwork:
     driver: bridge

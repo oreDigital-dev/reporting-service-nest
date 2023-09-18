@@ -4,12 +4,16 @@ import { MiningCompany } from './miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { Address } from './address.entity';
 import { MainUser } from './MainUser.entity';
-import { EUserStatus } from 'src/enums/EUserStatus.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity('mining_company_employees')
 export class MiningCompanyEmployee extends MainUser {
+
+
   @ManyToOne(() => MiningCompany)
+  @JoinColumn({name: 'company_id'})
+  @Exclude()
   company: MiningCompany;
 
   @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })

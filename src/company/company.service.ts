@@ -107,7 +107,6 @@ export class CompanyService {
     let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
-    // company.employees = [employee];
     const role = [];
     role.push(await this.roleService.getRoleByName(ERole[ERole.COMPANY_ADMIN]));
 
@@ -119,22 +118,22 @@ export class CompanyService {
     employee.activationCode =
       await this.utilsService.generateRandomFourDigitNumber();
     const createdEm = await this.employeeService.createEmp(employee);
-    await this.mailingService.sendPhoneSMSTOUser(
-      employee.phonenumber,
-      `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
-    );
+    // await this.mailingService.sendPhoneSMSTOUser(
+    //   employee.phonenumber,
+    //   `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
+    // );
     return createdCompany;
   }
 
   async saveCompany(company: MiningCompany) {
-    return this.companyRepo.save(company);
+    return await this.companyRepo.save(company);
   }
 
   async getCompanyById(id: UUID) {
     try {
       const isCompanyAvailable = await this.companyRepo.findOne({
         where: { id: id },
-        relations: ['employees', 'notifications', 'address'],
+        relations: ['notifications', 'address'],
       });
 
       if (isCompanyAvailable == null)
@@ -237,5 +236,16 @@ export class CompanyService {
         throw new BadRequestException('The provided status is not valid');
     }
     return companies;
+  }
+
+  async addEmployee(emp: MiningCompanyEmployee, id: UUID) {
+    let company = await this.companyRepo.findOneBy({
+      id: id,
+    });
+    let employees = company.employees;
+    employees.push(emp);
+    emp.company = company;
+    this.employeeService.employeeRepo.save(emp);
+    return this.companyRepo.save(company);
   }
 }

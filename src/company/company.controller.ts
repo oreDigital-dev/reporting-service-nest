@@ -32,7 +32,6 @@ export class CompanyController {
   }
 
   @Get('/id')
-  @Roles('SYSTEM_ADMIN, COMPANY_ADMIN')
   async getCompanyById(@Param('id') id: UUID) {
     return new ApiResponse(
       true,

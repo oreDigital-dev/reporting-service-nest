@@ -22,6 +22,8 @@ import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { generate } from 'otp-generator';
 import { Address } from 'src/entities/address.entity';
 import { AddressService } from 'src/address/address.service';
+import { EUserStatus } from 'src/enums/EUserStatus.enum';
+import { EActionType } from 'src/enums/EActionType.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -74,7 +76,7 @@ export class EmployeeService {
         specialChars: false,
       });
 
-      let emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
+      let emp: MiningCompanyEmployee = new MiningCompanyEmployee(
         dto.firstName,
         dto.lastName,
         dto.email,
@@ -87,48 +89,52 @@ export class EmployeeService {
       );
 
       let company = await this.companyService.getCompanyById(dto.company);
-      emplyee.company = company;
+      emp.company = company;
 
       let address: Address = await this.addressService.createAddress(
         dto.address,
       );
 
-      emplyee.address = address;
-
-      let createdEmployee = await this.employeeRepo.save(emplyee);
-
-      delete createdEmployee.password;
-      delete createdEmployee.activationCode;
-
-      this.mailingService.sendEmailToUser(
-        emplyee.email,
-        'employee-account-verification',
-        'OreDigital account verification',
-      );
-      const tokens = await this.utilsService.getTokens(emplyee, 'company');
-      let savedEmployee = await this.employeeRepo.findOne({
-        where: { email: emplyee.email },
-        relations: ['roles'],
-      });
-
+      emp.address = address;
       const employee = await this.roleService.assignRoleToEmployee(
         ERole[ERole.COMPANY_OWNER],
-        savedEmployee,
+        emp,
       );
 
-      savedEmployee = await this.employeeRepo.save(employee);
-      return {
-        access_token: tokens.accessToken,
-        refresh_token: tokens.refreshToken,
-        emplyee: await this.employeeRepo.findOne({
-          where: { email: emplyee.email },
-          relations: ['roles', 'company'],
-        }),
-      };
+      await this.employeeRepo.save(employee);
+
+      // this.mailingService.sendEmailToUser(
+      //   emp.email,
+      //   'employee-account-verification',
+      //   'OreDigital account verification',
+      // );
+      const tokens = await this.utilsService.getTokens(emp, 'company');
+
+      return await this.employeeRepo.findOne({
+        where: { email: emp.email },
+        relations: ['roles', 'company'],
+      });
     } catch (error) {
       console.error('Error creating employee: ', error);
       throw error;
     }
+  }
+
+  async approveAndRejectEmp(id: UUID, action: string) {
+    let employee = await this.employeeRepo.findOneBy({
+      id,
+    });
+
+    if (employee.status == EUserStatus[EUserStatus.ACTIVE]) {
+      throw new BadRequestException('The Account has not yet been verified!');
+    }
+
+    if (action == EActionType[EActionType.APPROVE]) {
+      employee.status = EActionType[EActionType.APPROVE];
+    } else {
+      employee.status = EActionType[EActionType.REJECT];
+    }
+    return this.employeeRepo.save(employee);
   }
 
   async createEmp(employee: MiningCompanyEmployee) {
@@ -182,7 +188,7 @@ export class EmployeeService {
       specialChars: false,
     });
 
-    const emplyee: MiningCompanyEmployee = new MiningCompanyEmployee(
+    const emp: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.firstName,
       dto.lastName,
       dto.email,

@@ -40,24 +40,29 @@ export class AuthService {
       case EAccountType[EAccountType.COMPANY]:
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
+          relations: ['roles'],
         });
         type = 'company';
         break;
       case EAccountType[EAccountType.RESCUE_TEAM]:
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
+          relations: ['roles'],
         });
         type = 'rescue_team';
         break;
       case EAccountType[EAccountType.RMB]:
         user = await this.rmbService.rmbRepo.findOne({
           where: { email: dto.email },
+          relations: ['roles'],
         });
         type = 'rmb';
         break;
       default:
         throw new BadRequestException('The provided account type is invalid');
     }
+
+    if (!user) throw new BadRequestException('Invalid email or password');
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
