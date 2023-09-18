@@ -42,7 +42,6 @@ export class UserMiddleWare implements NestMiddleware {
     } else {
       if (authorization) {
         const token = authorization.toString().split(' ')[1];
-        console.log("token", token )
         if (!authorization.toString().startsWith('Bearer '))
           throw new UnauthorizedException('The provided token is invalid');
         const { tokenVerified, error } = this.jwtService.verify(token, {

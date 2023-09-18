@@ -70,9 +70,9 @@ export class IncidentsService {
 
   async createIncident(dto: CreateIncidentDTO) {
       let incident = new Incident(EIncidentType[dto.type], dto.measurement);
-      incident.mineSite = await this.minesiteService.getMineSiteById(
-        dto.mineSite,
-      );
+      // incident.mineSite = await this.minesiteService.getMineSiteById(
+      //   dto.mineSite,
+      // );
       incident = await this.incidentRepo.save(incident);
       await this.minesiteService.addIncident(dto.mineSite, incident);
       return incident;

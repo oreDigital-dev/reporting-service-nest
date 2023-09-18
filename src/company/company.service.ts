@@ -118,10 +118,10 @@ export class CompanyService {
     employee.activationCode =
       await this.utilsService.generateRandomFourDigitNumber();
     const createdEm = await this.employeeService.createEmp(employee);
-    await this.mailingService.sendPhoneSMSTOUser(
-      employee.phonenumber,
-      `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
-    );
+    // await this.mailingService.sendPhoneSMSTOUser(
+    //   employee.phonenumber,
+    //   `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
+    // );
     return createdCompany;
   }
 
@@ -238,12 +238,12 @@ export class CompanyService {
     return companies;
   }
 
-  async addEmployee(emp: MiningCompanyEmployee, id: UUID){
+  async addEmployee(emp: MiningCompanyEmployee, id: UUID) {
     let company = await this.companyRepo.findOneBy({
-      id: id 
-    })
+      id: id,
+    });
     let employees = company.employees;
-    employees.push(emp)
+    employees.push(emp);
     emp.company = company;
     this.employeeService.employeeRepo.save(emp);
     return this.companyRepo.save(company);
