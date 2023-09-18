@@ -5,7 +5,6 @@ import { UUID } from 'crypto';
 
 export class CreateEmployeeDTO extends CreateUserDto {
   @IsNumber()
-  @IsNotEmpty()
   @ApiProperty()
   salary: number;
 
