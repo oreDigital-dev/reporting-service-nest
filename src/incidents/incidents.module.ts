@@ -9,6 +9,7 @@ import { MinesiteModule } from 'src/minesite/minesite.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { CompanyModule } from 'src/company/company.module';
+import { MiniIncident } from 'src/entities/mini-incident.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { CompanyModule } from 'src/company/company.module';
     MinesiteModule,
     NotificationModule,
     CompanyModule,
-    TypeOrmModule.forFeature([Incident]),
+    TypeOrmModule.forFeature([Incident, MiniIncident]),
   ],
   controllers: [IncidentsController],
   providers: [IncidentsService],

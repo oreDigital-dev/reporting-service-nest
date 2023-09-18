@@ -46,6 +46,7 @@ import { MiningCompanyEmployee } from './entities/miningCompany-employee.entity'
 import { RMBEmployee } from './entities/rmb-employee';
 import { MainUser } from './entities/MainUser.entity';
 import { MailingService } from './mailing/mailing.service';
+import { MiniIncident } from './entities/mini-incident.entity';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { MailingService } from './mailing/mailing.service';
           Organization,
           MiningCompanyEmployee,
           RMBEmployee,
+          MiniIncident,
         ],
         synchronize: true,
       }),

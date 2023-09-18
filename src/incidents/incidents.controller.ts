@@ -6,6 +6,8 @@ import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { UUID } from 'crypto';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
+import { CreateMiniIncidentDTO } from 'src/dtos/create_mini-incident.dto';
 
 @ApiTags('incidents')
 @Controller('incidents')
@@ -22,6 +24,20 @@ export class IncidentsController {
       true,
       'Incident created successfully!',
       this.incidentService.saveIncident(dto),
+    );
+  }
+
+  @Post('/min-incidents/create')
+  CreateMinIncident(
+    @Query('type') type: string,
+    @Query('isHappened') isHappened: boolean,
+    @Query('originMineSiteId') mineSiteId: UUID,
+  ) {
+    const dto = new CreateMiniIncidentDTO(type, isHappened, mineSiteId);
+    return new ApiResponse(
+      true,
+      'Incident created successfully!',
+      this.incidentService.saveMiniIncident(dto),
     );
   }
 
