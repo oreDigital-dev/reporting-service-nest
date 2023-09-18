@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 import { Request, Response } from 'express';
+import { Exception } from 'handlebars';
 import { CompanyService } from 'src/company/company.service';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
@@ -15,7 +16,7 @@ import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { MinesiteService } from 'src/minesite/minesite.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class IncidentsService {
@@ -291,25 +292,33 @@ export class IncidentsService {
     return await this.incidentRepo.find();
   }
 
-  async getIncidentByLoggedInCompany(req: Request, res: Response) {
-    // try {
-    //   let loggedInCompany = await this.utilService.getLoggedInProfile(req, res);
-    //   let incidents = await this.incidentRepo.findBy({
-    //     mineSite: In(loggedInCompany.mineSites),
-    //   });
-    //   return incidents;
-    // } catch (err) {
-    //   throw new Exception(err);
-    // }
+  async getAllIncidents() {
+    return await this.incidentRepo.find({});
   }
 
-  async getIncidentById(id: UUID){
+  async getIncidentByLoggedInCompany(req: Request, res: Response) {
+    try {
+      let loggedInCompany = await this.utilService.getLoggedInProfile(
+        req,
+        res,
+        'company',
+      );
+      let incidents = await this.incidentRepo.findBy({
+        mineSite: In(loggedInCompany.mineSites),
+      });
+      return incidents;
+    } catch (err) {
+      throw new Exception(err);
+    }
+  }
+
+  async getIncidentById(id: UUID) {
     let incident = await this.incidentRepo.findOne({
       where: { id: id },
       relations: ['mineSite'],
-    })
-    if(!incident){
-      throw new BadRequestException('No data found!')
+    });
+    if (!incident) {
+      throw new BadRequestException('No data found!');
     }
     return incident;
   }

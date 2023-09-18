@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { IncidentsService } from './incidents.service';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
@@ -42,8 +51,19 @@ export class IncidentsController {
     );
   }
 
+  @Get('/all')
+  getAllIncidents() {
+    return new ApiResponse(
+      true,
+      'Retrieved successfully!',
+      this.incidentService.getAllIncidents(),
+    );
+  }
   @Get('/all/by-company')
-  getIncidentsByLoggedInCompany(request: Request, response: Response) {
+  getIncidentsByLoggedInCompany(
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
     return new ApiResponse(
       true,
       'Retrieved successfully!',
@@ -76,7 +96,7 @@ export class IncidentsController {
     return new ApiResponse(
       true,
       'Data retrieved successfully!',
-      await this.incidentService.getIncidentById(id)
+      await this.incidentService.getIncidentById(id),
     );
   }
 }
