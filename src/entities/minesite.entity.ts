@@ -33,12 +33,12 @@ export class MineSite extends InitiatorAudit {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  @OneToMany(() => Incident, (incident) => incident.mineSite)
-  incidents: Incident[];
+  // @OneToMany(() => Incident, (incident) => incident.mineSite)
+  // @Exclude()
+  // incidents: Incident[];
 
   @ManyToOne(() => MiningCompany, (company) => company.mineSites)
   @JoinColumn({ name: 'company_id' })
-  @Exclude()
   company: MiningCompany;
 
   constructor(name: string) {

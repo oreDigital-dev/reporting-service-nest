@@ -65,7 +65,7 @@ export class UtilsService {
         national_id: user.national_id,
       },
       {
-        expiresIn: '10m',
+        expiresIn: '10h',
         secret: this.configService.get('SECRET_KEY'),
       },
     );

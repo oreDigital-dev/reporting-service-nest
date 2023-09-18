@@ -22,7 +22,7 @@ export class Incident extends InitiatorAudit {
   })
   measurement: number;
 
-  @ManyToOne(() => MineSite, (mineSite) => mineSite.incidents)
+  @ManyToOne(() => MineSite)
   mineSite: MineSite;
 
   constructor(type: string, measurement: number) {
