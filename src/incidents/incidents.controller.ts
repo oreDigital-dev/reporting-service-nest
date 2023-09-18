@@ -11,9 +11,13 @@ import { Request, Response } from 'express';
 @Controller('incidents')
 export class IncidentsController {
   constructor(private incidentService: IncidentsService) {}
-
   @Post('/create')
-  createIncident(@Body() dto: CreateIncidentDTO) {
+  createIncident(
+    @Query('type') type: string,
+    @Query('measurement') measurement: number,
+    @Query('originMineSiteId') mineSiteId: UUID,
+  ) {
+    const dto = new CreateIncidentDTO(type, measurement, mineSiteId);
     return new ApiResponse(
       true,
       'Incident created successfully!',
