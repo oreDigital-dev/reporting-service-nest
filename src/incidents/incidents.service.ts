@@ -26,8 +26,8 @@ export class IncidentsService {
 
   async saveIncident(dto: CreateIncidentDTO) {
     let incident = new Incident(EIncidentType[dto.type], dto.measurement);
-    // let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
-    // incident.mineSite = minesite;
+    let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
+    incident.mineSite = minesite;
 
     if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
       if (dto.measurement < 14) {
