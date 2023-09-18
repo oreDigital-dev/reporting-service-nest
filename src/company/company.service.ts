@@ -57,11 +57,11 @@ export class CompanyService {
       ],
     });
 
-    // if (available.length != 0) {
-    //   throw new BadRequestException(
-    //     "The company's phone number or email is already registered!",
-    //   );
-    // }
+    if (available.length != 0) {
+      throw new BadRequestException(
+        "The company's phone number or email is already registered!",
+      );
+    }
 
     let company: MiningCompany = new MiningCompany(
       dto.company.companyName,
