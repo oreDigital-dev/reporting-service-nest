@@ -13,7 +13,12 @@ export class IncidentsController {
   constructor(private incidentService: IncidentsService) {}
 
   @Post('/create')
-  async createIncident(@Body() dto: CreateIncidentDTO) {
+  async createIncident(
+    @Query('type') type: string,
+    @Query('measurement') measurement: number,
+    @Query('mineSiteId') mineSite: UUID,
+  ) {
+    const dto = new CreateIncidentDTO(type, measurement, mineSite);
     return new ApiResponse(
       true,
       'Incident created successfully!',

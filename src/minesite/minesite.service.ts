@@ -96,7 +96,7 @@ export class MinesiteService {
     }
   }
 
-  async getMineSiteById(id: UUID) {
+  async getMineSiteById(id: any) {
     let minesite = await this.mineSiteRepo.findOne({
       where: {
         id: id,
