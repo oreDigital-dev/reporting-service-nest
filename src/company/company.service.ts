@@ -173,7 +173,11 @@ export class CompanyService {
 
   async getCompanyProfile(req: Request, res: Response) {
     try {
-      let owner: any = await this.utilsService.getLoggedInProfile(req, res);
+      let owner: any = await this.utilsService.getLoggedInProfile(
+        req,
+        res,
+        'company',
+      );
       return this.companyRepo.findOne({ where: { email: owner.email } });
     } catch (err) {
       throw new Exception(err);

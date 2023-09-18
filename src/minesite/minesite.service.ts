@@ -83,7 +83,11 @@ export class MinesiteService {
 
   async getMinSitesOfLoggedCompany(req: Request, res: Response) {
     try {
-      const owner: any = await this.utilService.getLoggedInProfile(req, res);
+      const owner: any = await this.utilService.getLoggedInProfile(
+        req,
+        res,
+        'company',
+      );
       const company: any = await this.companyService.getCompanyByEmail(
         owner.email,
       );
@@ -125,7 +129,11 @@ export class MinesiteService {
   }
   async deleteAllMineSitesInMyCompany(req: Request, res: Response) {
     try {
-      let owner: any = await this.utilService.getLoggedInProfile(req, res);
+      let owner: any = await this.utilService.getLoggedInProfile(
+        req,
+        res,
+        'company',
+      );
       let company: any = await this.companyService.getCompanyByEmail(
         owner.email,
       );

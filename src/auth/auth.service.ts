@@ -133,8 +133,8 @@ export class AuthService {
     return { tokens, user: savedUser };
   }
 
-  async getProfile(req: Request, res: Response) {
-    let profile = this.utilsService.getLoggedInProfile(req, res);
+  async getProfile(req: Request, res: Response, type: string) {
+    let profile = this.utilsService.getLoggedInProfile(req, res, type);
     return profile;
   }
 }

@@ -220,7 +220,7 @@ export class EmployeeService {
   async getEmployeeById(id: UUID) {
     const isEmployeeAvailable = await this.employeeRepo.findOne({
       where: { id: id },
-      relations: ['roles'],
+      relations: ['roles', 'company'],
     });
     if (!isEmployeeAvailable)
       throw new NotFoundException(
@@ -230,7 +230,11 @@ export class EmployeeService {
   }
 
   async getEmployeesByLoggedInCompany(req: Request, res: Response) {
-    let company: any = await this.utilsService.getLoggedInProfile(req, res);
+    let company: any = await this.utilsService.getLoggedInProfile(
+      req,
+      res,
+      'company',
+    );
     return company.employees;
   }
 

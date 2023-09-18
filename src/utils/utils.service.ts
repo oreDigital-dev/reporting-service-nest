@@ -11,8 +11,12 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
+import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { User } from 'src/entities/us.entity';
 import { EAccountType } from 'src/enums/EAccountType.enum';
+import { MiningCompanyService } from 'src/mining-company/mining-company.service';
+import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -26,6 +30,10 @@ export class UtilsService {
     private companyService: CompanyService,
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(ConfigService) private readonly configService: ConfigService,
+    private miningCompanyService: EmployeeService,
+
+    @Inject(forwardRef(() => RmbService))
+    private rmbEmployeeService: RmbService,
   ) {}
 
   async getTokens(
@@ -101,8 +109,11 @@ export class UtilsService {
     return regex.test(id.toString());
   }
 
-  async getLoggedInProfile(req: Request, res: Response) {
+  async getLoggedInProfile(req: Request, res: Response, type: string) {
     const authorization = req.headers.authorization;
+
+    let user: any;
+
     if (authorization) {
       const token = authorization.split(' ')[1];
       if (!authorization.toString().startsWith('Bearer '))
@@ -113,7 +124,23 @@ export class UtilsService {
       if (error)
         return res.status(403).json({ sucess: false, message: error.message });
       const details: any = await this.jwtService.decode(token);
-      return await this.userService.getUserById(details.id, 'User');
+      switch (type.toUpperCase()) {
+        case EAccountType[EAccountType.COMPANY]:
+          user = await this.miningCompanyService.getEmployeeById(details.id);
+          break;
+        case EAccountType[EAccountType.RMB]:
+          user = await this.rmbEmployeeService.getRMBEmployeeById(details.id);
+          break;
+        case EAccountType[EAccountType.RESCUE_TEAM]:
+          await this.userService.getUserById(details.id, 'User');
+          break;
+        default:
+          throw new BadRequestException(
+            'The provided user type to decode is invalid',
+          );
+      }
+
+      return user;
     } else {
       return res.status(403).json({
         sucess: false,

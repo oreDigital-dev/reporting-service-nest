@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -62,8 +63,12 @@ export class AuthController {
     );
   }
   @Get('profile')
-  async getProfile(@Req() req: Request, @Res() res: Response) {
-    let profile = await this.authService.getProfile(req, res);
+  async getProfile(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query('type') type: string,
+  ) {
+    let profile = await this.authService.getProfile(req, res, type);
     return new ApiResponse(true, 'Profile retrieved successfully', profile);
   }
 }

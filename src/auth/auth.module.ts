@@ -10,7 +10,7 @@ import { RmbModule } from 'src/rmb/rmb.module';
   imports: [
     forwardRef(() => UsersModule),
     forwardRef(() => UtilsModule),
-    EmployeeModule,
+    forwardRef(() => EmployeeModule),
     forwardRef(() => RmbModule),
   ],
   controllers: [AuthController],

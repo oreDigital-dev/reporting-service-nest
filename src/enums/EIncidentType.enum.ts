@@ -7,4 +7,5 @@ export enum EIncidentType {
   HEATINDEX,
   HUMIDITY,
   WATER_LEVEL,
+  SHOCK,
 }
