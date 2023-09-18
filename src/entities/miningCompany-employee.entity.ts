@@ -13,7 +13,6 @@ export class MiningCompanyEmployee extends MainUser {
 
   @ManyToOne(() => MiningCompany)
   @JoinColumn({name: 'company_id'})
-  @Exclude()
   company: MiningCompany;
 
   @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })

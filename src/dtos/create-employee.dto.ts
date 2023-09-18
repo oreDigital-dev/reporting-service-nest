@@ -4,10 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UUID } from 'crypto';
 
 export class CreateEmployeeDTO extends CreateUserDto {
-  @IsNumber()
-  @ApiProperty()
-  salary: number;
-
+  
   @IsString()
   employeeRole: string;
 
