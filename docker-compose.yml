@@ -43,10 +43,10 @@ services:
       NODE_ENV: development
       PORT: 3000
     ports:
-      - "8090:3000"
+      - "8010:3000"
     networks:
-      - onetwork
+      - work
 
 networks:
-  onetwork:
+  work:
     driver: bridge
