@@ -16,7 +16,7 @@ export class MiniIncident extends InitiatorAudit {
   @Column({ nullable: false, default: EIncidentStatus.FINE })
   status: EIncidentStatus;
 
-  @ManyToOne(() => MineSite, (mineSite) => mineSite.incidents)
+  @ManyToOne(() => MineSite)
   mineSite: MineSite;
 
   constructor(type: EIncidentType, isHappened: boolean) {

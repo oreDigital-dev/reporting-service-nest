@@ -139,7 +139,6 @@ export class IncidentsService {
       dto.mineSite,
     );
     incident = await this.incidentRepo.save(incident);
-    await this.minesiteService.addIncident(dto.mineSite, incident);
     return incident;
   }
 
