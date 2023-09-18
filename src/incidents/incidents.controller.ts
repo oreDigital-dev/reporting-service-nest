@@ -14,15 +14,11 @@ export class IncidentsController {
 
   @Post('/create')
   async createIncident(@Body() dto: CreateIncidentDTO) {
-    try {
-      return new ApiResponse(
-        true,
-        'Incident created successfully!',
-        await this.incidentService.saveIncident(dto),
-      );
-    } catch (err) {
-      throw new Error(err);
-    }
+    return new ApiResponse(
+      true,
+      'Incident created successfully!',
+      await this.incidentService.saveIncident(dto),
+    );
   }
 
   @Get('/all/by-company')
@@ -47,7 +43,6 @@ export class IncidentsController {
       humidity,
       minesite,
     );
-
     return new ApiResponse(
       true,
       'Successfully saved!',
