@@ -1,19 +1,20 @@
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { MineSite } from './minesite.entity';
+import { UUID, randomUUID } from 'crypto';
 
 @Entity('incidents')
 export class Incident extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column({ nullable: true, enum: EIncidentType})
   type: string;
 
-  @Column({ nullable: false, default: EIncidentStatus.FINE })
-  status: EIncidentStatus;
+  @Column({ nullable: false, default: EIncidentStatus[EIncidentStatus.FINE] })
+  status: string;
 
   @Column({
     nullable: true,
@@ -24,9 +25,9 @@ export class Incident extends InitiatorAudit {
   @ManyToOne(() => MineSite, (mineSite) => mineSite.incidents)
   mineSite: MineSite;
 
-  constructor(type: EIncidentType, measurement: number) {
+  constructor(type: string, measurement: number) {
     super();
-    this.type = EIncidentType[type];
+    this.type =type;
     this.measurement = measurement;
   }
 }

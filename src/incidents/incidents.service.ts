@@ -1,7 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {  Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
-import { Exception } from 'handlebars';
 import { CompanyService } from 'src/company/company.service';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
@@ -13,7 +12,7 @@ import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { MinesiteService } from 'src/minesite/minesite.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { In, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 
 @Injectable()
 export class IncidentsService {
@@ -23,59 +22,59 @@ export class IncidentsService {
     private minesiteService: MinesiteService,
     private notificationService: NotificationService,
     private companyService: CompanyService,
-  ) {}
+  ) { }
 
   async saveIncident(dto: CreateIncidentDTO) {
-      let incident = new Incident(EIncidentType[dto.type], dto.measurement);
-      let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
-      incident.mineSite = minesite;
+    let incident = new Incident(EIncidentType[dto.type], dto.measurement);
+    let minesite = await this.minesiteService.getMineSiteById(dto.mineSite);
+    incident.mineSite = minesite;
 
-      if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
-        if (dto.measurement < 14) {
-          incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(
-            ENotificationType['COMPANIES_AND_REPORTS'],
-            new CreateNotificationDTO(
-              `${minesite.name}'s temperature is at the lowest!`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-        } else if (dto.measurement > 18) {
-          incident.status = EIncidentStatus.DANGER;
-          await this.notificationService.notify(
-            ENotificationType['COMPANIES_AND_REPORTS'],
-            new CreateNotificationDTO(
-              `${minesite.name}'s temperature is at the highest!`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-        }
-      } else if (dto.type == EIncidentType.LANDSLIDES.toString()) {
-        if (dto.measurement < 14) {
-          await this.notificationService.notify(
-            ENotificationType['COMPANIES_AND_REPORTS'],
-            new CreateNotificationDTO(
-              `${minesite.name} reports landslide occurrence!`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-        }
+    if (dto.type == EIncidentType.AIR_QUALITY.toString()) {
+      if (dto.measurement < 14) {
+        incident.status =EIncidentStatus[EIncidentStatus.DANGER];
+        await this.notificationService.notify(
+          ENotificationType['COMPANIES_AND_REPORTS'],
+          new CreateNotificationDTO(
+            `${minesite.name}'s temperature is at the lowest!`,
+            'COMPANY',
+          ),
+          minesite.company.id,
+        );
+      } else if (dto.measurement > 18) {
+        incident.status =EIncidentStatus[EIncidentStatus.DANGER];
+        await this.notificationService.notify(
+          ENotificationType['COMPANIES_AND_REPORTS'],
+          new CreateNotificationDTO(
+            `${minesite.name}'s temperature is at the highest!`,
+            'COMPANY',
+          ),
+          minesite.company.id,
+        );
       }
+    } else if (dto.type == EIncidentType.LANDSLIDES.toString()) {
+      if (dto.measurement < 14) {
+        await this.notificationService.notify(
+          ENotificationType['COMPANIES_AND_REPORTS'],
+          new CreateNotificationDTO(
+            `${minesite.name} reports landslide occurrence!`,
+            'COMPANY',
+          ),
+          minesite.company.id,
+        );
+      }
+    }
     return await this.incidentRepo.save(incident);
-  
+
   }
 
   async createIncident(dto: CreateIncidentDTO) {
-      let incident = new Incident(EIncidentType[dto.type], dto.measurement);
-      // incident.mineSite = await this.minesiteService.getMineSiteById(
-      //   dto.mineSite,
-      // );
-      incident = await this.incidentRepo.save(incident);
-      await this.minesiteService.addIncident(dto.mineSite, incident);
-      return incident;
+    let incident = new Incident(dto.type, dto.measurement);
+    // incident.mineSite = await this.minesiteService.getMineSiteById(
+    //   dto.mineSite,
+    // );
+    incident = await this.incidentRepo.save(incident);
+    await this.minesiteService.addIncident(dto.mineSite, incident);
+    return incident;
 
   }
 
@@ -83,17 +82,17 @@ export class IncidentsService {
     const incidents: CreateIncidentDTO[] = [
       {
         measurement: dto.temperature,
-        type: EIncidentType.TEMPERATURE.toString(),
+        type:EIncidentType[EIncidentType.TEMPERATURE],
         mineSite: dto.origin,
       },
       {
         measurement: dto.heatIndex,
-        type: EIncidentType.HEATINDEX.toString(),
+        type:EIncidentType[EIncidentType.HEATINDEX],
         mineSite: dto.origin,
       },
       {
         measurement: dto.humidity,
-        type: EIncidentType.HUMIDITY.toString(),
+        type: EIncidentType[EIncidentType.HUMIDITY],
         mineSite: dto.origin,
       },
     ];
@@ -109,7 +108,7 @@ export class IncidentsService {
               id: createIncident.id,
             },
             {
-              status: EIncidentStatus.DANGER,
+              status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
           // this.notificationService.notify(
@@ -120,13 +119,14 @@ export class IncidentsService {
           //   ),
           //   createIncident.mineSite.company.id,
           // );
+
         } else if (createIncident.measurement < 17) {
           await this.incidentRepo.update(
             {
               id: createIncident.id,
             },
             {
-              status: EIncidentStatus.DANGER,
+              status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
           // this.notificationService.notify(
@@ -145,7 +145,43 @@ export class IncidentsService {
               id: createIncident.id,
             },
             {
-              status: EIncidentStatus.DANGER,
+              status: EIncidentStatus[EIncidentStatus.DANGER],
+            },
+          );
+          // this.notificationService.notify(
+          //   'COMPANY',
+          //   new CreateNotificationDTO(
+          //     `${createIncident.mineSite.name} minesite is at a low humidity`,
+          //     'COMPANY',
+          //   ),
+          //   createIncident.mineSite.company.id,
+          // );
+        } else if (createIncident.measurement > 18) { 
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus[EIncidentStatus.DANGER],
+            },
+          );
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a high humidity`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
+        }
+      } else if (createIncident.type == EIncidentType[EIncidentType.HUMIDITY]) {
+        if (createIncident.measurement < 14) {
+          await this.incidentRepo.update(
+            {
+              id: createIncident.id,
+            },
+            {
+              status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
           // this.notificationService.notify(
@@ -162,7 +198,7 @@ export class IncidentsService {
               id: createIncident.id,
             },
             {
-              status: EIncidentStatus.DANGER,
+              status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
           this.notificationService.notify(
@@ -173,23 +209,24 @@ export class IncidentsService {
             ),
             createIncident.mineSite.company.id,
           );
+
         } else {
           await this.incidentRepo.update(
             {
               id: createIncident.id,
             },
             {
-              status: EIncidentStatus.DANGER,
+              status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
         }
         if (!createIncident || createIncident == null) {
           break;
         }
-        i++;
       }
+      i++;
     }
-    return await this.incidentRepo.find({});
+    return await this.incidentRepo.find();
   }
 
   async getIncidentByLoggedInCompany(req: Request, res: Response) {
