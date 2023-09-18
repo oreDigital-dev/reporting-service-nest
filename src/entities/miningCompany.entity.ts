@@ -58,6 +58,7 @@ export class MiningCompany extends Organization {
   miniLicense: number;
 
   @ManyToMany(() => MineSite)
+  @Exclude()
   mineSites: MineSite[];
 
   @ManyToMany(() => Mineral)

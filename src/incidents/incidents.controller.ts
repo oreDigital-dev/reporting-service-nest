@@ -55,12 +55,12 @@ export class IncidentsController {
     );
   }
 
-  @Get('/by-id')
-  getIncidentById(@Param('id') id: UUID) {
+  @Get('/:id')
+  async getIncidentById(@Param('id') id: UUID) {
     return new ApiResponse(
       true,
       'Data retrieved successfully!',
-      this.getIncidentById(id),
+      await this.incidentService.getIncidentById(id)
     );
   }
 }

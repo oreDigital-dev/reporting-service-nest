@@ -160,7 +160,10 @@ export class MinesiteService {
   }
   async addIncident(id: UUID, incident: Incident) {
     let minesite = await this.mineSiteRepo.findOneBy({ id });
-    let incidents = minesite.incidents || [];
+    let incidents = minesite.incidents;
+    if(incidents == null){
+      incidents = []
+    }
     incidents.push(incident);
     minesite.incidents = incidents;
     return await this.mineSiteRepo.save(minesite);

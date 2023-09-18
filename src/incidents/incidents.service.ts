@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 import { CompanyService } from 'src/company/company.service';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
@@ -68,9 +69,9 @@ export class IncidentsService {
 
   async createIncident(dto: CreateIncidentDTO) {
     let incident = new Incident(dto.type, dto.measurement);
-    // incident.mineSite = await this.minesiteService.getMineSiteById(
-    //   dto.mineSite,
-    // );
+    incident.mineSite = await this.minesiteService.getMineSiteById(
+      dto.mineSite,
+    );
     incident = await this.incidentRepo.save(incident);
     await this.minesiteService.addIncident(dto.mineSite, incident);
     return incident;
@@ -162,14 +163,14 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
-          this.notificationService.notify(
-            'COMPANY',
-            new CreateNotificationDTO(
-              `${createIncident.mineSite.name} minesite is at a high humidity`,
-              'COMPANY',
-            ),
-            createIncident.mineSite.company.id,
-          );
+          // this.notificationService.notify(
+          //   'COMPANY',
+          //   new CreateNotificationDTO(
+          //     `${createIncident.mineSite.name} minesite is at a high humidity`,
+          //     'COMPANY',
+          //   ),
+          //   createIncident.mineSite.company.id,
+          // );
         }
       } else if (createIncident.type == EIncidentType[EIncidentType.HUMIDITY]) {
         if (createIncident.measurement < 14) {
@@ -235,5 +236,16 @@ export class IncidentsService {
     // } catch (err) {
     //   throw new Exception(err);
     // }
+  }
+
+  async getIncidentById(id: UUID){
+    let incident = await this.incidentRepo.findOne({
+      where: { id: id },
+      relations: ['mineSite'],
+    })
+    if(!incident){
+      throw new BadRequestException('No data found!')
+    }
+    return incident;
   }
 }
