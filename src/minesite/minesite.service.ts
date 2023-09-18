@@ -104,9 +104,9 @@ export class MinesiteService {
       relations: ['address', 'company', 'minerals'],
     });
 
-    if (minesite == null) {
-      throw new NotFoundException('Minesite with that id is  not found!');
-    }
+    // if (minesite == null) {
+    //   throw new NotFoundException('Minesite with that id is  not found!');
+    // }
     return minesite;
   }
 
