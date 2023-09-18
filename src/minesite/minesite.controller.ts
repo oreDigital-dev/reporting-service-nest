@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,6 +9,7 @@ import {
   Post,
   Req,
   Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MinesiteService } from './minesite.service';
 import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
@@ -18,6 +20,7 @@ import { UUID } from 'crypto';
 import { UpdateMineSiteDTO } from 'src/dtos/update-minesite.dtp';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('minesites')
 @Controller('minesites')
 export class MinesiteController {

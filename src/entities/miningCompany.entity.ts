@@ -51,6 +51,7 @@ export class MiningCompany extends Organization {
   numberOfEmployees: number;
 
   @OneToMany(() => MiningCompanyEmployee, (employee) => employee)
+  @Exclude()
   employees: MiningCompanyEmployee[];
 
   @Column()

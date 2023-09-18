@@ -11,18 +11,18 @@ import { Request, Response } from 'express';
 @Controller('incidents')
 export class IncidentsController {
   constructor(private incidentService: IncidentsService) {}
+
   @Post('/create')
-  createIncident(
-    @Query('type') type: string,
-    @Query('measurement') measurement: number,
-    @Query('originMineSiteId') mineSiteId: UUID,
-  ) {
-    const dto = new CreateIncidentDTO(type, measurement, mineSiteId);
-    return new ApiResponse(
-      true,
-      'Incident created successfully!',
-      this.incidentService.saveIncident(dto),
-    );
+  async createIncident(@Body() dto: CreateIncidentDTO) {
+    try {
+      return new ApiResponse(
+        true,
+        'Incident created successfully!',
+        await this.incidentService.saveIncident(dto),
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   @Get('/all/by-company')
@@ -48,7 +48,6 @@ export class IncidentsController {
       minesite,
     );
 
-    console.log(dto);
     return new ApiResponse(
       true,
       'Successfully saved!',

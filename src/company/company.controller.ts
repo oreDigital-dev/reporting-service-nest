@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Put, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CompanyService } from './company.service';
 import { ApiResponse } from 'src/payload/apiResponse';
@@ -6,6 +6,7 @@ import { Roles } from 'src/utils/decorators/roles.decorator';
 import { UUID } from 'crypto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('companies')
 @Controller('companies')
 export class CompanyController {
