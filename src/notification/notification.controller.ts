@@ -3,12 +3,14 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { NotificationService } from './notification.service';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
+import { Roles } from 'src/utils/decorators/roles.decorator';
 
 @Controller('notifications')
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
   @Get('all')
+  @Roles('SYSTEM_ADMIN')
   async getAllNotifications() {
     return new ApiResponse(
       true,
