@@ -17,31 +17,53 @@ export class MailingService {
   async sendEmail(
     to: string,
     name: string,
-    token: string,
-    password?: string | null,
+    verificationCode: string,
+    link: string,
     reset?: boolean,
   ) {
     try {
       let mailOptions;
-      if (password && password != null && !reset) {
+      if (!reset) {
         mailOptions = {
           from: 'valensniyonsenga2003@gmail.com',
           to: to,
           subject: 'OreDigital Email Verification',
           html: `
-          Hello ${name}, <br />
-  
-          We are pleased to welcome you to TechTours. 
-          
-          <br />
-
-          To Login use your current password name make sure you change it after you login <br />
-
-          Yor Current Password : ${password} <br />
-
-          Take this time to verify your email by clicking the link below: <br />
-          
- 
+          <html lang='en'>
+          <head>
+            <meta charset='UTF-8' />
+            <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+            <title>Email Verification</title>
+            <style>
+              body { margin: 0; padding: 0; font-family: Arial, sans-serif;
+              background-color: #f4f4f4; } .container { max-width: 600px; margin: 0
+              auto; padding: 20px; background-color: #ffffff; border-radius: 5px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); } .header { text-align: center;
+              margin-bottom: 20px; } .content { margin-bottom: 20px; padding: 10px;
+              border: 1px solid #ccc; border-radius: 5px; } .button { display:
+              inline-block; padding: 10px 20px; background-color: #007bff; color:
+              #ffffff; text-decoration: none; border-radius: 5px; } .footer {
+              text-align: center; font-size: 12px; color: #777777; margin-top: 20px; }
+            </style>
+          </head>
+          <body>
+            <div class='container'>
+              <div class='header'>
+                <h1 style='text-align: center;'>OreDigital software soltions</h1>
+                <h1>Email Verification</h1>
+              </div>
+              <div class='content'>
+                <p>Hello ${name} Thank you for signing up! Please click the button below to verify
+                  your email address:</p>
+                  <p>Please use this code to verify your account ${verificationCode} or just click the below button
+                <a class='button' href='[${link}]'>Verify Email</a>
+              </div>
+              <div class='footer'>
+                <p>This is an automated email. Please do not reply.</p>
+              </div>
+            </div>
+          </body>
+        </html>
           `,
         };
       } else if (reset) {
@@ -50,11 +72,40 @@ export class MailingService {
           to,
           subject: 'OreDigital Password Reset Email',
           html: `
-          Hello <strong>${name}</strong>, <br />
-          
-          This email serves to allow you reset your password , If you did not ask for this email <br />
-          you can just ignore it.
-
+          <html lang='en'>
+          <head>
+            <meta charset='UTF-8' />
+            <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+            <title>Email Verification</title>
+            <style>
+              body { margin: 0; padding: 0; font-family: Arial, sans-serif;
+              background-color: #f4f4f4; } .container { max-width: 600px; margin: 0
+              auto; padding: 20px; background-color: #ffffff; border-radius: 5px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); } .header { text-align: center;
+              margin-bottom: 20px; } .content { margin-bottom: 20px; padding: 10px;
+              border: 1px solid #ccc; border-radius: 5px; } .button { display:
+              inline-block; padding: 10px 20px; background-color: #007bff; color:
+              #ffffff; text-decoration: none; border-radius: 5px; } .footer {
+              text-align: center; font-size: 12px; color: #777777; margin-top: 20px; }
+            </style>
+          </head>
+          <body>
+            <div class='container'>
+              <div class='header'>
+                <h1 style='text-align: center;'>OreDigital software soltions</h1>
+                <h1>Email Verification</h1>
+              </div>
+              <div class='content'>
+                <p>Hello ${name} Thank you for have an interest into oreDigital! </p>
+                  <p>Please use this code to reset  your password ${verificationCode} or just click the below button
+                <a class='button' href='${link}'>Verify Email</a>
+              </div>
+              <div class='footer'>
+                <p>This is an automated email. Please do not reply.</p>
+              </div>
+            </div>
+          </body>
+        </html>
           `,
         };
       } else {
