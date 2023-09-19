@@ -100,10 +100,9 @@ export class NotificationService {
     return await this.notificationRepo.find({});
   }
 
-  async getMyNotifications(req: Request, res: Response, userType: string) {
+  async getMyNotifications(req: Request, userType: string) {
     const loggedInProfile: any = await this.utilsService.getLoggedInProfile(
       req,
-      res,
       userType,
     );
     return loggedInProfile.notifications;
@@ -129,7 +128,6 @@ export class NotificationService {
   async getMyLatestNotification(req: Request, res: Response, userType: string) {
     const employee: any = await this.utilsService.getLoggedInProfile(
       req,
-      res,
       userType,
     );
     return employee.notifications[employee.notifications.length - 1];

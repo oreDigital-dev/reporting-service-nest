@@ -29,7 +29,7 @@ export class NotificationController {
     return new ApiResponse(
       true,
       'Notifications retrieved successfully',
-      await this.notificationService.getMyNotifications(req, res, userType),
+      await this.notificationService.getMyNotifications(req, userType),
     );
   }
 
