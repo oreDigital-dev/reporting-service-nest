@@ -12,7 +12,11 @@ import { RMBEmployee } from 'src/entities/rmb-employee';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { RmbService } from 'src/rmb/rmb.service';
+import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
+import { Request, Response } from 'express';
+import { EUserType } from 'src/enums/EUserType.enum';
+import { EAccountType } from 'src/enums/EAccountType.enum';
 
 @Injectable()
 export class NotificationService {
@@ -23,6 +27,7 @@ export class NotificationService {
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private rmbService: RmbService, // private rescueTeamService
+    private utilsService: UtilsService,
   ) {}
   async notify(type: string, dto: CreateNotificationDTO, id: UUID) {
     if (type == 'COMPANY') {
@@ -89,11 +94,55 @@ export class NotificationService {
     });
   }
 
-  async sendNotification(data: CreateNotificationDTO) {
-    let user;
-    let newNotification;
+  async getAllNotifications() {
+    return await this.notificationRepo.find({});
+  }
 
-    if (this.activeUsers[data.to]) {
+  async getMyNotifications(req: Request, res: Response) {
+    const loggedInProfile: any = await this.utilsService.getLoggedInProfile(
+      req,
+      res,
+    );
+    return loggedInProfile.notifications;
+  }
+  async getNotificationsByUserId(id: UUID, userType: string) {
+    let user: any;
+    switch (userType.toString()) {
+      case EAccountType[EAccountType.COMPANY]:
+        user = await this.employeeService.getEmployeeById(id);
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        user = await this.employeeService.getEmployeeById(id);
+        break;
+      case EAccountType[EAccountType.RMB]:
+        user = await this.rmbService.getRMBEmployeeById(id);
+        break;
+      default:
+        throw new BadRequestException('The provided user type is invali');
     }
+    if (user) return user.notifications;
+  }
+
+  async getMyLatestNotification(req: Request, res: Response) {
+    const employee: any = await this.utilsService.getLoggedInProfile(req, res);
+    return employee.notifications[employee.notifications.length - 1];
+  }
+
+  async getLatestNotifictionByUserId(id: UUID, userType: string) {
+    let user: any;
+    switch (userType.toString()) {
+      case EAccountType[EAccountType.COMPANY]:
+        user = await this.employeeService.getEmployeeById(id);
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        user = await this.employeeService.getEmployeeById(id);
+        break;
+      case EAccountType[EAccountType.RMB]:
+        user = await this.rmbService.getRMBEmployeeById(id);
+        break;
+      default:
+        throw new BadRequestException('The provided user type is invali');
+    }
+    if (user) return user.notifications[user.notifications.length - 1];
   }
 }
