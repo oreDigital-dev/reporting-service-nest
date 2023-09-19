@@ -14,8 +14,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { CombinedIncidentDTO } from 'src/dtos/combined-incidents.dto';
 import { UUID } from 'crypto';
 import { ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
-import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
+import { Request } from 'express';
 import { CreateMiniIncidentDTO } from 'src/dtos/create_mini-incident.dto';
 
 @ApiTags('incidents')
@@ -52,22 +51,24 @@ export class IncidentsController {
   }
 
   @Get('/all')
-  getAllIncidents() {
+  async getAllIncidents() {
     return new ApiResponse(
       true,
       'Retrieved successfully!',
-      this.incidentService.getAllIncidents(),
+      await this.incidentService.getAllIncidents(),
     );
   }
+
+  
   @Get('/all/by-company')
-  getIncidentsByLoggedInCompany(
+  async getIncidentsByLoggedInCompany(
     @Req() request: Request,
-    @Res() response: Response,
+    
   ) {
     return new ApiResponse(
       true,
       'Retrieved successfully!',
-      this.incidentService.getIncidentByLoggedInCompany(request, response),
+      await this.incidentService.getIncidentByLoggedInCompany(request),
     );
   }
 

@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
+import { Exception } from 'handlebars/runtime';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
@@ -34,7 +35,7 @@ export class UtilsService {
 
     @Inject(forwardRef(() => RmbService))
     private rmbEmployeeService: RmbService,
-  ) {}
+  ) { }
 
   async getTokens(
     user: User,
@@ -109,7 +110,7 @@ export class UtilsService {
     return regex.test(id.toString());
   }
 
-  async getLoggedInProfile(req: Request, res: Response, type: string) {
+  async getLoggedInProfile(req: Request, type: string) {
     const authorization = req.headers.authorization;
 
     let user: any;
@@ -122,7 +123,7 @@ export class UtilsService {
         secret: this.configService.get('SECRET_KEY'),
       });
       if (error)
-        return res.status(403).json({ sucess: false, message: error.message });
+        throw new BadRequestException({ sucess: false, message: error.message });
       const details: any = await this.jwtService.decode(token);
       switch (type.toUpperCase()) {
         case EAccountType[EAccountType.COMPANY]:
@@ -142,10 +143,9 @@ export class UtilsService {
 
       return user;
     } else {
-      return res.status(403).json({
-        sucess: false,
-        message: 'Please you are not authorized to access resource',
-      });
+      throw new Exception(
+        'Please you are not authorized to access resource',
+      );
     }
   }
 }

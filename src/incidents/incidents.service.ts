@@ -10,6 +10,7 @@ import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
 import { CreateMiniIncidentDTO } from 'src/dtos/create_mini-incident.dto';
 import { Incident } from 'src/entities/incident.entity';
 import { MiniIncident } from 'src/entities/mini-incident.entity';
+import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
@@ -295,15 +296,16 @@ export class IncidentsService {
     return await this.incidentRepo.find({});
   }
 
-  async getIncidentByLoggedInCompany(req: Request, res: Response) {
+  async getIncidentByLoggedInCompany(req: Request) {
     try {
-      let loggedInCompany = await this.utilService.getLoggedInProfile(
+      let loggedInCompany : MiningCompanyEmployee = await this.utilService.getLoggedInProfile(
         req,
-        res,
         'company',
       );
+      let minesites : any = await this.minesiteService.getMinesitesByCompany(loggedInCompany.company);
+
       let incidents = await this.incidentRepo.findBy({
-        mineSite: In(loggedInCompany.mineSites),
+        mineSite: In(minesites),
       });
       return incidents;
     } catch (err) {
