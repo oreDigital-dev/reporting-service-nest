@@ -17,6 +17,7 @@ import { ERole } from 'src/enums/ERole.enum';
 import { EUserType } from 'src/enums/EUserType.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { RoleService } from 'src/roles/roles.service';
+import { frontendAccountVerificationUrl } from 'src/utils/appData/constants';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 
@@ -85,15 +86,18 @@ export class RmbService {
     systemAdmin.activationCode =
       this.utilsService.generateRandomFourDigitNumber();
     let createdAdmin = await this.rmbRepo.save(systemAdmin);
+    await this.mailService.sendEmail(
+      createdAdmin.email,
+      createdAdmin.lastName,
+      createdAdmin.activationCode,
+      frontendAccountVerificationUrl,
+      false,
+    );
     // await this.mailService.sendPhoneSMSTOUser(
     //   systemAdmin.phonenumber,
     //   `Hello! Your account as a system admin has been created successfully! your account verification code is ${systemAdmin.activationCode}`,
     // );
-    // this.mailService.sendEmailToUser(
-    //   createdAdmin.email,
-    //   'verify-account',
-    //   'OreDigital account verification',
-    // );
+
     delete createdAdmin.password;
     return {
       message:

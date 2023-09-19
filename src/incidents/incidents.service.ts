@@ -13,6 +13,7 @@ import { MiniIncident } from 'src/entities/mini-incident.entity';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
+import { MailingService } from 'src/mailing/mailing.service';
 import { MinesiteService } from 'src/minesite/minesite.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -28,6 +29,7 @@ export class IncidentsService {
     private minesiteService: MinesiteService,
     private notificationService: NotificationService,
     private companyService: CompanyService,
+    private mailingService: MailingService,
   ) {}
 
   async saveIncident(dto: CreateIncidentDTO) {
@@ -84,6 +86,19 @@ export class IncidentsService {
       createdIncident = await this.minIncidentRepo.save(incident);
       switch (dto.type.toUpperCase()) {
         case EIncidentType[EIncidentType.LANDSLIDES]:
+          createdIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `At ${incident.createdAt} in  ${minesite.name}' happened landslides which might cause loss of lives of peaples !`,
+                  '',
+                  createdIncident,
+                );
+              }
+            });
+          });
           await this.notificationService.notify(
             ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
             new CreateNotificationDTO(
@@ -94,17 +109,33 @@ export class IncidentsService {
           );
           break;
         case EIncidentType[EIncidentType.AIR_QUALITY]:
-        case EIncidentType[EIncidentType.LANDSLIDES]:
-          await this.notificationService.notify(
-            ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
-            new CreateNotificationDTO(
-              `At ${incident.createdAt} in  ${minesite.name}'  has law air quality  might cause loss of lives of employees, please seriuos measures are needed !`,
-              'COMPANY',
-            ),
-            minesite.company.id,
-          );
-          break;
+          createdIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `At  ${minesite.name}' There  very law air quality  which might cause loss of lives of peaples !`,
+                  '',
+                  createdIncident,
+                );
+              }
+            });
+          });
         case EIncidentType[EIncidentType.LIGHT]:
+          createdIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `${minesite.name}'  mine site  has law light intensity! this  might cause loss of lives of employees, please seriuos measures are needed !`,
+                  '',
+                  createdIncident,
+                );
+              }
+            });
+          });
           await this.notificationService.notify(
             ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
             new CreateNotificationDTO(
@@ -115,6 +146,19 @@ export class IncidentsService {
           );
           break;
         case EIncidentType[EIncidentType.WATER_LEVEL]:
+          createdIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `Water level at ${minesite.name}'  mine site is increasing ! this  might cause loss of lives of employees, please seriuos measures are needed !`,
+                  '',
+                  createdIncident,
+                );
+              }
+            });
+          });
           await this.notificationService.notify(
             ENotificationType[ENotificationType.COMPANY_NOTIFICATION],
             new CreateNotificationDTO(
@@ -175,14 +219,27 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
-          // this.notificationService.notify(
-          //   'COMPANY',
-          //   new CreateNotificationDTO(
-          //     `${createIncident.mineSite.name} minesite is at its highest temperature`,
-          //     'COMPANY',
-          //   ),
-          //   createIncident.mineSite.company.id,
-          // );
+          createIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `There is hight temperature in one of your minesites, please help is needed for employees security there`,
+                  '',
+                  createIncident,
+                );
+              }
+            });
+          });
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a low temperature`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
         } else if (createIncident.measurement < 17) {
           await this.incidentRepo.update(
             {
@@ -192,14 +249,27 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
-          // this.notificationService.notify(
-          //   'COMPANY',
-          //   new CreateNotificationDTO(
-          //     `${createIncident.mineSite.name} minesite is at a low temperature`,
-          //     'COMPANY',
-          //   ),
-          //   createIncident.mineSite.company.id,
-          // );
+          createIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `There is law temperature in one of your minesites, please help is needed for employees security there`,
+                  '',
+                  createIncident,
+                );
+              }
+            });
+          });
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a low temperature`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
         }
       } else if (createIncident.type == EIncidentType[EIncidentType.HUMIDITY]) {
         if (createIncident.measurement < 14) {
@@ -211,14 +281,28 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
-          // this.notificationService.notify(
-          //   'COMPANY',
-          //   new CreateNotificationDTO(
-          //     `${createIncident.mineSite.name} minesite is at a low humidity`,
-          //     'COMPANY',
-          //   ),
-          //   createIncident.mineSite.company.id,
-          // );
+
+          createIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `There is very law humidity in one of your minesites, please help is needed for employees security there`,
+                  '',
+                  createIncident,
+                );
+              }
+            });
+          });
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a low humidity`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
         } else if (createIncident.measurement > 18) {
           await this.incidentRepo.update(
             {
@@ -228,14 +312,28 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
-          // this.notificationService.notify(
-          //   'COMPANY',
-          //   new CreateNotificationDTO(
-          //     `${createIncident.mineSite.name} minesite is at a high humidity`,
-          //     'COMPANY',
-          //   ),
-          //   createIncident.mineSite.company.id,
-          // );
+
+          createIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `There is very high humidity in one of your minesites, please help is needed for employees security there`,
+                  '',
+                  createIncident,
+                );
+              }
+            });
+          });
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a high humidity`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
         }
       } else if (createIncident.type == EIncidentType[EIncidentType.HUMIDITY]) {
         if (createIncident.measurement < 14) {
@@ -247,14 +345,28 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
-          // this.notificationService.notify(
-          //   'COMPANY',
-          //   new CreateNotificationDTO(
-          //     `${createIncident.mineSite.name} minesite is at a low humidity`,
-          //     'COMPANY',
-          //   ),
-          //   createIncident.mineSite.company.id,
-          // );
+
+          createIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `There is very law humidity in one of your minesites, please help is needed for employees security there`,
+                  '',
+                  createIncident,
+                );
+              }
+            });
+          });
+          this.notificationService.notify(
+            'COMPANY',
+            new CreateNotificationDTO(
+              `${createIncident.mineSite.name} minesite is at a low humidity`,
+              'COMPANY',
+            ),
+            createIncident.mineSite.company.id,
+          );
         } else if (createIncident.measurement > 18) {
           await this.incidentRepo.update(
             {
@@ -264,6 +376,20 @@ export class IncidentsService {
               status: EIncidentStatus[EIncidentStatus.DANGER],
             },
           );
+
+          createIncident.mineSite.company.employees.forEach((employee) => {
+            employee.roles.forEach(async (role) => {
+              if (role.roleName == 'COMPANY_ADMIN') {
+                await this.mailingService.sendIncidentNotification(
+                  employee.email,
+                  employee.lastName,
+                  `There is very high humidity in one of your minesites, please help is needed for employees security there`,
+                  '',
+                  createIncident,
+                );
+              }
+            });
+          });
           this.notificationService.notify(
             'COMPANY',
             new CreateNotificationDTO(

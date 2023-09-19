@@ -127,14 +127,6 @@ export class AppModule implements OnModuleInit, NestModule {
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
     let minerals = await this.mineralService.getAllMinerals();
-
-    await this.mailingService.sendEmail(
-      'valensniyonsenga2003@gmail.com',
-      'vava2003',
-      '45454545',
-      '4545',
-      false,
-    );
     if (!minerals || minerals.length == 0) {
       this.mineralService.createMinera();
     }

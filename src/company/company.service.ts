@@ -29,6 +29,7 @@ import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { MailingService } from 'src/mailing/mailing.service';
+import { frontendAccountVerificationUrl } from 'src/utils/appData/constants';
 
 @Injectable()
 export class CompanyService {
@@ -118,6 +119,13 @@ export class CompanyService {
     employee.activationCode =
       await this.utilsService.generateRandomFourDigitNumber();
     const createdEm = await this.employeeService.createEmp(employee);
+    await this.mailingService.sendEmail(
+      createdEm.email,
+      createdEm.lastName,
+      createdEm.activationCode,
+      frontendAccountVerificationUrl,
+      false,
+    );
     // await this.mailingService.sendPhoneSMSTOUser(
     //   employee.phonenumber,
     //   `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
@@ -200,7 +208,7 @@ export class CompanyService {
         // await this.mailingService.sendPhoneSMSTOUser(
         //   availableCompany.email,
         //   `Hello ${availableCompany.name} we are proudly appy to let you know that your request to register as company was approved by RMB.!! happy reducing the risk and improve productivity`,
-        // );
+        // );`
         break;
       case 'REJECT':
         availableCompany.status =
