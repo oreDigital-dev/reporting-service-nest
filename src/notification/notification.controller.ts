@@ -4,8 +4,10 @@ import { NotificationService } from './notification.service';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('notifications')
+@ApiTags('Notifications')
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 

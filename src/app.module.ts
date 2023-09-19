@@ -130,9 +130,9 @@ export class AppModule implements OnModuleInit, NestModule {
 
     await this.mailingService.sendEmail(
       'valensniyonsenga2003@gmail.com',
-      'valens',
-      'token',
       'vava2003',
+      '45454545',
+      '4545',
       false,
     );
     if (!minerals || minerals.length == 0) {

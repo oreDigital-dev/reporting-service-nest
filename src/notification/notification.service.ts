@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EUserType } from 'src/enums/EUserType.enum';
 import { EAccountType } from 'src/enums/EAccountType.enum';
+import { MailingService } from 'src/mailing/mailing.service';
 
 @Injectable()
 export class NotificationService {
@@ -28,6 +29,7 @@ export class NotificationService {
     private employeeService: EmployeeService,
     private rmbService: RmbService, // private rescueTeamService
     private utilsService: UtilsService,
+    private mailingService: MailingService,
   ) {}
   async notify(type: string, dto: CreateNotificationDTO, id: UUID) {
     if (type == 'COMPANY') {
