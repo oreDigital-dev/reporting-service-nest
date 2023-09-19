@@ -40,7 +40,7 @@ export class IncidentsController {
   @Post('/min-incidents/create')
   CreateMinIncident(
     @Query('type') type: string,
-    @Query('isHappened') isHappened: boolean,
+    @Query('isHappened') isHappened: number,
     @Query('originMineSiteId') mineSiteId: UUID,
   ) {
     const dto = new CreateMiniIncidentDTO(type, isHappened, mineSiteId);
