@@ -1,10 +1,7 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
-import { error } from 'console';
-import { Options } from 'nodemailer/lib/smtp-transport';
-import { MainUser } from 'src/entities/MainUser.entity';
-
+import { MailerService } from '@nestjs-modules/mailer';
 @Injectable()
 export class MailingService {
   constructor(
@@ -55,23 +52,5 @@ export class MailingService {
       .then((message) =>
         console.log(message.sid, ' Message sent successfully'),
       );
-  }
-
-  async sendUserWelcome(user: string, token: string) {
-    const confirmation_url = `example.com/auth/confirm?token=${token}`;
-
-    await this.mailService
-      .sendMail({
-        to: user,
-        // from: '"Support Team" <support@example.com>', // override default from
-        subject: 'Welcome to Nice App! Confirm your Email',
-        template: './welcome.ejs', // `.ejs` extension is appended automatically
-        context: {
-          // name: 'VALENS',
-          // confirmation_url,
-        },
-      })
-      .then((res) => console.log('mail sent'))
-      .catch((error) => console.log(error));
   }
 }
