@@ -2,10 +2,10 @@ import { UUID } from 'crypto';
 
 export class CreateMiniIncidentDTO {
   type: string;
-  isHappened: boolean;
+  isHappened: number;
   originMineSite: UUID;
 
-  constructor(type: string, isHappened: boolean, mineSiteId) {
+  constructor(type: string, isHappened: number, mineSiteId) {
     this.type = type;
     this.isHappened = isHappened;
     this.originMineSite = mineSiteId;

@@ -13,6 +13,9 @@ export class MiniIncident extends InitiatorAudit {
   @Column({ nullable: true })
   type: EIncidentType;
 
+  @Column()
+  isHappened: boolean;
+
   @Column({ nullable: false, default: EIncidentStatus.FINE })
   status: EIncidentStatus;
 

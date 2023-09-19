@@ -38,4 +38,10 @@ export class NotificationService {
     if (this.activeUsers[data.to]) {
     }
   }
+
+  async getAllNotifications() {
+    return '';
+  }
+
+  async getNotificationsByUser(id: UUID, userType: string) {}
 }

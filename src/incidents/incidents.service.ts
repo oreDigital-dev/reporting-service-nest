@@ -73,13 +73,15 @@ export class IncidentsService {
   }
 
   async saveMiniIncident(dto: CreateMiniIncidentDTO) {
-    let incident = new MiniIncident(EIncidentType[dto.type], dto.isHappened);
+    let incident = new MiniIncident(EIncidentType[dto.type], true);
     let minesite = await this.minesiteService.getMineSiteById(
       dto.originMineSite,
     );
     incident.mineSite = minesite;
+    let createdIncident;
 
-    if (dto.isHappened) {
+    if (dto.isHappened == 1) {
+      createdIncident = await this.minIncidentRepo.save(incident);
       switch (dto.type.toUpperCase()) {
         case EIncidentType[EIncidentType.LANDSLIDES]:
           await this.notificationService.notify(
@@ -128,9 +130,6 @@ export class IncidentsService {
           );
       }
     }
-
-    const createdIncident = await this.minIncidentRepo.save(incident);
-    console.log(createdIncident);
     return createdIncident;
   }
 
