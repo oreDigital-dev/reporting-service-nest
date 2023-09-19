@@ -1,39 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
-import { MailerService } from '@nestjs-modules/mailer';
 @Injectable()
 export class MailingService {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly mailService: MailerService,
-  ) {}
+  private transporter;
+  constructor(private readonly configService: ConfigService) {
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail', // Use your email service provider
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  }
 
-  private async setTransport() {}
-
-  public async sendEmailToUser(
-    receiver: String,
-    template: string,
-    subject: string,
+  async sendEmail(
+    to: string,
+    name: string,
+    token: string,
+    password?: string | null,
+    reset?: boolean,
   ) {
-    await this.setTransport();
-    this.mailService
-      .sendMail({
-        transporterName: 'gmail',
-        to: receiver.toString(),
-        from: this.configService.get('EMAIL'),
-        subject: subject,
-        template: template,
-        context: {
-          code: '38320',
-        },
-      })
-      .then((result) => {
-        console.log('mail sent successfully');
-      })
-      .catch((error) => {
-        console.log('error while sending an email', error);
-      });
+    try {
+      let mailOptions;
+      if (password && password != null && !reset) {
+        mailOptions = {
+          from: 'valensniyonsenga2003@gmail.com',
+          to: to,
+          subject: 'OreDigital Email Verification',
+          html: `
+          Hello ${name}, <br />
+  
+          We are pleased to welcome you to TechTours. 
+          
+          <br />
+
+          To Login use your current password name make sure you change it after you login <br />
+
+          Yor Current Password : ${password} <br />
+
+          Take this time to verify your email by clicking the link below: <br />
+          
+ 
+          `,
+        };
+      } else if (reset) {
+        mailOptions = {
+          from: 'valensniyonsenga2003@gmail.com',
+          to,
+          subject: 'OreDigital Password Reset Email',
+          html: `
+          Hello <strong>${name}</strong>, <br />
+          
+          This email serves to allow you reset your password , If you did not ask for this email <br />
+          you can just ignore it.
+
+          `,
+        };
+      } else {
+        mailOptions = {
+          from: 'valensniyonsenga2003@gmail.com',
+          to,
+          subject: 'OreDigital Email Verification',
+          html: `
+          Hello ${name}, <br />
+  
+          We are pleased to welcome you to OreDigital. Take this time to verify your email by clicking the link below: <br />
+
+          `,
+        };
+      }
+      await this.transporter.sendMail(mailOptions);
+      return 'Email sent successfully';
+    } catch (error) {
+      throw new Error(`Error sending email: ${error.message}`);
+    }
   }
 
   async sendPhoneSMSTOUser(number: string, message: string) {

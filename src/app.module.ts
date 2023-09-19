@@ -38,7 +38,6 @@ import { NotificationModule } from './notification/notification.module';
 import { UserMiddleWare } from './middlewares/user.middleware';
 import { RmbModule } from './rmb/rmb.module';
 import { MiningCompany } from './entities/miningCompany.entity';
-import { MiningCompanyModule } from './mining-company/mining-company.module';
 import { Organization } from './entities/organization.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
@@ -105,7 +104,7 @@ import { MiniIncident } from './entities/mini-incident.entity';
     NotificationModule,
     RmbModule,
     RmbModule,
-    forwardRef(() => MiningCompanyModule),
+    forwardRef(() => CompanyModule),
   ],
   controllers: [
     HomeController,
@@ -128,7 +127,14 @@ export class AppModule implements OnModuleInit, NestModule {
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
     let minerals = await this.mineralService.getAllMinerals();
- 
+
+    await this.mailingService.sendEmail(
+      'valensniyonsenga2003@gmail.com',
+      'valens',
+      'token',
+      'vava2003',
+      false,
+    );
     if (!minerals || minerals.length == 0) {
       this.mineralService.createMinera();
     }

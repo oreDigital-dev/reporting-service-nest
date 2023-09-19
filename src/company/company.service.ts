@@ -197,18 +197,18 @@ export class CompanyService {
       case 'APPROVE':
         availableCompany.status =
           EOrganizationStatus[EOrganizationStatus.APPROVED];
-        await this.mailingService.sendPhoneSMSTOUser(
-          availableCompany.email,
-          `Hello ${availableCompany.name} we are proudly appy to let you know that your request to register as company was approved by RMB.!! happy reducing the risk and improve productivity`,
-        );
+        // await this.mailingService.sendPhoneSMSTOUser(
+        //   availableCompany.email,
+        //   `Hello ${availableCompany.name} we are proudly appy to let you know that your request to register as company was approved by RMB.!! happy reducing the risk and improve productivity`,
+        // );
         break;
       case 'REJECT':
         availableCompany.status =
           EOrganizationStatus[EOrganizationStatus.REJECTED];
-        await this.mailingService.sendPhoneSMSTOUser(
-          availableCompany.email,
-          `Hello ${availableCompany.name} we are kindly regretting  to let you know that your request to register as company was rejected by RMB due to different parameter .!! happy reducing the risk and improve productivity`,
-        );
+        // await this.mailingService.sendPhoneSMSTOUser(
+        //   availableCompany.email,
+        //   `Hello ${availableCompany.name} we are kindly regretting  to let you know that your request to register as company was rejected by RMB due to different parameter .!! happy reducing the risk and improve productivity`,
+        // );
         break;
       default:
         throw new BadRequestException(
