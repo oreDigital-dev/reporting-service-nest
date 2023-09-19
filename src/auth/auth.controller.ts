@@ -65,10 +65,9 @@ export class AuthController {
   @Get('profile')
   async getProfile(
     @Req() req: Request,
-    @Res() res: Response,
     @Query('type') type: string,
   ) {
-    let profile = await this.authService.getProfile(req, res, type);
+    let profile = await this.authService.getProfile(req, type);
     return new ApiResponse(true, 'Profile retrieved successfully', profile);
   }
 }

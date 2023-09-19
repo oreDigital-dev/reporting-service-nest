@@ -142,7 +142,7 @@ export class CompanyService {
       const isCompanyAvailable = await this.companyRepo.findOne({
         where: { id: id },
         relations: ['notifications', 'address'],
-      });
+      });      message: 
 
       if (isCompanyAvailable == null)
         throw new NotFoundException(
@@ -183,10 +183,9 @@ export class CompanyService {
     try {
       let owner: any = await this.utilsService.getLoggedInProfile(
         req,
-        res,
         'company',
       );
-      return this.companyRepo.findOne({ where: { email: owner.email } });
+      return this.companyRepo.findOne({ where: { email: owner.email }});
     } catch (err) {
       throw new Exception(err);
     }

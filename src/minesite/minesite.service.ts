@@ -61,12 +61,8 @@ export class MinesiteService {
     }
     mineSite.minerals = minerals;
     mineSite.address = address;
-    let minesites = company.mineSites || [];
     mineSite.company = company;
-    let mineSite2 = await this.mineSiteRepo.save(mineSite);
-    minesites.push(mineSite2);
-    company.minesites = minesites;
-    this.companyService.saveCompany(company);
+    let mineSite2 = await this.mineSiteRepo.save(mineSite);    
     return mineSite2;
   }
 
@@ -81,20 +77,27 @@ export class MinesiteService {
     }
   }
 
-  async getMinSitesOfLoggedCompany(req: Request, res: Response) {
-    try {
+  async getMinSitesOfLoggedCompany(req: Request) {
+
       const owner: any = await this.utilService.getLoggedInProfile(
         req,
-        res,
         'company',
       );
-      const company: any = await this.companyService.getCompanyByEmail(
-        owner.email,
-      );
+
       let minesites = await this.mineSiteRepo.find({
-        where: { company: company },
+        where: { company: owner.company },
       });
-      console.log(minesites);
+
+      return minesites;
+
+  }
+
+  async getMinesitesByCompany(company : any) {
+    try {
+      let minesites = await this.mineSiteRepo.findBy({
+        company: company
+      });
+      return minesites;
     } catch (error) {
       throw error;
     }
@@ -127,11 +130,10 @@ export class MinesiteService {
       throw error;
     }
   }
-  async deleteAllMineSitesInMyCompany(req: Request, res: Response) {
+  async deleteAllMineSitesInMyCompany(req: Request) {
     try {
       let owner: any = await this.utilService.getLoggedInProfile(
         req,
-        res,
         'company',
       );
       let company: any = await this.companyService.getCompanyByEmail(

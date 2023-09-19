@@ -24,16 +24,13 @@ import { Roles } from 'src/utils/decorators/roles.decorator';
 @ApiTags('minesites')
 @Controller('minesites')
 export class MinesiteController {
-  constructor(private mineSiteService: MinesiteService) {}
+  constructor(private mineSiteService: MinesiteService) { }
   @Post('create')
   async createMineSite(
     @Body() body: createMineSiteDTO,
 
   ) {
-    const createdMineSite = await this.mineSiteService.createMineSite(
-      body,
-  
-    );
+    const createdMineSite = await this.mineSiteService.createMineSite(body);
     return new ApiResponse(
       true,
       'MineSite created successfully',
@@ -50,11 +47,11 @@ export class MinesiteController {
   }
 
   @Get('/for-loggedIn-company')
-  getMinSitesOfLoggedCompany(@Req() req: Request, @Res() res: Response) {
+  getMinSitesOfLoggedCompany(@Req() req: Request) {
     return new ApiResponse(
       true,
       'mine sites retrieved sucessfully',
-      this.mineSiteService.getMinSitesOfLoggedCompany(req, res),
+      this.mineSiteService.getMinSitesOfLoggedCompany(req),
     );
   }
 
@@ -70,11 +67,11 @@ export class MinesiteController {
 
   @Delete('/delete-all/{loggedIn-company}')
   @Roles('COMPANY_OWNER')
-  deleteAllMineSitesInMyCompany(@Req() req: Request, @Res() res: Response) {
+  deleteAllMineSitesInMyCompany(@Req() req: Request) {
     return new ApiResponse(
       true,
       'All your mine sites got deleted successfully',
-      this.mineSiteService.deleteAllMineSitesInMyCompany(req, res),
+      this.mineSiteService.deleteAllMineSitesInMyCompany(req),
     );
   }
   @Patch('update-one')
