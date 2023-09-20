@@ -37,6 +37,7 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/incidents/create' ||
       req.baseUrl == '/incidents/create-combined' ||
       req.baseUrl == '/employees/create' ||
+      req.baseUrl == '/rmb/create/rmb-employee'||
       req.baseUrl == '/incidents/min-incidents/create'     ) {
       next();
     } else {
