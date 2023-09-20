@@ -55,7 +55,7 @@ export class MailingService {
           <body>
             <div class='container'>
               <div class='header'>
-                <h1 style='text-align: center;'>OreDigital software soltions</h1>
+                <h1 style='text-align: center;'>OreDigital software Solutions</h1>
                 <h1>Email Verification</h1>
               </div>
               <div class='content'>
