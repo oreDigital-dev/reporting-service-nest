@@ -29,7 +29,6 @@ export class IncidentsService {
     private utilService: UtilsService,
     private minesiteService: MinesiteService,
     private notificationService: NotificationService,
-    private companyService: CompanyService,
     private mailingService: MailingService,
   ) {}
 
@@ -211,7 +210,7 @@ export class IncidentsService {
     while (i < incidents.length) {
       createIncident = await this.createIncident(incidents[i]);
       if (createIncident.type == EIncidentType[EIncidentType.TEMPERATURE]) {
-        if (createIncident.measurement > 17) {
+        if (createIncident.measurement > 18) {
           await this.incidentRepo.update(
             {
               id: createIncident.id,
@@ -226,7 +225,7 @@ export class IncidentsService {
                 await this.mailingService.sendIncidentNotification(
                   employee.email,
                   employee.lastName,
-                  `There is hight temperature in one of your minesites, please help is needed for employees security there`,
+                  `There is high temperature in one of your minesites, help is needed!`,
                   '',
                   createIncident,
                 );
@@ -256,7 +255,7 @@ export class IncidentsService {
                 await this.mailingService.sendIncidentNotification(
                   employee.email,
                   employee.lastName,
-                  `There is law temperature in one of your minesites, please help is needed for employees security there`,
+                  `There is low temperature in one of your minesites, Help is needed!`,
                   '',
                   createIncident,
                 );
@@ -289,7 +288,7 @@ export class IncidentsService {
                 await this.mailingService.sendIncidentNotification(
                   employee.email,
                   employee.lastName,
-                  `There is very law humidity in one of your minesites, please help is needed for employees security there`,
+                  `There is very low humidity in one of your minesites, help is needed!`,
                   '',
                   createIncident,
                 );
@@ -320,7 +319,7 @@ export class IncidentsService {
                 await this.mailingService.sendIncidentNotification(
                   employee.email,
                   employee.lastName,
-                  `There is very high humidity in one of your minesites, please help is needed for employees security there`,
+                  `There is very high humidity in one of your minesites, help is needed!`,
                   '',
                   createIncident,
                 );
@@ -353,7 +352,7 @@ export class IncidentsService {
                 await this.mailingService.sendIncidentNotification(
                   employee.email,
                   employee.lastName,
-                  `There is very law humidity in one of your minesites, please help is needed for employees security there`,
+                  `There is very law humidity in one of your minesites, help is needed!`,
                   '',
                   createIncident,
                 );

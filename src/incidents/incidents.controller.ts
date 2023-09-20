@@ -1,12 +1,10 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
   Post,
   Query,
-  Req,
-  Res,
+  Req
 } from '@nestjs/common';
 import { IncidentsService } from './incidents.service';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
@@ -59,7 +57,7 @@ export class IncidentsController {
     );
   }
 
-  
+
   @Get('/all/by-company')
   async getIncidentsByLoggedInCompany(
     @Req() request: Request,

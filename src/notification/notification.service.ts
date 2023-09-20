@@ -5,7 +5,6 @@ import { CompanyService } from 'src/company/company.service';
 import { CreateNotificationDTO } from 'src/dtos/create-notification.dto';
 import { CreateBulkyNotificationDTO } from 'src/dtos/create_buky-notifications.dto';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
-import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { Notification } from 'src/entities/notification.entity';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { RMBEmployee } from 'src/entities/rmb-employee';
@@ -15,9 +14,7 @@ import { RmbService } from 'src/rmb/rmb.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
-import { EUserType } from 'src/enums/EUserType.enum';
 import { EAccountType } from 'src/enums/EAccountType.enum';
-import { MailingService } from 'src/mailing/mailing.service';
 
 @Injectable()
 export class NotificationService {
@@ -27,10 +24,9 @@ export class NotificationService {
     public notificationRepo: Repository<Notification>,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
-    private rmbService: RmbService, // private rescueTeamService
-    private utilsService: UtilsService,
-    private mailingService: MailingService,
-  ) {}
+    private rmbService: RmbService,
+    private utilsService: UtilsService
+      ) {}
   async notify(type: string, dto: CreateNotificationDTO, id: UUID) {
     if (type == 'COMPANY') {
       let company = await this.companyService.getCompanyById(id);
