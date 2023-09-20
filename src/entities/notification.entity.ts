@@ -15,7 +15,7 @@ export class Notification {
   @PrimaryGeneratedColumn()
   id: UUID;
 
-  @Column()
+  @Column({ nullable: true })
   type: ENotificationType;
 
   @Column({ default: ENotificationStatus['UNREAD'] })

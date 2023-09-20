@@ -24,6 +24,7 @@ import { Address } from 'src/entities/address.entity';
 import { AddressService } from 'src/address/address.service';
 import { EUserStatus } from 'src/enums/EUserStatus.enum';
 import { EActionType } from 'src/enums/EActionType.enum';
+import { MainUser } from 'src/entities/MainUser.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -137,7 +138,7 @@ export class EmployeeService {
     return this.employeeRepo.save(employee);
   }
 
-  async createEmp(employee: MiningCompanyEmployee) {
+  async createEmp(employee: MainUser) {
     const availableEmployee = await this.employeeRepo.findOne({
       where: { email: employee.email },
     });

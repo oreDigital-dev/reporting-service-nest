@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 import { CompanyService } from 'src/company/company.service';
@@ -15,6 +19,8 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
 import { EAccountType } from 'src/enums/EAccountType.enum';
+import { MainUser } from 'src/entities/MainUser.entity';
+import { Exception } from 'handlebars';
 
 @Injectable()
 export class NotificationService {
@@ -25,8 +31,8 @@ export class NotificationService {
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private rmbService: RmbService,
-    private utilsService: UtilsService
-      ) {}
+    private utilsService: UtilsService,
+  ) {}
   async notify(type: string, dto: CreateNotificationDTO, id: UUID) {
     if (type == 'COMPANY') {
       let company = await this.companyService.getCompanyById(id);
@@ -127,6 +133,47 @@ export class NotificationService {
       userType,
     );
     return employee.notifications[employee.notifications.length - 1];
+  }
+
+  async NotifyEmployee(employee: MainUser, message: string, type: string) {
+    console.log(employee);
+
+    const employee2 = await this.employeeService.employeeRepo.findOne({
+      where: { id: employee.id },
+      relations: ['notifications'],
+    });
+    if (!employee2)
+      throw new NotFoundException(
+        'User to send the notification with that id is not found',
+      );
+    let notification;
+    let notifications = employee2.notifications;
+    switch (type.toUpperCase()) {
+      case EAccountType[EAccountType.COMPANY]:
+        notification = new Notification(
+          message,
+          ENotificationType.COMPANY_NOTIFICATION,
+        );
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        notification = new Notification(
+          message,
+          ENotificationType.RESCUE_TEAM_NOTIFICATION,
+        );
+        break;
+      case EAccountType[EAccountType.RMB]:
+        notification = new Notification(
+          message,
+          ENotificationType.RMB_NOTIFICATION,
+        );
+        break;
+      default:
+        throw new BadRequestException('The provided type is invalid');
+    }
+    let createdNotification = await this.notificationRepo.save(notification);
+    notifications.push(createdNotification);
+    employee.notifications = notifications;
+    await this.employeeService.employeeRepo.save(employee);
   }
 
   async getLatestNotifictionByUserId(id: UUID, userType: string) {
