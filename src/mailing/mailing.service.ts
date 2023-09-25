@@ -347,9 +347,6 @@ export class MailingService {
     const accountSid = 'ACf1110530263a48c3268469db2aeb9663';
     const authToken = 'ef681c3808cd469182404ec132cc6589';
     const client = require('twilio')(accountSid, authToken);
-
-    console.log(number, '============');
-
     await client.messages
       .create({
         body: message,

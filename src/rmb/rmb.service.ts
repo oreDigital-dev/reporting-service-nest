@@ -86,13 +86,13 @@ export class RmbService {
     systemAdmin.activationCode =
       this.utilsService.generateRandomFourDigitNumber();
     let createdAdmin = await this.rmbRepo.save(systemAdmin);
-    await this.mailService.sendEmail(
-      createdAdmin.email,
-      createdAdmin.lastName,
-      createdAdmin.activationCode,
-      frontendAccountVerificationUrl,
-      false,
-    );
+    // await this.mailService.sendEmail(
+    //   createdAdmin.email,
+    //   createdAdmin.lastName,
+    //   createdAdmin.activationCode,
+    //   frontendAccountVerificationUrl,
+    //   false,
+    // );
     // await this.mailService.sendPhoneSMSTOUser(
     //   systemAdmin.phonenumber,
     //   `Hello! Your account as a system admin has been created successfully! your account verification code is ${systemAdmin.activationCode}`,
