@@ -9,8 +9,7 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
-import { File } from 'src/file/File';
-import { UUID, randomUUID } from 'crypto';
+import { UUID } from 'crypto';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EUserStatus } from 'src/enums/EUserStatus.enum';
 
@@ -46,7 +45,7 @@ export class User extends InitiatorAudit {
   @JoinColumn({
     name: 'profile_picture',
   })
-  profile_pic: File;
+  profile_pic: string;
 
   @Column()
   password: string;

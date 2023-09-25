@@ -12,6 +12,7 @@ import { Request, Response } from 'express';
 import { Exception } from 'handlebars/runtime';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
+import { MainUser } from 'src/entities/MainUser.entity';
 import { User } from 'src/entities/us.entity';
 import { EAccountType } from 'src/enums/EAccountType.enum';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
@@ -33,10 +34,10 @@ export class UtilsService {
 
     @Inject(forwardRef(() => RmbService))
     private rmbEmployeeService: RmbService,
-  ) { }
+  ) {}
 
   async getTokens(
-    user: User,
+    user: MainUser,
     entity: string,
   ): Promise<{ accessToken: String; refreshToken: String }> {
     let type: string;
@@ -121,7 +122,10 @@ export class UtilsService {
         secret: this.configService.get('SECRET_KEY'),
       });
       if (error)
-        throw new BadRequestException({ sucess: false, message: error.message });
+        throw new BadRequestException({
+          sucess: false,
+          message: error.message,
+        });
       const details: any = await this.jwtService.decode(token);
       switch (type.toUpperCase()) {
         case EAccountType[EAccountType.COMPANY]:
@@ -141,9 +145,7 @@ export class UtilsService {
 
       return user;
     } else {
-      throw new Exception(
-        'Please you are not authorized to access resource',
-      );
+      throw new Exception('Please you are not authorized to access resource');
     }
   }
 }

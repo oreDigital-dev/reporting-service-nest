@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { MainUser } from 'src/entities/MainUser.entity';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/us.entity';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
@@ -35,7 +36,7 @@ export class RolesGuard implements CanActivate {
     }
     const req = context.switchToHttp().getRequest();
     const authorization = req.headers.authorization;
-    let user: User = null;
+    let user: MainUser = null;
     if (authorization) {
       const token = authorization.split(' ')[1];
       if (!authorization.toString().startsWith('Bearer '))

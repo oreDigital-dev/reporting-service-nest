@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
-import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
@@ -54,7 +53,7 @@ export class MainUser extends InitiatorAudit {
   @JoinColumn({
     name: 'profile_picture',
   })
-  profile_pic: File;
+  profile_pic: string;
 
   @Column()
   password: string;

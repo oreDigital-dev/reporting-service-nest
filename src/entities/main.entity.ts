@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
-import { File } from 'src/file/File';
 import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
