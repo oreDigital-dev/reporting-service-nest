@@ -104,6 +104,29 @@ export class RescueTeamsController {
       await this.rescueTeamService.getAllRescueTeams(),
     );
   }
+
+  @Put('/{approve-or-reject}')
+  @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  async approveOrRejectRescueTeams(
+    @Query('action') action: string,
+    @Query('id') id: UUID,
+  ) {
+    return new ApiResponse(
+      true,
+      'The rescue team updated successsfully',
+      await this.rescueTeamService.approveOrRejectRescueTeams(action, id),
+    );
+  }
+  @Get('all/{by-status}')
+  @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  async getRescueTeamsByStatus(@Query('status') status: string) {
+    return new ApiResponse(
+      true,
+      'The rescue teams retrieved successfully',
+      await this.rescueTeamService.getRescueTeamsByStatus(status),
+    );
+  }
+
   @Delete('employees/:id')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async deleteRescueTeamEmployeeById(@Param('id') id: UUID) {

@@ -22,6 +22,7 @@ import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Injectable()
 export class RescueTeamsService {
@@ -239,5 +240,52 @@ export class RescueTeamsService {
           await this.rescueTeamEmployeeRepo.remove(emp);
       });
     });
+  }
+
+  async approveOrRejectRescueTeams(action: string, id: UUID) {
+    let rescueTeam = await this.getRescueTeamById(id);
+    switch (action.toUpperCase()) {
+      case 'APPROVE':
+        if ((rescueTeam.status = EAccountStatus[EAccountStatus.APPROVED]))
+          throw new ForbiddenException('The rescue team is already approved');
+        rescueTeam.status = EAccountStatus[EAccountStatus.APPROVED];
+        break;
+      case 'REJECT':
+        if (rescueTeam.status == EAccountStatus[EAccountStatus.REJECTED])
+          throw new ForbiddenException('The rescue team is already rejected');
+        rescueTeam.status = EAccountStatus[EAccountStatus.REJECTED];
+        break;
+      default:
+        throw new BadRequestException('The provided action is invalid');
+    }
+    return await this.rescueTeamRepo.save(rescueTeam);
+  }
+  async getRescueTeamsByStatus(status: string) {
+    let rescueTeams;
+    switch (status.toUpperCase()) {
+      case EAccountStatus[EAccountStatus.ACTIVE]:
+        rescueTeams = await this.rescueTeamRepo.findOne({
+          where: { status: EAccountStatus[EAccountStatus.ACTIVE] },
+        });
+        break;
+      case EAccountStatus[EAccountStatus.APPROVED]:
+        rescueTeams = await this.rescueTeamRepo.findOne({
+          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+        });
+        break;
+      case EAccountStatus[EAccountStatus.PENDING]:
+        rescueTeams = await this.rescueTeamRepo.findOne({
+          where: { status: EAccountStatus[EAccountStatus.PENDING] },
+        });
+        break;
+      case EAccountStatus[EAccountStatus.REJECTED]:
+        rescueTeams = await this.rescueTeamRepo.findOne({
+          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+        });
+        break;
+      default:
+        throw new BadRequestException('The provided status is invalid');
+    }
+    return rescueTeams;
   }
 }
