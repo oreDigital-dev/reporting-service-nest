@@ -127,7 +127,7 @@ export class NotificationService {
     if (user) return user.notifications;
   }
 
-  async getMyLatestNotification(req: Request, res: Response, userType: string) {
+  async getMyLatestNotification(req: Request, userType: string) {
     const employee: any = await this.utilsService.getLoggedInProfile(
       req,
       userType,

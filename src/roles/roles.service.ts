@@ -14,10 +14,10 @@ export class RoleService {
     const roleArray: Array<ERole> = [
       ERole.SYSTEM_ADMIN,
       ERole.RESCUE_TEAM_ADMIN,
-      ERole.POLICE_STATION_ADMIN,
-      ERole.POLICE_STATION_ADMIN,
       ERole.COMPANY_EMPLOYEE,
       ERole.COMPANY_OWNER,
+      ERole.RESCUE_TEAM_EMPLOYEE,
+      ERole.RESCUE_TEAM_OWNER,
     ];
     roleArray.forEach(async (role) => {
       const availableRole = await this.getRoleByName(role);
@@ -30,7 +30,7 @@ export class RoleService {
     });
   }
 
-   async assignRoleToEmployee(roleName: any, user: MainUser) {
+  async assignRoleToEmployee(roleName: any, user: MainUser) {
     const role: Role = await this.roleRepo.findOne({
       where: {
         roleName: roleName,

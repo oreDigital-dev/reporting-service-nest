@@ -16,7 +16,6 @@ import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { Address } from 'src/entities/address.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
-import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { ERole } from 'src/enums/ERole.enum';
@@ -24,7 +23,6 @@ import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { Role } from 'src/entities/role.entity';
 import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
@@ -65,7 +63,7 @@ export class CompanyService {
     }
 
     let company: MiningCompany = new MiningCompany(
-      dto.company.companyName,
+      dto.company.name,
       dto.company.email,
       dto.company.phoneNumber,
       dto.company.numberOfEmployees,
@@ -102,7 +100,6 @@ export class CompanyService {
           specialChars: false,
         }),
       ),
-      ECompanyRole[ECompanyRole.ADMIN],
     );
 
     let adminAddress: Address = await this.addressService.createAddress(
@@ -142,9 +139,8 @@ export class CompanyService {
       const isCompanyAvailable = await this.companyRepo.findOne({
         where: { id: id },
         relations: ['notifications', 'address'],
-      });      message: 
-
-      if (isCompanyAvailable == null)
+      });
+      message: if (isCompanyAvailable == null)
         throw new NotFoundException(
           'The company with the provided id is not found',
         );
@@ -185,7 +181,7 @@ export class CompanyService {
         req,
         'company',
       );
-      return this.companyRepo.findOne({ where: { email: owner.email }});
+      return this.companyRepo.findOne({ where: { email: owner.email } });
     } catch (err) {
       throw new Exception(err);
     }
@@ -204,18 +200,19 @@ export class CompanyService {
       case 'APPROVE':
         availableCompany.status =
           EOrganizationStatus[EOrganizationStatus.APPROVED];
-        // await this.mailingService.sendPhoneSMSTOUser(
-        //   availableCompany.email,
-        //   `Hello ${availableCompany.name} we are proudly appy to let you know that your request to register as company was approved by RMB.!! happy reducing the risk and improve productivity`,
-        // );`
+        await this.mailingService.sendPhoneSMSTOUser(
+          availableCompany.email,
+          `Hello ${availableCompany.name} we are proudly appy to let you know that your request to register as company was approved by RMB.!! happy reducing the risk and improve productivity,
+        `,
+        );
         break;
       case 'REJECT':
         availableCompany.status =
           EOrganizationStatus[EOrganizationStatus.REJECTED];
-        // await this.mailingService.sendPhoneSMSTOUser(
-        //   availableCompany.email,
-        //   `Hello ${availableCompany.name} we are kindly regretting  to let you know that your request to register as company was rejected by RMB due to different parameter .!! happy reducing the risk and improve productivity`,
-        // );
+        await this.mailingService.sendPhoneSMSTOUser(
+          availableCompany.email,
+          `Hello ${availableCompany.name} we are kindly regretting  to let you know that your request to register as company was rejected by RMB due to different parameter .!! happy reducing the risk and improve productivity`,
+        );
         break;
       default:
         throw new BadRequestException(

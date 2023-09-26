@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
@@ -15,10 +14,9 @@ import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 
 @Entity('organizations')
 export class Organization extends InitiatorAudit {
-
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: UUID;
-  
+
   @Column()
   name: string;
   @Column()

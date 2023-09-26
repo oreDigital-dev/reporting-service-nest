@@ -1,5 +1,4 @@
 export enum ERescueTeamCategory {
-  RED_CROSS,
-  IMMEASUREY,
   POLICE,
+  REDCROSS,
 }

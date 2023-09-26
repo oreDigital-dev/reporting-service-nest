@@ -21,11 +21,7 @@ export class NotificationController {
     );
   }
   @Get('all/{loggedIn-user}')
-  async getMyNotifications(
-    @Query('userType') userType: string,
-    req: Request,
-    res: Response,
-  ) {
+  async getMyNotifications(@Query('userType') userType: string, req: Request) {
     return new ApiResponse(
       true,
       'Notifications retrieved successfully',
@@ -48,17 +44,12 @@ export class NotificationController {
   @Get('latest-one/{loggedIn-employee}')
   async getMyLatestNotification(
     @Req() req: Request,
-    @Res() res: Response,
     @Query('userType') userType: string,
   ) {
     return new ApiResponse(
       true,
       'Notifications retrieved successfully',
-      await this.notificationService.getMyLatestNotification(
-        req,
-        res,
-        userType,
-      ),
+      await this.notificationService.getMyLatestNotification(req, userType),
     );
   }
 

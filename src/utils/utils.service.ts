@@ -15,6 +15,9 @@ import { CompanyService } from 'src/company/company.service';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { User } from 'src/entities/us.entity';
 import { EAccountType } from 'src/enums/EAccountType.enum';
+import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
+import { EGender } from 'src/enums/EGender.enum';
+import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
@@ -108,6 +111,45 @@ export class UtilsService {
     const regex = /^[0-9a-fA-F]{24}$/;
     return regex.test(id.toString());
   }
+
+  getGender = (gender: string) => {
+    switch (gender.toUpperCase()) {
+      case EGender[EGender.FEMALE]:
+        return EGender[EGender.FEMALE];
+      case EGender[EGender.MALE]:
+        return EGender[EGender.MALE];
+      case EGender[EGender.OTHER]:
+        return EGender[EGender.OTHER];
+      default:
+        throw new BadRequestException('The provided gender is invalid');
+    }
+  };
+
+  getEmployeeType = (type: string) => {
+    switch (type.toUpperCase()) {
+      case EEmployeeType[EEmployeeType.ADMIN]:
+        return EEmployeeType[EEmployeeType.ADMIN];
+      case EEmployeeType[EEmployeeType.EMPLOYEE]:
+        return EEmployeeType[EEmployeeType.EMPLOYEE];
+      default:
+        throw new BadRequestException('The provided employee type is invalid');
+    }
+  };
+
+  getRescueTeamCategory = (category: string) => {
+    switch (category.toUpperCase()) {
+      case ERescueTeamCategory[ERescueTeamCategory.IMMEASUREY]:
+        return ERescueTeamCategory[ERescueTeamCategory.IMMEASUREY];
+      case ERescueTeamCategory[ERescueTeamCategory.POLICE]:
+        return ERescueTeamCategory[ERescueTeamCategory.POLICE];
+      case ERescueTeamCategory[ERescueTeamCategory.RED_CROSS]:
+        return ERescueTeamCategory[ERescueTeamCategory.RED_CROSS];
+      default:
+        throw new BadRequestException(
+          'The rescue team category provided is invalid',
+        );
+    }
+  };
 
   async getLoggedInProfile(req: Request, type: string) {
     const authorization = req.headers.authorization;

@@ -86,7 +86,6 @@ export class EmployeeService {
         dto.phoneNumber,
         hashedPassword,
         Number(otp),
-        ECompanyRole[dto.employeeRole],
       );
 
       let company = await this.companyService.getCompanyById(dto.company);
@@ -193,7 +192,6 @@ export class EmployeeService {
       dto.phoneNumber,
       hashedPassword,
       Number(otp),
-      ECompanyRole[dto.employeeRole],
     );
     let updatedUser = Object.assign(availalbleUser, dto);
     let createdEmployee = await this.employeeRepo.save(updatedUser);

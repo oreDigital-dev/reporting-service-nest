@@ -48,6 +48,9 @@ import { MailingService } from '../mailing/mailing.service';
 import { MiniIncident } from '../entities/mini-incident.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { RescueTeam } from 'src/entities/rescue-team.entity';
+import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
+import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 
 @Module({
   imports: [
@@ -78,6 +81,8 @@ import { AppService } from './app.service';
           MiningCompanyEmployee,
           RMBEmployee,
           MiniIncident,
+          RescueTeam,
+          RescueTeamEmployee,
         ],
         synchronize: true,
       }),
@@ -107,6 +112,7 @@ import { AppService } from './app.service';
     RmbModule,
     RmbModule,
     AuthModule,
+    RescueTeamsModule,
     forwardRef(() => CompanyModule),
   ],
   controllers: [
