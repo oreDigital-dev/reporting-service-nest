@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { RescueTeamsService } from './rescue-teams.service';
 import { CreateRescueTeamDTO } from 'src/dtos/create_rescue-team.dto';
@@ -16,6 +17,8 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateRescueTeam } from 'src/dtos/update_rescueteam.dto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Request } from 'express';
+
 @Controller('rescue-teams')
 @ApiTags('rescue_teams')
 export class RescueTeamsController {
@@ -54,6 +57,15 @@ export class RescueTeamsController {
       true,
       'The employee has retrieved successfully',
       await this.rescueTeamService.getEmployeeByEmail(email),
+    );
+  }
+
+  @Get('employees/{loggedIn-rescue-team}')
+  async getEmployeesOfLoginRescueTeam(@Req() req: Request) {
+    return new ApiResponse(
+      true,
+      'All employees retrieved successfully',
+      await this.rescueTeamService.getEmployeesOfLoginRescueTeam(req),
     );
   }
   @Get('/{by-email}')

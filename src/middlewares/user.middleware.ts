@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request } from 'express';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -21,6 +22,8 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(UsersService) private readonly userService: UsersService,
     @Inject(EmployeeService) private readonly employeeService: EmployeeService,
     @Inject(RmbService) private readonly rmbService: RmbService,
+    @Inject(RescueTeamsService)
+    private readonly rescueTeamService: RescueTeamsService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
     const authorization = req.headers.authorization;
@@ -64,7 +67,7 @@ export class UserMiddleWare implements NestMiddleware {
             });
             break;
           case 'RESCUE_TEAM':
-            user = await this.employeeService.getEmployeeById(details.id);
+            user = await this.rescueTeamService.getEmployeeById(details.id);
             break;
           default:
             throw new BadRequestException(

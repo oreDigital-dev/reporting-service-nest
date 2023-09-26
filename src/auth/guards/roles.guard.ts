@@ -13,6 +13,7 @@ import { MainUser } from 'src/entities/MainUser.entity';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/us.entity';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -25,6 +26,8 @@ export class RolesGuard implements CanActivate {
     @Inject(UsersService) private userService: UsersService,
     @Inject(EmployeeService) private employeeService: EmployeeService,
     @Inject(RmbService) private rmbService: RmbService,
+    @Inject(RescueTeamsService)
+    private readonly rescueTeamService: RescueTeamsService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<String[]>('roles', [
@@ -58,7 +61,7 @@ export class RolesGuard implements CanActivate {
           });
           break;
         case 'RESCUE_TEAM':
-          user = await this.employeeService.getEmployeeById(details.id);
+          user = await this.rescueTeamService.getEmployeeById(details.id);
           break;
         default:
           throw new BadRequestException(

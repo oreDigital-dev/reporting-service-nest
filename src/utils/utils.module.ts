@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { RmbModule } from 'src/rmb/rmb.module';
+import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { RmbModule } from 'src/rmb/rmb.module';
     forwardRef(() => RmbModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
+    RescueTeamsModule,
   ],
   providers: [UtilsService],
   exports: [UtilsService],

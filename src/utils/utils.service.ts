@@ -8,17 +8,17 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { Exception } from 'handlebars/runtime';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
 import { MainUser } from 'src/entities/MainUser.entity';
-import { User } from 'src/entities/us.entity';
 import { EAccountType } from 'src/enums/EAccountType.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
 import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -28,15 +28,15 @@ export class UtilsService {
     @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
     @Inject(forwardRef(() => AuthService))
-    private authService: AuthService,
     @Inject(forwardRef(() => CompanyService))
-    private companyService: CompanyService,
-    @Inject(JwtService) private readonly jwtService: JwtService,
+    @Inject(JwtService)
+    private readonly jwtService: JwtService,
     @Inject(ConfigService) private readonly configService: ConfigService,
     private miningCompanyService: EmployeeService,
-
     @Inject(forwardRef(() => RmbService))
     private rmbEmployeeService: RmbService,
+    @Inject(RescueTeamsService)
+    private readonly rescueTeamService: RescueTeamsService,
   ) {}
 
   async getTokens(
@@ -153,7 +153,6 @@ export class UtilsService {
 
   async getLoggedInProfile(req: Request, type: string) {
     const authorization = req.headers.authorization;
-
     let user: any;
 
     if (authorization) {
@@ -177,14 +176,13 @@ export class UtilsService {
           user = await this.rmbEmployeeService.getRMBEmployeeById(details.id);
           break;
         case EAccountType[EAccountType.RESCUE_TEAM]:
-          await this.userService.getUserById(details.id, 'User');
+          await this.rescueTeamService.getEmployeeById(details.id);
           break;
         default:
           throw new BadRequestException(
             'The provided user type to decode is invalid',
           );
       }
-
       return user;
     } else {
       throw new Exception('Please you are not authorized to access resource');

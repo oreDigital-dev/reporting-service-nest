@@ -3,6 +3,9 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
+  Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +21,7 @@ import { ERole } from 'src/enums/ERole.enum';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
+import { Request } from 'express';
 
 @Injectable()
 export class RescueTeamsService {
@@ -26,6 +30,7 @@ export class RescueTeamsService {
     @InjectRepository(RescueTeamEmployee)
     public rescueTeamEmployeeRepo: Repository<RescueTeamEmployee>,
     private configService: ConfigService,
+    @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
     private roleService: RoleService,
     private addressService: AddressService,
@@ -182,8 +187,8 @@ export class RescueTeamsService {
   async getRescueTeamByEmail(email: string) {
     let rescueTeam = await this.rescueTeamRepo.findOne({
       where: { email: email },
+      relations: ['roles'],
     });
-
     if (!rescueTeam)
       throw new NotFoundException(
         'The rescue team with the provided email is not found',
@@ -194,6 +199,7 @@ export class RescueTeamsService {
   async getEmployeeById(id: UUID) {
     const employee = await this.rescueTeamEmployeeRepo.findOne({
       where: { id: id },
+      relations: ['roles', 'rescueTeam'],
     });
     if (!employee)
       throw new NotFoundException(
@@ -212,6 +218,17 @@ export class RescueTeamsService {
   async deleteRescueTeamEmployeeById(id: UUID) {
     const availableEmployee = await this.getEmployeeById(id);
     await this.rescueTeamEmployeeRepo.remove(availableEmployee);
+  }
+
+  async getEmployeesOfLoginRescueTeam(req: Request) {
+    const teamOwner = await this.utilsService.getLoggedInProfile(
+      req,
+      'rescue_team',
+    );
+    return await this.rescueTeamEmployeeRepo.find({
+      where: { rescueTeam: teamOwner.rescueTeam },
+      relations: ['roles', 'rescueTeam'],
+    });
   }
 
   async deleteAllEmployees() {

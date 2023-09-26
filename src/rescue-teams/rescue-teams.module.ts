@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { RescueTeamsService } from './rescue-teams.service';
 import { RescueTeamsController } from './rescue-teams.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import { AddressModule } from 'src/address/address.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([RescueTeam, RescueTeamEmployee]),
-    UtilsModule,
+    forwardRef(() => UtilsModule),
     RolesModule,
     AddressModule,
   ],
