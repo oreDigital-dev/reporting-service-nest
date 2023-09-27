@@ -21,7 +21,7 @@ import { Exclude } from 'class-transformer';
 @Entity('mining_companies')
 export class MiningCompany extends Organization {
   @PrimaryColumn()
-  id: UUID = randomUUID();
+  id: UUID;
 
   @Column()
   name: string;
@@ -32,7 +32,7 @@ export class MiningCompany extends Organization {
   phoneNumber: string;
 
   @ManyToOne(() => Address, (address) => address.company)
-  @JoinColumn({name:'address_id'})
+  @JoinColumn({ name: 'address_id' })
   address: Address;
 
   @OneToMany(() => Notification, (notification) => notification.miningCompany)
