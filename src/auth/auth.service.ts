@@ -47,7 +47,7 @@ export class AuthService {
       case EAccountType[EAccountType.COMPANY]:
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
-          relations: ['roles', 'company'],
+          relations: ['roles'],
         });
         type = 'company';
         break;
