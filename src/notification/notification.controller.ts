@@ -44,7 +44,7 @@ export class NotificationController {
     );
   }
 
-  @Get('latest-one/{loggedIn-employee}')
+  @Get('latest-one/loggedIn-employee')
   async getMyLatestNotification(
     @Req() req: Request,
     @Query('userType') userType: string,
@@ -56,7 +56,7 @@ export class NotificationController {
     );
   }
 
-  @Get('latest-one/{by-userId}/:id')
+  @Get('latest-one/by-userId/:id')
   async getLatestNotifictionByUserId(
     @Param('id') id: UUID,
     @Param('userType') userType: string,
