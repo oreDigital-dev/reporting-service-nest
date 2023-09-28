@@ -28,9 +28,11 @@ export class UtilsService {
     @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
     @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
     @Inject(forwardRef(() => CompanyService))
+    private companyService: CompanyService,
     @Inject(JwtService)
-    private readonly jwtService: JwtService,
+    private jwtService: JwtService,
     @Inject(ConfigService) private readonly configService: ConfigService,
     private miningCompanyService: EmployeeService,
     @Inject(forwardRef(() => RmbService))
