@@ -106,10 +106,15 @@ export class CompanyService {
       dto.companyAdmin.address,
     );
     const role = [];
-    role.push(await this.roleService.getRoleByName(ERole[ERole.COMPANY_ADMIN]));
-
+    role.push(
+      await this.roleService.getRolesByNames([
+        ERole[ERole.COMPANY_ADMIN],
+        ERole[ERole.COMPANY_EMPLOYEE],
+      ]),
+    );
     employee.roles = role;
     employee.address = adminAddress;
+    // main
 
     const createdCompany = await this.companyRepo.save(company);
     employee.company = createdCompany;
@@ -123,6 +128,7 @@ export class CompanyService {
       frontendAccountVerificationUrl,
       false,
     );
+    console.log(createdEm.roles);
     // await this.mailingService.sendPhoneSMSTOUser(
     //   employee.phonenumber,
     //   `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,

@@ -18,7 +18,7 @@ import { VerifyAccountDTO } from 'src/dtos/verify-account.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
 import { AuthService } from './auth.service';
-import { Response, Request } from 'express';
+import { Request } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
