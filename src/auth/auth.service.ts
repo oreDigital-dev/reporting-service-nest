@@ -57,8 +57,6 @@ export class AuthService {
           where: { email: dto.email },
           relations: ['roles'],
         });
-        user.password = await this.utilsService.hashString(user.password);
-        await this.rescueTeamService.rescueTeamEmployeeRepo.save(user);
         type = 'rescue_team';
         break;
       case EAccountType[EAccountType.RMB]:
