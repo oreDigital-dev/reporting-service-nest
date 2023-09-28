@@ -230,11 +230,14 @@ export class EmployeeService {
   }
 
   async getEmployeesByLoggedInCompany(req: Request) {
-    let company: any = await this.utilsService.getLoggedInProfile(
+    let employee: any = await this.utilsService.getLoggedInProfile(
       req,
       'company',
     );
-    return company.employees;
+    const employees = await this.employeeRepo.findOne({
+      where: { company: employee.company },
+    });
+    return employees;
   }
 
   async getAllEmployees() {
