@@ -21,7 +21,10 @@ export class NotificationController {
     );
   }
   @Get('all/loggedIn-user')
-  async getMyNotifications(@Query('userType') userType: string, req: Request) {
+  async getMyNotifications(
+    @Query('userType') userType: string,
+    @Req() req: Request,
+  ) {
     return new ApiResponse(
       true,
       'Notifications retrieved successfully',

@@ -16,6 +16,7 @@ export class RoleService {
       ERole.RESCUE_TEAM_ADMIN,
       ERole.COMPANY_EMPLOYEE,
       ERole.COMPANY_OWNER,
+      ERole.COMPANY_ADMIN,
       ERole.RESCUE_TEAM_EMPLOYEE,
       ERole.RESCUE_TEAM_OWNER,
     ];

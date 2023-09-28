@@ -26,7 +26,7 @@ export class EmployeeController {
   constructor(
     private empService: EmployeeService,
     private mailService: MailingService,
-  ) { }
+  ) {}
 
   @Post('/create')
   async createEmployee(@Body() dto: CreateEmployeeDTO) {
@@ -109,14 +109,20 @@ export class EmployeeController {
       console.error(error);
       throw error;
     }
-
   }
 
   @Post('/approve-or-reject/:id/:action')
   @Roles('COMPANY_ADMIN')
-  async approveOrReject(@Query('id') id: UUID, @Query('action') action: string) {
+  async approveOrReject(
+    @Query('id') id: UUID,
+    @Query('action') action: string,
+  ) {
     try {
-      return new ApiResponse(true, 'Updating account successfull', this.empService.approveAndRejectEmp(id, action))
+      return new ApiResponse(
+        true,
+        'Updating account successfull',
+        this.empService.approveAndRejectEmp(id, action),
+      );
     } catch (err) {
       console.error(err);
       throw err;
@@ -124,6 +130,7 @@ export class EmployeeController {
   }
 
   @Get('/all')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
   async getAllEmployees(): Promise<ApiResponse> {
     try {
       const employees = await this.empService.getAllEmployees();
@@ -139,6 +146,7 @@ export class EmployeeController {
   }
 
   @Delete('/all')
+  @Roles('COMPANY_ADMIN')
   async deleteAllEmployees(): Promise<ApiResponse> {
     try {
       await this.empService.deleteAllEmployees();
@@ -150,6 +158,7 @@ export class EmployeeController {
   }
 
   @Delete('/:id')
+  @Roles('COMPANY_ADMIN')
   async deleteEmployeeById(@Param('id') id: UUID): Promise<ApiResponse> {
     try {
       await this.empService.deleteEmployeeById(id);

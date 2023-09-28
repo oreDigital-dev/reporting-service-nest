@@ -151,11 +151,12 @@ export class EmployeeService {
     employee.password = await this.utilsService.hashString(employee.password);
     let createdEmployee = await this.employeeRepo.save(employee);
     delete createdEmployee.password;
-    // this.mailingService.sendEmailToUser(
-    //   employee.email,
-    //   'employee-account-verification',
-    //   'OreDigital account verification',
-    // );
+    console.log(
+      await this.employeeRepo.findOne({
+        where: { email: createdEmployee.email },
+        relations: ['roles'],
+      }),
+    );
     return createdEmployee;
   }
 
@@ -219,7 +220,7 @@ export class EmployeeService {
   async getEmployeeById(id: UUID) {
     const isEmployeeAvailable = await this.employeeRepo.findOne({
       where: { id: id },
-      relations: ['roles', 'company'],
+      relations: ['roles', 'company', 'notifications'],
     });
     if (!isEmployeeAvailable)
       throw new NotFoundException(

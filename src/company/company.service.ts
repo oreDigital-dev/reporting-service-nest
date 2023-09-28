@@ -84,7 +84,7 @@ export class CompanyService {
     company.minerals = minerals;
     company.address = companyAddress;
 
-    const employee: MiningCompanyEmployee = new MiningCompanyEmployee(
+    let employee: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.companyAdmin.firstName,
       dto.companyAdmin.lastName,
       dto.companyAdmin.email,
@@ -105,22 +105,20 @@ export class CompanyService {
     let adminAddress: Address = await this.addressService.createAddress(
       dto.companyAdmin.address,
     );
-    const role = [];
-    role.push(
-      await this.roleService.getRolesByNames([
-        ERole[ERole.COMPANY_ADMIN],
-        ERole[ERole.COMPANY_EMPLOYEE],
-      ]),
-    );
-    employee.roles = role;
-    employee.address = adminAddress;
-    // main
+    const roless = await this.roleService.getRolesByNames([
+      ERole[ERole.COMPANY_ADMIN],
+      ERole[ERole.COMPANY_EMPLOYEE],
+    ]);
 
+    employee.roles = roless;
+    employee.address = adminAddress;
     const createdCompany = await this.companyRepo.save(company);
     employee.company = createdCompany;
     employee.activationCode =
       await this.utilsService.generateRandomFourDigitNumber();
-    const createdEm = await this.employeeService.createEmp(employee);
+    employee.password = await this.utilsService.hashString(employee.password);
+    const createdEm = await this.employeeService.employeeRepo.save(employee);
+
     await this.mailingService.sendEmail(
       createdEm.email,
       createdEm.lastName,
@@ -128,12 +126,11 @@ export class CompanyService {
       frontendAccountVerificationUrl,
       false,
     );
-    console.log(createdEm.roles);
     // await this.mailingService.sendPhoneSMSTOUser(
     //   employee.phonenumber,
     //   `Thank you for creating a work space at OreDigital , your account verification code is ${employee.activationCode.toString()}`,
     // );
-    return createdCompany;
+    return createdEm;
   }
 
   async saveCompany(company: MiningCompany) {

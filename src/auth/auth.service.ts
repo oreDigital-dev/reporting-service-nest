@@ -49,6 +49,7 @@ export class AuthService {
           where: { email: dto.email },
           relations: ['roles'],
         });
+        console.log(user);
         type = 'company';
         break;
       case EAccountType[EAccountType.RESCUE_TEAM]:

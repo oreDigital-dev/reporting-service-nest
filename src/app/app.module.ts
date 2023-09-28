@@ -139,6 +139,7 @@ export class AppModule implements OnModuleInit, NestModule {
     if (!minerals || minerals.length == 0) {
       this.mineralService.createMinera();
     }
+    // await this.roleService.roleRepo.delete({});
     if (!roles || roles.length == 0) {
       this.roleService.createRoles();
     }

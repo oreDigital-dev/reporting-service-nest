@@ -200,7 +200,7 @@ export class RescueTeamsService {
   async getEmployeeById(id: UUID) {
     const employee = await this.rescueTeamEmployeeRepo.findOne({
       where: { id: id },
-      relations: ['roles', 'rescueTeam'],
+      relations: ['roles', 'rescueTeam', 'notifications'],
     });
     if (!employee)
       throw new NotFoundException(

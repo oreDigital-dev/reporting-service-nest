@@ -109,7 +109,7 @@ export class RmbService {
   async getRMBEmployeeById(id: UUID) {
     const availableEmployee = await this.rmbRepo.findOne({
       where: { id: id },
-      relations: ['roles'],
+      relations: ['roles', 'notifications'],
     });
     if (!availableEmployee)
       throw new NotFoundException(
