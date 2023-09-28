@@ -50,12 +50,19 @@ export class UserMiddleWare implements NestMiddleware {
         const token = authorization.toString().split(' ')[1];
         if (!authorization.toString().startsWith('Bearer '))
           throw new UnauthorizedException('The provided token is invalid');
-        const { tokenVerified, error } = this.jwtService.verify(token, {
-          secret: this.configService.get('SECRET_KEY'),
-        });
-        if (error) throw new UnauthorizedException(error.message);
-        const details: any = await this.jwtService.decode(token);
-
+        let details: any;
+        try {
+          const { tokenVerified, error } = this.jwtService.verify(token, {
+            secret: this.configService.get('SECRET_KEY'),
+          });
+          details = await this.jwtService.decode(token);
+        } catch (error) {
+          if (error.name === 'TokenExpiredError') {
+            throw new BadRequestException('Token has expired');
+          } else {
+            throw new UnauthorizedException('Token is invalid');
+          }
+        }
         let user: any;
         switch (details.type.toUpperCase()) {
           case 'COMPANY':
