@@ -77,7 +77,6 @@ export class UserMiddleWare implements NestMiddleware {
         req['user'] = user;
         next();
       } else {
-        console.log(req.baseUrl);
         throw new UnauthorizedException('Please get authenticated first');
       }
     }

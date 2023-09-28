@@ -20,7 +20,7 @@ export class NotificationController {
       await this.notificationService.getAllNotifications(),
     );
   }
-  @Get('all/{loggedIn-user}')
+  @Get('all/loggedIn-user')
   async getMyNotifications(@Query('userType') userType: string, req: Request) {
     return new ApiResponse(
       true,
