@@ -18,7 +18,6 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { UUID } from 'crypto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { MailingService } from 'src/mailing/mailing.service';
-import { Role } from 'src/entities/role.entity';
 
 @Controller('employees')
 @ApiTags('company-employees')
@@ -93,12 +92,10 @@ export class EmployeeController {
   @Get('/all/by-loggedin-company')
   async getEmployeesByLoggedInCompany(
     @Req() req: Request,
-    @Res() res: Response,
   ): Promise<ApiResponse> {
     try {
       const employees = await this.empService.getEmployeesByLoggedInCompany(
         req,
-        res,
       );
       return new ApiResponse(
         true,
