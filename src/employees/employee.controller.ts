@@ -112,7 +112,13 @@ export class EmployeeController {
   }
 
   @Post('/approve-or-reject/:id/:action')
-  @Roles('COMPANY_ADMIN')
+  @Roles(
+    'COMPANY_ADMIN',
+    'COMPANY_EMPLOYEE',
+    'RMB_ADMIN',
+    'RESCUE_TEAM_ADMIN',
+    'SYSTEM_ADMIN',
+  )
   async approveOrReject(
     @Query('id') id: UUID,
     @Query('action') action: string,
@@ -130,7 +136,14 @@ export class EmployeeController {
   }
 
   @Get('/all')
-  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
+  @Roles(
+    'COMPANY_ADMIN',
+    'COMPANY_OWNER',
+    'COMPANY_EMPLOYEE',
+    'RESCUE_TEAM_ADMIN',
+    'RMD_ADMIN',
+    'SYSTEM_ADMIN',
+  )
   async getAllEmployees(): Promise<ApiResponse> {
     try {
       const employees = await this.empService.getAllEmployees();
@@ -146,7 +159,13 @@ export class EmployeeController {
   }
 
   @Delete('/all')
-  @Roles('COMPANY_ADMIN')
+  @Roles(
+    'COMPANY_ADMIN',
+    'COMPANY_EMPLOYEE',
+    'SYSTEM_ADMIN',
+    'RMB_ADMIN',
+    'RESCUE_TEAM_ADMIN',
+  )
   async deleteAllEmployees(): Promise<ApiResponse> {
     try {
       await this.empService.deleteAllEmployees();
@@ -158,7 +177,7 @@ export class EmployeeController {
   }
 
   @Delete('/:id')
-  @Roles('COMPANY_ADMIN')
+  @Roles('COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
   async deleteEmployeeById(@Param('id') id: UUID): Promise<ApiResponse> {
     try {
       await this.empService.deleteEmployeeById(id);

@@ -12,7 +12,7 @@ import { Exception } from 'handlebars';
 import { AddressService } from 'src/address/address.service';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { Address } from 'src/entities/address.entity';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MiningCompany } from 'src/entities/miningCompany.entity';

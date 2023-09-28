@@ -10,7 +10,7 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { CompanyModule } from 'src/company/company.module';
 import { MiniIncident } from 'src/entities/mini-incident.entity';
-import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
+import { EmployeeModule } from 'src/employees/employee.module';
 
 @Module({
   imports: [

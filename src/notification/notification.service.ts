@@ -13,7 +13,7 @@ import { Notification } from 'src/entities/notification.entity';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { RMBEmployee } from 'src/entities/rmb-employee';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
