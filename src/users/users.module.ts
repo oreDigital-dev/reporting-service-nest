@@ -8,6 +8,7 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { EmployeeModule } from 'src/employees/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RmbModule } from 'src/rmb/rmb.module';
+import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 
 @Global()
 @Module({
@@ -18,6 +19,7 @@ import { RmbModule } from 'src/rmb/rmb.module';
     EmployeeModule,
     UtilsModule,
     RmbModule,
+    RescueTeamsModule,
   ],
   providers: [UsersService],
   controllers: [UsersController],

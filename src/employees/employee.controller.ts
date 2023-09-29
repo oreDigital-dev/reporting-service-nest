@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -18,13 +19,15 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { UUID } from 'crypto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { MailingService } from 'src/mailing/mailing.service';
+import { UsersService } from 'src/users/users.service';
+import { ApproveOrRejectEmployeeDTO } from 'src/dtos/reject_or_approve-user.dto';
 
 @Controller('employees')
 @ApiTags('company-employees')
 export class EmployeeController {
   constructor(
     private empService: EmployeeService,
-    private mailService: MailingService,
+    private userService: UsersService,
   ) {}
 
   @Post('/create')
@@ -90,6 +93,7 @@ export class EmployeeController {
   }
 
   @Get('/all/by-loggedin-company')
+  @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
   async getEmployeesByLoggedInCompany(
     @Req() req: Request,
   ): Promise<ApiResponse> {
@@ -153,6 +157,28 @@ export class EmployeeController {
       console.error(error);
       throw error;
     }
+  }
+  @Get('all/by-status')
+  async getMiningCompanyEmployeesByStatus(@Query('status') status: string) {
+    return new ApiResponse(
+      true,
+      'Mining company retrieved successfully',
+      await this.empService.getMiningCompanyEmployeesByStatus(status),
+    );
+  }
+
+  @Put('approve-or-reject')
+  async approveorRejectMiningCompanyEmployees(
+    @Body() dto: ApproveOrRejectEmployeeDTO,
+  ) {
+    return new ApiResponse(
+      true,
+      'Empoyeee updated successfully',
+      await this.empService.approveorRejectMiningCompanyEmployees(
+        dto.id,
+        dto.action,
+      ),
+    );
   }
 
   @Delete('/all')

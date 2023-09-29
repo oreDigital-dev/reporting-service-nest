@@ -15,7 +15,6 @@ import { UUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { EUserStatus } from 'src/enums/EUserStatus.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 
@@ -106,6 +105,6 @@ export class MainUser extends InitiatorAudit {
     this.national_id = national_id;
     this.phonenumber = phonenumber;
     this.password = password;
-    this.status = EUserStatus[status];
+    this.status = EAccountStatus[status];
   }
 }
