@@ -113,13 +113,7 @@ export class EmployeeController {
   }
 
   @Post('/approve-or-reject/:id/:action')
-  @Roles(
-    'COMPANY_ADMIN',
-    'COMPANY_EMPLOYEE',
-    'RMB_ADMIN',
-    'RESCUE_TEAM_ADMIN',
-    'SYSTEM_ADMIN',
-  )
+  @Roles('COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
   async approveOrReject(
     @Query('id') id: UUID,
     @Query('action') action: string,
@@ -137,14 +131,7 @@ export class EmployeeController {
   }
 
   @Get('/all')
-  @Roles(
-    'COMPANY_ADMIN',
-    'COMPANY_OWNER',
-    'COMPANY_EMPLOYEE',
-    'RESCUE_TEAM_ADMIN',
-    'RMD_ADMIN',
-    'SYSTEM_ADMIN',
-  )
+  @Roles('RMD_ADMIN', 'SYSTEM_ADMIN')
   async getAllEmployees(): Promise<ApiResponse> {
     try {
       const employees = await this.empService.getAllEmployees();
@@ -159,6 +146,7 @@ export class EmployeeController {
     }
   }
   @Get('all/by-status')
+  @Roles('COMPANY_EMPLOYEE', 'COMPANY_ADMIN')
   async getMiningCompanyEmployeesByStatus(@Query('status') status: string) {
     return new ApiResponse(
       true,
@@ -168,6 +156,7 @@ export class EmployeeController {
   }
 
   @Put('approve-or-reject')
+  @Roles('COMPANY_EMPLOYEE', 'COMPANY_OWNER', 'COMPANY_ADMIN')
   async approveorRejectMiningCompanyEmployees(
     @Body() dto: ApproveOrRejectEmployeeDTO,
   ) {
