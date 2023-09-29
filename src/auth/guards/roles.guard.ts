@@ -12,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/us.entity';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';

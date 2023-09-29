@@ -17,7 +17,7 @@ import { EAccountType } from 'src/enums/EAccountType.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';

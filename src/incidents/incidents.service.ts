@@ -17,7 +17,7 @@ import { EIncidentType } from 'src/enums/EIncidentType.enum';
 import { ENotificationType } from 'src/enums/ENotificationType.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { MinesiteService } from 'src/minesite/minesite.service';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { In, Repository } from 'typeorm';

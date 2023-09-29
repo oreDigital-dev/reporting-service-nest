@@ -5,9 +5,10 @@ import { User } from 'src/entities/us.entity';
 import { RolesModule } from 'src/roles/roles.module';
 import { MailingModule } from 'src/mailing/mailing.module';
 import { UtilsModule } from 'src/utils/utils.module';
-import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
+import { EmployeeModule } from 'src/employees/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RmbModule } from 'src/rmb/rmb.module';
+import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 
 @Global()
 @Module({
@@ -17,7 +18,8 @@ import { RmbModule } from 'src/rmb/rmb.module';
     MailingModule,
     EmployeeModule,
     UtilsModule,
-    RmbModule
+    RmbModule,
+    RescueTeamsModule,
   ],
   providers: [UsersService],
   controllers: [UsersController],

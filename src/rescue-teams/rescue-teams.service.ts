@@ -23,6 +23,8 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { MainUser } from 'src/entities/MainUser.entity';
+import { EActionType } from 'src/enums/EActionType.enum';
 
 @Injectable()
 export class RescueTeamsService {
@@ -287,5 +289,40 @@ export class RescueTeamsService {
         throw new BadRequestException('The provided status is invalid');
     }
     return rescueTeams;
+  }
+
+  async getRescueTeamEmployeesByStatus(status: string) {
+    switch (status.toUpperCase()) {
+      case EActionType[EActionType.APPROVE] + 'D':
+        return await this.rescueTeamEmployeeRepo.find({
+          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+        });
+      case EActionType[EActionType.REJECT] + 'D':
+        return await this.rescueTeamEmployeeRepo.find({
+          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+        });
+      default:
+        throw new BadRequestException('The provided action is invalid');
+    }
+  }
+  async approveOrRejectRescueTeamEmployees(id: UUID, action: string) {
+    let user: MainUser;
+    switch (action.toUpperCase()) {
+      case 'APPROVE':
+        user = await this.getEmployeeById(id);
+        if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+          throw new ForbiddenException('The employee is already approved');
+        user.status = EAccountStatus[EAccountStatus.APPROVED];
+        break;
+      case 'REJECT':
+        user = await this.getEmployeeById(id);
+        if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+          throw new ForbiddenException('The employee is already rejected');
+        user.status = EAccountStatus[EAccountStatus.REJECTED];
+        break;
+      default:
+        throw new BadRequestException('The provided action is invalid');
+    }
+    return await this.rescueTeamEmployeeRepo.save(user);
   }
 }

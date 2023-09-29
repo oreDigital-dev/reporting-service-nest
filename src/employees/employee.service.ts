@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -18,13 +19,13 @@ import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
-import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { generate } from 'otp-generator';
 import { Address } from 'src/entities/address.entity';
 import { AddressService } from 'src/address/address.service';
-import { EUserStatus } from 'src/enums/EUserStatus.enum';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EOrganizationType } from 'src/enums/EOrganizationType';
 
 @Injectable()
 export class EmployeeService {
@@ -125,7 +126,7 @@ export class EmployeeService {
       id,
     });
 
-    if (employee.status == EUserStatus[EUserStatus.ACTIVE]) {
+    if (employee.status == EActionType[EAccountStatus.ACTIVE]) {
       throw new BadRequestException('The Account has not yet been verified!');
     }
 
@@ -254,5 +255,41 @@ export class EmployeeService {
   async deleteEmployeeById(id: UUID) {
     let employee = await this.getEmployeeById(id);
     this.employeeRepo.remove(employee);
+  }
+
+  // This api is optimized to be used to all types of employees
+  async getMiningCompanyEmployeesByStatus(status: string) {
+    switch (status.toUpperCase()) {
+      case EActionType[EActionType.APPROVE] + 'D':
+        return await this.employeeRepo.find({
+          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+        });
+      case EActionType[EActionType.REJECT] + 'D':
+        return await this.employeeRepo.find({
+          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+        });
+      default:
+        throw new BadRequestException('The provided action is invalid');
+    }
+  }
+
+  async approveorRejectMiningCompanyEmployees(id: UUID, action: string) {
+    let user: MainUser;
+    switch (action.toUpperCase()) {
+      case 'APPROVE':
+        user = await this.getEmployeeById(id);
+        if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+          throw new ForbiddenException('The employee is already approved');
+        user.status = EAccountStatus[EAccountStatus.APPROVED];
+        break;
+      case 'REJECT':
+        user = await this.getEmployeeById(id);
+        if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+          throw new ForbiddenException('The employee is already rejected');
+        user.status = EAccountStatus[EAccountStatus.REJECTED];
+        break;
+      default:
+        throw new BadRequestException('The provided action is invalid');
+    }
   }
 }

@@ -8,8 +8,7 @@ import {
 
 import { LoginDTO } from 'src/dtos/login.dto';
 import { ERole } from 'src/enums/ERole.enum';
-import { EUserStatus } from 'src/enums/EUserStatus.enum';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { EAccountType } from 'src/enums/EAccountType.enum';
@@ -77,7 +76,9 @@ export class AuthService {
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
 
-    if (user.status == EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION])
+    if (
+      user.status == EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
+    )
       throw new BadRequestException(
         'This account is not yet verified, please check your gmail for verification details',
       );
@@ -140,7 +141,9 @@ export class AuthService {
     user.status = EAccountStatus[EAccountStatus.PENDING];
     user.roles.forEach((role) => {
       if (role.roleName == ERole[ERole.SYSTEM_ADMIN]) {
-        user.status = EUserStatus[EUserStatus.ACTIVE];
+        user.status = EAccountStatus[EAccountStatus.ACTIVE];
+      } else {
+        user.status = EAccountStatus[EAccountStatus.PENDING];
       }
     });
     return user;
