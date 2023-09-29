@@ -93,7 +93,7 @@ export class EmployeeController {
   }
 
   @Get('/all/by-loggedin-company')
-  @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
+  @Roles('COMPANY_OWNER', 'COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
   async getEmployeesByLoggedInCompany(
     @Req() req: Request,
   ): Promise<ApiResponse> {

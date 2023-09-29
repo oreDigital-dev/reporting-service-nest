@@ -5,7 +5,6 @@ import {
   BadRequestException,
   Inject,
   forwardRef,
-  Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -92,12 +91,14 @@ export class RescueTeamsService {
         );
 
         let employeess = rescueTeam.employees;
+        rescueTeamEmployee;
         createdRescueTeamEmployee = await this.rescueTeamEmployeeRepo.save(
           rescueTeamEmployee,
         );
         roles = await this.roleService.getRolesByNames([
           ERole[ERole.RESCUE_TEAM_ADMIN],
           ERole[ERole.RESCUE_TEAM_OWNER],
+          ERole[ERole.RESCUE_TEAM_EMPLOYEE],
         ]);
         createdRescueTeamEmployee.roles = roles;
         createdRescueTeamEmployee.rescueTeam = rescueTeam;
@@ -123,10 +124,6 @@ export class RescueTeamsService {
             dto.rescueTeam.rescueTeamCategory,
           ),
         );
-
-        createdRescueTeamEmployee = await this.rescueTeamEmployeeRepo.save(
-          rescueTeamEmployee,
-        );
         roles = await this.roleService.getRolesByNames([
           ERole[ERole.RESCUE_TEAM_EMPLOYEE],
         ]);
@@ -136,6 +133,11 @@ export class RescueTeamsService {
         createdRescueTeamEmployee.password = await this.utilsService.hashString(
           dto.RescueTeamAdmin.password,
         );
+
+        createdRescueTeamEmployee = await this.rescueTeamEmployeeRepo.save(
+          rescueTeamEmployee,
+        );
+
         break;
       default:
         throw new BadRequestException(
