@@ -90,18 +90,22 @@ export class RescueTeamsService {
           ),
         );
 
-        let employeess = rescueTeam.employees;
-        rescueTeamEmployee;
+        roles = await this.roleService.getRolesByNames([
+          ERole[ERole.RESCUE_TEAM_EMPLOYEE],
+          ERole[ERole.RESCUE_TEAM_OWNER],
+          ERole[ERole.RESCUE_TEAM_ADMIN],
+        ]);
+
+        rescueTeamEmployee.roles = roles;
+        rescueTeamEmployee.rescueTeam = rescueTeam;
+        rescueTeamEmployee.password = await this.utilsService.hashString(
+          dto.RescueTeamAdmin.password,
+        );
         createdRescueTeamEmployee = await this.rescueTeamEmployeeRepo.save(
           rescueTeamEmployee,
         );
-        roles = await this.roleService.getRolesByNames([
-          ERole[ERole.RESCUE_TEAM_ADMIN],
-          ERole[ERole.RESCUE_TEAM_OWNER],
-          ERole[ERole.RESCUE_TEAM_EMPLOYEE],
-        ]);
-        createdRescueTeamEmployee.roles = roles;
-        createdRescueTeamEmployee.rescueTeam = rescueTeam;
+        return createdRescueTeamEmployee;
+
         break;
       case EEmployeeType[EEmployeeType.EMPLOYEE]:
         rescueTeamEmployee = new RescueTeamEmployee(
@@ -128,16 +132,11 @@ export class RescueTeamsService {
           ERole[ERole.RESCUE_TEAM_EMPLOYEE],
         ]);
 
-        createdRescueTeamEmployee.roles = roles;
-        createdRescueTeamEmployee.rescueTeam = rescueTeam;
-        createdRescueTeamEmployee.password = await this.utilsService.hashString(
+        rescueTeamEmployee.roles = roles;
+        rescueTeamEmployee.rescueTeam = rescueTeam;
+        rescueTeamEmployee.password = await this.utilsService.hashString(
           dto.RescueTeamAdmin.password,
         );
-
-        createdRescueTeamEmployee = await this.rescueTeamEmployeeRepo.save(
-          rescueTeamEmployee,
-        );
-
         break;
       default:
         throw new BadRequestException(
@@ -151,7 +150,7 @@ export class RescueTeamsService {
     rescueTeamEmployee.address = (await addresses).address1;
     rescueTeam.address = (await addresses).address2;
     await this.rescueTeamRepo.save(rescueTeam);
-    return await this.rescueTeamEmployeeRepo.save(createdRescueTeamEmployee);
+    return await this.rescueTeamEmployeeRepo.save(rescueTeamEmployee);
   }
 
   async UpdateEmployee(dto: Partial<UpdateRescueTeamEmployee>) {
