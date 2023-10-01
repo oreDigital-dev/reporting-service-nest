@@ -16,8 +16,13 @@ import { EGender } from 'src/enums/EGender.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { RmbService } from 'src/rmb/rmb.service';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
+import { EOrganizationType } from 'src/enums/EOrganizationType';
+import { EActionType } from 'src/enums/EActionType.enum';
+import { EAccountType } from 'src/enums/EAccountType.enum';
+import { MainUser } from 'src/entities/MainUser.entity';
 
 @Injectable()
 export class UsersService {
@@ -26,13 +31,11 @@ export class UsersService {
 
     private roleService: RoleService,
     private mailService: MailingService,
-
     private utilsService: UtilsService,
-
     private employeeService: EmployeeService,
-
-    private rmbService : RmbService
-  ) { }
+    private rmbService: RmbService,
+    private rescueTeamService: RescueTeamsService,
+  ) {}
 
   async createSytemAdmin(dto: CreateUserDto) {
     if (dto.registrationKey != 'admin@oreDigital')
@@ -90,13 +93,12 @@ export class UsersService {
   }
 
   async getUserByEmail(email: any) {
-    let user : any;
-    user = await this.employeeService.getEmployeeByEmail(email);  
-    if(!user){
-      user = await this.rmbService.getRMBEmployeeByEmail(email)
+    let user: any;
+    user = await this.employeeService.getEmployeeByEmail(email);
+    if (!user) {
+      user = await this.rmbService.getRMBEmployeeByEmail(email);
     }
 
- 
     if (!user)
       throw new NotFoundException(
         'The user with the provided email is not found',
@@ -121,5 +123,123 @@ export class UsersService {
     const min = 1000;
     const max = 9999;
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // This api is optimized to be used to all types of employees
+  async approveOrRejectUsers(id: UUID, action: string, organization) {
+    let user: MainUser;
+    switch (organization.toUpperCase()) {
+      case EOrganizationType[EOrganizationType.COMPANY]:
+        switch (action.toUpperCase()) {
+          case 'APPROVE':
+            user = await this.employeeService.getEmployeeById(id);
+            if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+              throw new ForbiddenException('The employee is already approved');
+            user.status = EAccountStatus[EAccountStatus.APPROVED];
+            break;
+          case 'REJECT':
+            user = await this.employeeService.getEmployeeById(id);
+            if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+              throw new ForbiddenException('The employee is already rejected');
+            user.status = EAccountStatus[EAccountStatus.REJECTED];
+            break;
+          default:
+            throw new BadRequestException('The provided action is invalid');
+        }
+        break;
+      case EOrganizationType[EOrganizationType.RESCUE_TEAM]:
+        switch (action.toUpperCase()) {
+          case 'APPROVE':
+            user = await this.rescueTeamService.getEmployeeById(id);
+            if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+              throw new ForbiddenException('The employee is already approved');
+            user.status = EAccountStatus[EAccountStatus.APPROVED];
+            break;
+          case 'REJECT':
+            user = await this.rescueTeamService.getEmployeeById(id);
+            if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+              throw new ForbiddenException('The employee is already rejected');
+            user.status = EAccountStatus[EAccountStatus.REJECTED];
+            break;
+          default:
+            throw new BadRequestException('The provided action is invalid');
+        }
+        break;
+      case EOrganizationType[EOrganizationType.RMB]:
+        switch (action.toUpperCase()) {
+          case 'APPROVE':
+            user = await this.rmbService.getRMBEmployeeById(id);
+            if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+              throw new ForbiddenException('The employee is already approved');
+            user.status = EAccountStatus[EAccountStatus.APPROVED];
+            break;
+          case 'REJECT':
+            user = await this.rmbService.getRMBEmployeeById(id);
+            if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+              throw new ForbiddenException('The employee is already rejected');
+            user.status = EAccountStatus[EAccountStatus.REJECTED];
+            break;
+          default:
+            throw new BadRequestException('The provided action is invalid');
+        }
+        break;
+      default:
+        throw new BadRequestException(
+          'The provided organization type is invalid',
+        );
+    }
+  }
+
+  // This api is optimized to be used to all types of employees
+  async getUsersByStatus(status: string, organization: string) {
+    switch (organization.toUpperCase()) {
+      case EOrganizationType[EOrganizationType.RMB]:
+        switch (status.toUpperCase()) {
+          case EActionType[EActionType.APPROVE] + 'D':
+            return await this.rmbService.rmbRepo.find({
+              where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+            });
+          case EActionType[EActionType.REJECT] + 'D':
+            return await this.rmbService.rmbRepo.find({
+              where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+            });
+          default:
+            throw new BadRequestException('The provided action is invalid');
+        }
+        break;
+      case EOrganizationType[EOrganizationType.COMPANY]:
+        switch (status.toUpperCase()) {
+          case EActionType[EActionType.APPROVE] + 'D':
+            return await this.employeeService.employeeRepo.find({
+              where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+            });
+          case EActionType[EActionType.REJECT] + 'D':
+            return await this.employeeService.employeeRepo.find({
+              where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+            });
+          default:
+            throw new BadRequestException('The provided action is invalid');
+        }
+        break;
+      case EOrganizationType[EOrganizationType.RESCUE_TEAM]:
+        switch (status.toUpperCase()) {
+          case EActionType[EActionType.APPROVE] + 'D':
+            return await this.rescueTeamService.rescueTeamEmployeeRepo.find({
+              where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+            });
+          case EActionType[EActionType.REJECT] + 'D':
+            return await this.rescueTeamService.rescueTeamEmployeeRepo.find({
+              where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+            });
+          default:
+            throw new BadRequestException('The provided action is invalid');
+            break;
+        }
+        break;
+      default:
+        throw new BadRequestException(
+          'The provided organization type is invalid',
+        );
+    }
   }
 }

@@ -20,11 +20,10 @@ export class NotificationController {
       await this.notificationService.getAllNotifications(),
     );
   }
-  @Get('all/{loggedIn-user}')
+  @Get('all/loggedIn-user')
   async getMyNotifications(
     @Query('userType') userType: string,
-    req: Request,
-    res: Response,
+    @Req() req: Request,
   ) {
     return new ApiResponse(
       true,
@@ -45,24 +44,19 @@ export class NotificationController {
     );
   }
 
-  @Get('latest-one/{loggedIn-employee}')
+  @Get('latest-one/loggedIn-employee')
   async getMyLatestNotification(
     @Req() req: Request,
-    @Res() res: Response,
     @Query('userType') userType: string,
   ) {
     return new ApiResponse(
       true,
       'Notifications retrieved successfully',
-      await this.notificationService.getMyLatestNotification(
-        req,
-        res,
-        userType,
-      ),
+      await this.notificationService.getMyLatestNotification(req, userType),
     );
   }
 
-  @Get('latest-one/{by-userId}/:id')
+  @Get('latest-one/by-userId/:id')
   async getLatestNotifictionByUserId(
     @Param('id') id: UUID,
     @Param('userType') userType: string,

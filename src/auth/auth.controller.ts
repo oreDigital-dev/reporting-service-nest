@@ -4,6 +4,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Req,
@@ -17,7 +18,7 @@ import { VerifyAccountDTO } from 'src/dtos/verify-account.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
 import { AuthService } from './auth.service';
-import { Response, Request } from 'express';
+import { Request } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -46,7 +47,7 @@ export class AuthController {
     return new ApiResponse(
       true,
       'Your account is verified successfully',
-      await this.authService.verifyAccount(dto.email),
+      await this.authService.verifyAccount(dto.email, dto.userType),
     );
   }
 
@@ -63,11 +64,20 @@ export class AuthController {
     );
   }
   @Get('profile')
-  async getProfile(
-    @Req() req: Request,
-    @Query('type') type: string,
-  ) {
+  async getProfile(@Req() req: Request, @Query('type') type: string) {
     let profile = await this.authService.getProfile(req, type);
     return new ApiResponse(true, 'Profile retrieved successfully', profile);
+  }
+
+  @Get('resend/{verification-code}/:email')
+  async resendVerificationCode(
+    @Param('email') email: string,
+    userType: string,
+  ) {
+    return new ApiResponse(
+      true,
+      'The verification code was sent to your gmail account and phone number',
+      await this.authService.resendVerificationCode(email, userType),
+    );
   }
 }

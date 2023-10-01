@@ -3,4 +3,5 @@ export enum EOrganizationType {
   RESCUE_TEAM,
   POLICE_STATION,
   RMB,
+  COMPANY,
 }

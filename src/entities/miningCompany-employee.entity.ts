@@ -9,10 +9,8 @@ import { Exclude } from 'class-transformer';
 
 @Entity('mining_company_employees')
 export class MiningCompanyEmployee extends MainUser {
-
-
   @ManyToOne(() => MiningCompany)
-  @JoinColumn({name: 'company_id'})
+  @JoinColumn({ name: 'company_id' })
   company: MiningCompany;
 
   @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })
@@ -31,7 +29,6 @@ export class MiningCompanyEmployee extends MainUser {
     phonenumber: string,
     password: string,
     status: EAccountStatus,
-    role: string,
   ) {
     super(
       firstName,
@@ -43,6 +40,5 @@ export class MiningCompanyEmployee extends MainUser {
       password,
       status,
     );
-    this.role = ECompanyRole[role];
   }
 }

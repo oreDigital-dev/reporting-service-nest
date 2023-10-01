@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { UUID } from 'crypto';
+import { ApproveOrRejectEmployeeDTO } from 'src/dtos/reject_or_approve-user.dto';
 
 @Controller('users')
 @ApiTags('users')

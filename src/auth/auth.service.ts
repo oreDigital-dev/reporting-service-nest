@@ -3,19 +3,22 @@ import {
   Injectable,
   forwardRef,
   Inject,
+  ForbiddenException,
 } from '@nestjs/common';
 
 import { LoginDTO } from 'src/dtos/login.dto';
 import { ERole } from 'src/enums/ERole.enum';
-import { EUserStatus } from 'src/enums/EUserStatus.enum';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { EAccountType } from 'src/enums/EAccountType.enum';
 import { RmbService } from 'src/rmb/rmb.service';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
+import { MainUser } from 'src/entities/MainUser.entity';
+import { MailingService } from 'src/mailing/mailing.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -26,6 +29,8 @@ export class AuthService {
     private employeeService: EmployeeService,
     @Inject(forwardRef(() => RmbService))
     private rmbService: RmbService,
+    private rescueTeamService: RescueTeamsService,
+    private mailingService: MailingService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -40,12 +45,13 @@ export class AuthService {
       case EAccountType[EAccountType.COMPANY]:
         user = await this.employeeService.employeeRepo.findOne({
           where: { email: dto.email },
-          relations: ['roles', 'company'],
+          relations: ['roles'],
         });
+        console.log(user);
         type = 'company';
         break;
       case EAccountType[EAccountType.RESCUE_TEAM]:
-        user = await this.employeeService.employeeRepo.findOne({
+        user = await this.rescueTeamService.rescueTeamEmployeeRepo.findOne({
           where: { email: dto.email },
           relations: ['roles'],
         });
@@ -67,7 +73,9 @@ export class AuthService {
     if (!passwordMatch)
       throw new BadRequestException('Invalid email or password');
 
-    if (user.status == EUserStatus[EUserStatus.WAITING_EMAIL_VERIFICATION])
+    if (
+      user.status == EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
+    )
       throw new BadRequestException(
         'This account is not yet verified, please check your gmail for verification details',
       );
@@ -80,25 +88,62 @@ export class AuthService {
     };
   }
 
-  async verifyAccount(email: string) {
-    const verifiedAccount = await this.userService.getUserByEmail(email);
-    if (verifiedAccount.status === EAccountStatus[EAccountStatus.ACTIVE])
+  async verifyAccount(email: string, userType: String) {
+    let user;
+    let activatedUser;
+    let tokens;
+    let verifiedAccount;
+
+    switch (userType.toUpperCase()) {
+      case EAccountType[EAccountType.COMPANY]:
+        user = await this.employeeService.employeeRepo.findOne({
+          where: { email: email },
+          relations: ['roles', 'company'],
+        });
+        activatedUser = this.activateUser(user);
+        verifiedAccount = await this.userService.userRepo.save(user);
+        tokens = await this.utilsService.getTokens(activatedUser, 'company');
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        user = await this.rescueTeamService.rescueTeamEmployeeRepo.findOne({
+          where: { email: email },
+          relations: ['roles'],
+        });
+        activatedUser = this.activateUser(user);
+        verifiedAccount = await this.userService.userRepo.save(user);
+        tokens = await this.utilsService.getTokens(
+          activatedUser,
+          'rescue_team',
+        );
+        break;
+      case EAccountType[EAccountType.RMB]:
+        user = await this.rmbService.rmbRepo.findOne({
+          where: { email: email },
+          relations: ['roles'],
+        });
+        activatedUser = this.activateUser(user);
+        verifiedAccount = await this.userService.userRepo.save(user);
+        tokens = await this.utilsService.getTokens(activatedUser, 'rmb');
+        break;
+      default:
+        throw new BadRequestException('The provided account type is invalid');
+    }
+    delete user.password;
+    return { tokens, user: verifiedAccount };
+  }
+
+  activateUser(user: MainUser) {
+    if (user.status === EAccountStatus[EAccountStatus.ACTIVE])
       throw new BadRequestException('This is already verified');
-    verifiedAccount.status = EAccountStatus[EAccountStatus.PENDING];
-    verifiedAccount.roles.forEach((role) => {
+    user.status = EAccountStatus[EAccountStatus.PENDING];
+    user.roles.forEach((role) => {
       if (role.roleName == ERole[ERole.SYSTEM_ADMIN]) {
-        verifiedAccount.status = EUserStatus[EUserStatus.ACTIVE];
+        user.status = EAccountStatus[EAccountStatus.ACTIVE];
+      } else {
+        user.status = EAccountStatus[EAccountStatus.PENDING];
       }
     });
-    const verifiedAccount2 = await this.userService.userRepo.save(
-      verifiedAccount,
-    );
-    const tokens = await this.utilsService.getTokens(
-      verifiedAccount2,
-      'company',
-    );
-    delete verifiedAccount2.password;
-    return { tokens, user: verifiedAccount2 };
+    return user;
   }
 
   getUserByEmail(email: string) {
@@ -136,5 +181,45 @@ export class AuthService {
   async getProfile(req: Request, type: string) {
     let profile = this.utilsService.getLoggedInProfile(req, type);
     return profile;
+  }
+
+  async resendVerificationCode(email: string, userType: string) {
+    let user: MainUser;
+    switch (userType.toUpperCase()) {
+      case EAccountType[EAccountType.COMPANY]:
+        user = await this.employeeService.employeeRepo.findOne({
+          where: { email: email },
+        });
+        break;
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        user = await this.rescueTeamService.rescueTeamEmployeeRepo.findOne({
+          where: { email: email },
+        });
+
+        break;
+      case EAccountType[EAccountType.RMB]:
+        user = await this.rmbService.rmbRepo.findOne({
+          where: { email: email },
+        });
+        break;
+      default:
+        throw new BadRequestException('The provided account type is invalid');
+    }
+
+    if (user.status == EAccountStatus[EAccountStatus.ACTIVE])
+      throw new ForbiddenException(
+        'Your account is already active, please login',
+      );
+    await this.mailingService.sendEmail(
+      user.email,
+      user.lastName,
+      user.activationCode,
+      '',
+      false,
+    );
+    await this.mailingService.sendPhoneSMSTOUser(
+      user.phonenumber,
+      `Hello ${user.lastName} this is OreDigital , thank for creating an account , please your verification code is ${user.activationCode}`,
+    );
   }
 }

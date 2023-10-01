@@ -6,46 +6,51 @@ import {
   OnModuleInit,
   forwardRef,
 } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MailingModule } from './mailing/mailing.module';
+import { MailingModule } from '../mailing/mailing.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './entities/us.entity';
-import { Role } from './entities/role.entity';
-import { RoleService } from './roles/roles.service';
-import { IncidentsModule } from './incidents/incidents.module';
-import { AddressModule } from './address/address.module';
-import { MinesiteModule } from './minesite/minesite.module';
-import { HomeController } from './home/home.controller';
-import { AuthController } from './auth/auth.controller';
-import { MinesiteController } from './minesite/minesite.controller';
-import { EmployeeController } from './miningCompanyEmployee/employee.controller';
-import { EmployeeModule } from './miningCompanyEmployee/employee.module';
-import { Notification } from './entities/notification.entity';
-import { MineSite } from './entities/minesite.entity';
-import { Incident } from './entities/incident.entity';
-import { Address } from './entities/address.entity';
-import { MineralModule } from './mineral/mineral.module';
-import { CompanyModule } from './company/company.module';
+import { User } from '../entities/us.entity';
+import { Role } from '../entities/role.entity';
+import { RoleService } from '../roles/roles.service';
+import { IncidentsModule } from '../incidents/incidents.module';
+import { AddressModule } from '../address/address.module';
+import { MinesiteModule } from '../minesite/minesite.module';
+import { HomeController } from '../home/home.controller';
+import { AuthController } from '../auth/auth.controller';
+import { MinesiteController } from '../minesite/minesite.controller';
+import { EmployeeController } from '../employees/employee.controller';
+import { EmployeeModule } from '../employees/employee.module';
+import { Notification } from '../entities/notification.entity';
+import { MineSite } from '../entities/minesite.entity';
+import { Incident } from '../entities/incident.entity';
+import { Address } from '../entities/address.entity';
+import { MineralModule } from '../mineral/mineral.module';
+import { CompanyModule } from '../company/company.module';
 import { JwtModule } from '@nestjs/jwt';
-import { CompanyController } from './company/company.controller';
-import { Mineral } from './entities/mineral.entity';
-import { MineralService } from './mineral/mineral.service';
-import { NotificationModule } from './notification/notification.module';
-import { UserMiddleWare } from './middlewares/user.middleware';
-import { RmbModule } from './rmb/rmb.module';
-import { MiningCompany } from './entities/miningCompany.entity';
-import { Organization } from './entities/organization.entity';
+import { CompanyController } from '../company/company.controller';
+import { Mineral } from '../entities/mineral.entity';
+import { MineralService } from '../mineral/mineral.service';
+import { NotificationModule } from '../notification/notification.module';
+import { UserMiddleWare } from '../middlewares/user.middleware';
+import { RmbModule } from '../rmb/rmb.module';
+import { MiningCompany } from '../entities/miningCompany.entity';
+import { Organization } from '../entities/organization.entity';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/guards/roles.guard';
-import { MiningCompanyEmployee } from './entities/miningCompany-employee.entity';
-import { RMBEmployee } from './entities/rmb-employee';
-import { MainUser } from './entities/MainUser.entity';
-import { MailingService } from './mailing/mailing.service';
-import { MiniIncident } from './entities/mini-incident.entity';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { MiningCompanyEmployee } from '../entities/miningCompany-employee.entity';
+import { RMBEmployee } from '../entities/rmb-employee';
+import { MainUser } from '../entities/MainUser.entity';
+import { MailingService } from '../mailing/mailing.service';
+import { MiniIncident } from '../entities/mini-incident.entity';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { RescueTeam } from 'src/entities/rescue-team.entity';
+import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
+import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 
 @Module({
   imports: [
@@ -76,6 +81,8 @@ import { MiniIncident } from './entities/mini-incident.entity';
           MiningCompanyEmployee,
           RMBEmployee,
           MiniIncident,
+          RescueTeam,
+          RescueTeamEmployee,
         ],
         synchronize: true,
       }),
@@ -104,22 +111,24 @@ import { MiniIncident } from './entities/mini-incident.entity';
     NotificationModule,
     RmbModule,
     RmbModule,
+    AuthModule,
+    RescueTeamsModule,
     forwardRef(() => CompanyModule),
   ],
   controllers: [
     HomeController,
+    AppController,
     AuthController,
     CompanyController,
     MinesiteController,
     EmployeeController,
   ],
-  providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
+  providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
 })
 export class AppModule implements OnModuleInit, NestModule {
   constructor(
     private readonly roleService: RoleService,
     private readonly mineralService: MineralService,
-    private readonly mailingService: MailingService,
   ) {}
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(UserMiddleWare).forRoutes('*');
@@ -130,6 +139,7 @@ export class AppModule implements OnModuleInit, NestModule {
     if (!minerals || minerals.length == 0) {
       this.mineralService.createMinera();
     }
+    await this.roleService.roleRepo.delete({});
     if (!roles || roles.length == 0) {
       this.roleService.createRoles();
     }

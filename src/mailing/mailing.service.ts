@@ -7,6 +7,7 @@ import {
   incidentFooterEmail,
   incidentHeaderEmail,
 } from 'src/utils/appData/constants';
+import { error } from 'console';
 @Injectable()
 export class MailingService {
   private transporter;
@@ -19,7 +20,6 @@ export class MailingService {
       },
     });
   }
-
   async sendEmail(
     to: string,
     name: string,
@@ -51,11 +51,11 @@ export class MailingService {
               #ffffff; text-decoration: none; border-radius: 5px; } .footer {
               text-align: center; font-size: 12px; color: #777777; margin-top: 20px; }
             </style>
-          </head>
+          </head>                                                                                                                       
           <body>
             <div class='container'>
               <div class='header'>
-                <h1 style='text-align: center;'>OreDigital software soltions</h1>
+                <h1 style='text-align: center;'>OreDigital software Solutions</h1>
                 <h1>Email Verification</h1>
               </div>
               <div class='content'>
@@ -139,177 +139,226 @@ export class MailingService {
     link: string,
     incident: Incident,
   ) {
-    let mailOptions;
-    switch (incident.type) {
-      case EIncidentType[EIncidentType.TEMPERATURE]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
-              ${incidentFooterEmail}
-        `;
-        break;
-      case EIncidentType[EIncidentType.HUMIDITY]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
-              ${incidentFooterEmail}
-        `;
-        break;
-      case EIncidentType[EIncidentType.HUMIDITY]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
+    try {
+      let mailOptions;
+      switch (incident.type) {
+        case EIncidentType[EIncidentType.TEMPERATURE]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            html: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${incident.createdAt}</li>
+                    <li><strong>Mine site:</strong>${incident.mineSite.name}</li>
+                    <li><strong>Location:</strong>${incident.mineSite.address.province},${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+         </div>
+         <div class="footer">
+            <p>This email is sent by [Your Company Name]</p>
+                  ${incidentFooterEmail}
+            `,
+          };
+
+          break;
+        case EIncidentType[EIncidentType.HUMIDITY]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            html: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${incident.createdAt}</li>
+                    <li><strong>Mine site:</strong>${incident.mineSite.name}</li>
+                    <li><strong>Location:</strong>${incident.mineSite.address.province},${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+        </div>
+        <div class="footer">
+            <p>This email is sent by [Your Company Name]</p>
+      ${incidentFooterEmail}
+`,
+          };
+          break;
+        case EIncidentType[EIncidentType.HUMIDITY]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            html: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${
+                      incident.createdAt
+                    }</li>
+                    <li><strong>Mine site:</strong>${
+                      incident.mineSite.name
+                    }</li>
+                    <li><strong>Location:</strong>${
+                      incident.mineSite.address.province
+                    },${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+          </div>
+         <div class="footer">
+            <p>This email is sent by ${this.configService.get('USER_EMAIL')}</p>
+                    ${incidentFooterEmail}
+            `,
+          };
+          break;
+        case EIncidentType[EIncidentType.AIR_QUALITY]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            html: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${incident.createdAt}</li>
+                    <li><strong>Mine site:</strong>${incident.mineSite.name}</li>
+                    <li><strong>Location:</strong>${incident.mineSite.address.province},${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+        </div>
+        <div class="footer">
+            <p>This email is sent by [Your Company Name]</p>
                 ${incidentFooterEmail}
-        `;
-        break;
-      case EIncidentType[EIncidentType.AIR_QUALITY]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
-            ${incidentFooterEmail}
-        `;
-        break;
-      case EIncidentType[EIncidentType.LANDSLIDES]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
-            ${incidentFooterEmail}
-        `;
-        break;
-      case EIncidentType[EIncidentType.WATER_LEVEL]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
-              ${incidentFooterEmail}
-        `;
-        break;
-      case EIncidentType[EIncidentType.LANDSLIDES]:
-        mailOptions = `${incidentHeaderEmail}
-                    <p>Dear Stakeholders,</p>
-                    <p>An incident has been reported that requires your attention. Here are the details:</p>
-                    <div class="incident-details">
-                        <h2>Incident Details</h2>
-                        <ul>
-                            <li><strong>Incident ID:</strong> XYZ-12345</li>
-                            <li><strong>Date and Time:</strong> September 19, 2023, 10:30 AM</li>
-                            <li><strong>Location:</strong> [Location Name]</li>
-                            <li><strong>Description:</strong> [Incident Description]</li>
-                        </ul>
-                    </div>
-                    <p>Please take the necessary actions to address this incident promptly.</p>
-                    <p>Thank you for your attention to this matter.</p>
-                </div>
-                <div class="footer">
-                    <p>This email is sent by [Your Company Name]</p>
-              ${incidentFooterEmail}
-        `;
-        break;
-      default:
-        throw new BadRequestException(
-          "The provided incident is not supported! hence we can't send an email",
-        );
+            `,
+          };
+          break;
+        case EIncidentType[EIncidentType.LANDSLIDES]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            html: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${incident.createdAt}</li>
+                    <li><strong>Mine site:</strong>${incident.mineSite.name}</li>
+                    <li><strong>Location:</strong>${incident.mineSite.address.province},${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+        </div>
+        <div class="footer">
+            <p>This email is sent by [Your Company Name]</p>
+                ${incidentFooterEmail}
+            `,
+          };
+          break;
+        case EIncidentType[EIncidentType.WATER_LEVEL]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            template: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${incident.createdAt}</li>
+                    <li><strong>Mine site:</strong>${incident.mineSite.name}</li>
+                    <li><strong>Location:</strong>${incident.mineSite.address.province},${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+        </div>
+        <div class="footer">
+            <p>This email is sent by [Your Company Name]</p>
+                  ${incidentFooterEmail}
+            `,
+          };
+          break;
+        case EIncidentType[EIncidentType.LANDSLIDES]:
+          mailOptions = {
+            from: 'valensniyonsenga2003@gmail.com',
+            to,
+            subject: 'OreDigital Incident Alert',
+            html: `${incidentHeaderEmail}
+            <p>Dear ${name},</p>
+            <p>${message}. Here are the details:</p>
+            <div class="incident-details">
+                <h2>Incident Details</h2>
+                <ul>
+                    <li><strong>Incident ID:</strong>${incident.id}</li>
+                    <li><strong>Date and Time:</strong>${incident.createdAt}</li>
+                    <li><strong>Mine site:</strong>${incident.mineSite.name}</li>
+                    <li><strong>Location:</strong>${incident.mineSite.address.province},${incident.mineSite.address.district}</li>
+                </ul>
+            </div>
+            <p>Please take the necessary actions to address this incident promptly.</p>
+            <p>Thank you for your attention to this matter.</p>
+        </div>
+        <div class="footer">
+            <p>This email is sent by [Your Company Name]</p>
+                  ${incidentFooterEmail}
+            `,
+          };
+          break;
+        default:
+          throw new BadRequestException(
+            "The provided incident is not supported! hence we can't send an email",
+          );
+      }
+      await this.transporter.sendMail(mailOptions);
+      return 'Email sent successfully';
+    } catch (error) {
+      console.log('Erro while sending email', error);
     }
   }
 
   async sendPhoneSMSTOUser(number: string, message: string) {
     const accountSid = 'ACf1110530263a48c3268469db2aeb9663';
-    const authToken = 'c4e2e1555e731d7464c440b0fab7c3ba';
-    const client = require('twilio')(
-      this.configService.get('SID'),
-      this.configService.get('AUTH_TOKEN'),
-    );
+    const authToken = 'ef681c3808cd469182404ec132cc6589';
+    const client = require('twilio')(accountSid, authToken);
     await client.messages
       .create({
         body: message,
         from: this.configService.get('PHONE_NUMBER'),
-        to: number.toString(),
+        // to: number.toString(),
+        to: '+250798782003',
       })
-      .then((message) =>
-        console.log(message.sid, ' Message sent successfully'),
-      );
+      .then((message) => console.log(message.sid, ' Message sent successfully'))
+      .catch((error) => {
+        throw new BadRequestException(
+          'Error while sending sms ' + error.message,
+        );
+      });
   }
 }

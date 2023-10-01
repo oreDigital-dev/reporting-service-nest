@@ -9,7 +9,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request } from 'express';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EmployeeService } from 'src/employees/employee.service';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -21,6 +22,8 @@ export class UserMiddleWare implements NestMiddleware {
     @Inject(UsersService) private readonly userService: UsersService,
     @Inject(EmployeeService) private readonly employeeService: EmployeeService,
     @Inject(RmbService) private readonly rmbService: RmbService,
+    @Inject(RescueTeamsService)
+    private readonly rescueTeamService: RescueTeamsService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
     const authorization = req.headers.authorization;
@@ -37,19 +40,29 @@ export class UserMiddleWare implements NestMiddleware {
       req.baseUrl == '/incidents/create' ||
       req.baseUrl == '/incidents/create-combined' ||
       req.baseUrl == '/employees/create' ||
-      req.baseUrl == '/incidents/min-incidents/create'     ) {
+      req.baseUrl == '/rmb/create/rmb-employee' ||
+      req.baseUrl == '/rescue-teams/create' ||
+      req.baseUrl == '/incidents/min-incidents/create'
+    ) {
       next();
     } else {
       if (authorization) {
         const token = authorization.toString().split(' ')[1];
         if (!authorization.toString().startsWith('Bearer '))
           throw new UnauthorizedException('The provided token is invalid');
-        const { tokenVerified, error } = this.jwtService.verify(token, {
-          secret: this.configService.get('SECRET_KEY'),
-        });
-        if (error) throw new UnauthorizedException(error.message);
-        const details: any = await this.jwtService.decode(token);
-
+        let details: any;
+        try {
+          const { tokenVerified, error } = this.jwtService.verify(token, {
+            secret: this.configService.get('SECRET_KEY'),
+          });
+          details = await this.jwtService.decode(token);
+        } catch (error) {
+          if (error.name === 'TokenExpiredError') {
+            throw new BadRequestException('Token has expired');
+          } else {
+            throw new UnauthorizedException('Token is invalid');
+          }
+        }
         let user: any;
         switch (details.type.toUpperCase()) {
           case 'COMPANY':
@@ -61,7 +74,7 @@ export class UserMiddleWare implements NestMiddleware {
             });
             break;
           case 'RESCUE_TEAM':
-            user = await this.employeeService.getEmployeeById(details.id);
+            user = await this.rescueTeamService.getEmployeeById(details.id);
             break;
           default:
             throw new BadRequestException(
@@ -71,7 +84,6 @@ export class UserMiddleWare implements NestMiddleware {
         req['user'] = user;
         next();
       } else {
-        console.log(req.baseUrl);
         throw new UnauthorizedException('Please get authenticated first');
       }
     }

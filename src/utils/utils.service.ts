@@ -8,13 +8,17 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { Exception } from 'handlebars/runtime';
 import { AuthService } from 'src/auth/auth.service';
 import { CompanyService } from 'src/company/company.service';
-import { User } from 'src/entities/us.entity';
+import { MainUser } from 'src/entities/MainUser.entity';
 import { EAccountType } from 'src/enums/EAccountType.enum';
-import { EmployeeService } from 'src/miningCompanyEmployee/employee.service';
+import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
+import { EGender } from 'src/enums/EGender.enum';
+import { ERescueTeamCategory } from 'src/enums/ERescueTeamCategory.enum';
+import { EmployeeService } from 'src/employees/employee.service';
+import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -27,16 +31,18 @@ export class UtilsService {
     private authService: AuthService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-    @Inject(JwtService) private readonly jwtService: JwtService,
+    @Inject(JwtService)
+    private jwtService: JwtService,
     @Inject(ConfigService) private readonly configService: ConfigService,
     private miningCompanyService: EmployeeService,
-
     @Inject(forwardRef(() => RmbService))
     private rmbEmployeeService: RmbService,
-  ) { }
+    @Inject(RescueTeamsService)
+    private readonly rescueTeamService: RescueTeamsService,
+  ) {}
 
   async getTokens(
-    user: User,
+    user: MainUser,
     entity: string,
   ): Promise<{ accessToken: String; refreshToken: String }> {
     let type: string;
@@ -108,9 +114,47 @@ export class UtilsService {
     return regex.test(id.toString());
   }
 
+  getGender = (gender: string) => {
+    switch (gender.toUpperCase()) {
+      case EGender[EGender.FEMALE]:
+        return EGender[EGender.FEMALE];
+      case EGender[EGender.MALE]:
+        return EGender[EGender.MALE];
+      case EGender[EGender.OTHER]:
+        return EGender[EGender.OTHER];
+      default:
+        throw new BadRequestException('The provided gender is invalid');
+    }
+  };
+
+  getEmployeeType = (type: string) => {
+    switch (type.toUpperCase()) {
+      case EEmployeeType[EEmployeeType.ADMIN]:
+        return EEmployeeType[EEmployeeType.ADMIN];
+      case EEmployeeType[EEmployeeType.EMPLOYEE]:
+        return EEmployeeType[EEmployeeType.EMPLOYEE];
+      default:
+        throw new BadRequestException('The provided employee type is invalid');
+    }
+  };
+
+  getRescueTeamCategory = (category: string) => {
+    switch (category.toUpperCase()) {
+      case ERescueTeamCategory[ERescueTeamCategory.IMMEASUREY]:
+        return ERescueTeamCategory[ERescueTeamCategory.IMMEASUREY];
+      case ERescueTeamCategory[ERescueTeamCategory.POLICE]:
+        return ERescueTeamCategory[ERescueTeamCategory.POLICE];
+      case ERescueTeamCategory[ERescueTeamCategory.RED_CROSS]:
+        return ERescueTeamCategory[ERescueTeamCategory.RED_CROSS];
+      default:
+        throw new BadRequestException(
+          'The rescue team category provided is invalid',
+        );
+    }
+  };
+
   async getLoggedInProfile(req: Request, type: string) {
     const authorization = req.headers.authorization;
-
     let user: any;
 
     if (authorization) {
@@ -121,7 +165,10 @@ export class UtilsService {
         secret: this.configService.get('SECRET_KEY'),
       });
       if (error)
-        throw new BadRequestException({ sucess: false, message: error.message });
+        throw new BadRequestException({
+          sucess: false,
+          message: error.message,
+        });
       const details: any = await this.jwtService.decode(token);
       switch (type.toUpperCase()) {
         case EAccountType[EAccountType.COMPANY]:
@@ -131,19 +178,16 @@ export class UtilsService {
           user = await this.rmbEmployeeService.getRMBEmployeeById(details.id);
           break;
         case EAccountType[EAccountType.RESCUE_TEAM]:
-          await this.userService.getUserById(details.id, 'User');
+          await this.rescueTeamService.getEmployeeById(details.id);
           break;
         default:
           throw new BadRequestException(
             'The provided user type to decode is invalid',
           );
       }
-
       return user;
     } else {
-      throw new Exception(
-        'Please you are not authorized to access resource',
-      );
+      throw new Exception('Please you are not authorized to access resource');
     }
   }
 }

@@ -7,7 +7,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { MineralModule } from 'src/mineral/mineral.module';
 import { MailingModule } from 'src/mailing/mailing.module';
-import { EmployeeModule } from 'src/miningCompanyEmployee/employee.module';
+import { EmployeeModule } from 'src/employees/employee.module';
 import { RolesModule } from 'src/roles/roles.module';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 

@@ -13,4 +13,8 @@ export class VerifyAccountDTO {
   @IsNotEmpty()
   @ApiProperty()
   verificationCode: number;
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  userType: string;
 }
