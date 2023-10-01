@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
@@ -25,7 +25,6 @@ import { AddressService } from 'src/address/address.service';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { EOrganizationType } from 'src/enums/EOrganizationType';
 
 @Injectable()
 export class EmployeeService {
@@ -235,7 +234,7 @@ export class EmployeeService {
       req,
       'company',
     );
-    const employees = await this.employeeRepo.findOne({
+    const employees = await this.employeeRepo.find({
       where: { company: employee.company },
     });
     return employees;
