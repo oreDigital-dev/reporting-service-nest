@@ -5,8 +5,6 @@ import { CreateDateColumn } from 'typeorm';
   strategy: 'exposeAll',
 })
 export abstract class TimeStampsAudit {
-  constructor() {}
-
   @CreateDateColumn({ name: 'created_at', default: new Date(Date.now()) })
   createdAt: Date;
 

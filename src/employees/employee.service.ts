@@ -25,6 +25,8 @@ import { AddressService } from 'src/address/address.service';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EOrganizationType } from 'src/enums/EOrganizationType';
+import { Role } from 'src/entities/role.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -237,7 +239,14 @@ export class EmployeeService {
     const employees = await this.employeeRepo.find({
       where: { company: employee.company },
     });
-    return employees;
+    let newEmployees: MiningCompanyEmployee[] = [];
+    employees.forEach((employee) => {
+      delete employee.password;
+      delete employee.activationCode;
+      delete employee.status;
+      newEmployees.push(employee);
+    });
+    return newEmployees;
   }
 
   async getAllEmployees() {

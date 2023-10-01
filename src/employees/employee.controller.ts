@@ -170,13 +170,7 @@ export class EmployeeController {
   }
 
   @Delete('/all')
-  @Roles(
-    'COMPANY_ADMIN',
-    'COMPANY_EMPLOYEE',
-    'SYSTEM_ADMIN',
-    'RMB_ADMIN',
-    'RESCUE_TEAM_ADMIN',
-  )
+  @Roles('RMB_ADMI')
   async deleteAllEmployees(): Promise<ApiResponse> {
     try {
       await this.empService.deleteAllEmployees();
