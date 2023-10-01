@@ -32,7 +32,7 @@ export class AuthController {
   async login(@Body() dto: LoginDTO): Promise<ApiResponse> {
     return new ApiResponse(
       true,
-      'User loggedInSucccessfully',
+      'User logged in successfully!',
       await this.authService.login(dto),
     );
   }
