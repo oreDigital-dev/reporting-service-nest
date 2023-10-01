@@ -19,6 +19,8 @@ export class RoleService {
       ERole.COMPANY_ADMIN,
       ERole.RESCUE_TEAM_EMPLOYEE,
       ERole.RESCUE_TEAM_OWNER,
+      ERole.RMB_ADMIN,
+      ERole.RMB_EMPLOYEE,
     ];
     roleArray.forEach(async (role) => {
       const availableRole = await this.getRoleByName(role);

@@ -14,7 +14,6 @@ import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { ERole } from 'src/enums/ERole.enum';
-import { EUserType } from 'src/enums/EUserType.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { RoleService } from 'src/roles/roles.service';
 import { frontendAccountVerificationUrl } from 'src/utils/appData/constants';
