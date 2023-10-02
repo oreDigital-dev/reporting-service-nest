@@ -25,11 +25,11 @@ export class RescueTeamsController {
   constructor(private rescueTeamService: RescueTeamsService) {}
 
   @Post('create')
-  async createRescueTeam() {
+  async createRescueTeam(@Body() dto: CreateRescueTeamDTO) {
     return new ApiResponse(
       true,
       'The rescue team created successfully',
-      await this.rescueTeamService.createRescueTeam(null),
+      await this.rescueTeamService.createRescueTeam(dto),
     );
   }
   @Put('/employees/update/:id')
