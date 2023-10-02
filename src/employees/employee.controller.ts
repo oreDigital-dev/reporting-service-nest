@@ -14,11 +14,10 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UpdateEmployeeDTO } from 'src/dtos/update-employee.dto';
 import { EmployeeService } from './employee.service';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { ApiResponse } from 'src/payload/apiResponse';
-import { UUID } from 'crypto';
+import { UUID } from 'crypto' ;
 import { Roles } from 'src/utils/decorators/roles.decorator';
-import { MailingService } from 'src/mailing/mailing.service';
 import { UsersService } from 'src/users/users.service';
 import { ApproveOrRejectEmployeeDTO } from 'src/dtos/reject_or_approve-user.dto';
 

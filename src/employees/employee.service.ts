@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
