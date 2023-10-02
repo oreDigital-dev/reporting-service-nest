@@ -10,11 +10,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { Request } from 'express';
+import { Request, query } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
-import { MailingService } from 'src/mailing/mailing.service';
 import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
@@ -25,8 +24,11 @@ import { AddressService } from 'src/address/address.service';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { EOrganizationType } from 'src/enums/EOrganizationType';
-import { Role } from 'src/entities/role.entity';
+import { PageOptionsDTO } from 'src/dtos/page-options.dto';
+import { PageMetaDto } from 'src/dtos/page-meta.dts';
+import { PageDto } from 'src/dtos/pagination-dto';
+import Page from 'twilio/lib/base/Page';
+import { Order } from 'src/enums/Order.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -35,11 +37,8 @@ export class EmployeeService {
     public employeeRepo: Repository<MiningCompanyEmployee>,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
-
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-
-    private mailingService: MailingService,
     private roleService: RoleService,
     private addressService: AddressService,
   ) {}
@@ -231,14 +230,26 @@ export class EmployeeService {
     return isEmployeeAvailable;
   }
 
-  async getEmployeesByLoggedInCompany(req: Request) {
+  async getEmployeesByLoggedInCompany(req: Request, pageOptionsDto: PageOptionsDTO) {
     let employee: any = await this.utilsService.getLoggedInProfile(
       req,
       'company',
     );
     const employees = await this.employeeRepo.find({
       where: { company: employee.company },
+      order: {createdAt : Order[pageOptionsDto.order]},
+      take : pageOptionsDto.take
     });
+
+    // const queryBuilder = this.employeeRepo.createQueryBuilder("user");
+    // console.log(Order[pageOptionsDto.order])
+    //  queryBuilder.orderBy("user.createdAt", Order[pageOptionsDto.order]).take(pageOptionsDto.take);
+
+    //  const itemCount=  await queryBuilder.getCount();
+    //  const {entities} = await queryBuilder.getRawAndEntities();
+    //  const pageMetaDto = new PageMetaDto({itemCount, pageOptionsDto})
+    //  return new PageDto(entities, pageMetaDto);
+  
     let newEmployees: MiningCompanyEmployee[] = [];
     employees.forEach((employee) => {
       delete employee.password;
@@ -260,9 +271,13 @@ export class EmployeeService {
     });
     return newEmployees;
   }
+
+
   async deleteAllEmployees() {
     return this.employeeRepo.delete({});
   }
+
+
   async deleteEmployeeById(id: UUID) {
     let employee = await this.getEmployeeById(id);
     this.employeeRepo.remove(employee);
