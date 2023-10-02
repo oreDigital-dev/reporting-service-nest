@@ -31,8 +31,8 @@ export class RmbController {
   }
 
   @Post('create/rmb-employee')
-  async createSytemAdmin() {
-    const response = await this.rmbService.createSytemAdmin(null);
+  async createSytemAdmin(@Body() dto: CreateOrganizationEmployeeDTO) {
+    const response = await this.rmbService.createSytemAdmin(dto);
     return new ApiResponse(true, response.message, response.admin);
   }
 
