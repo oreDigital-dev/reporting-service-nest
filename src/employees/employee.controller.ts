@@ -121,8 +121,8 @@ export class EmployeeController {
     }
   }
 
-  @Post('/approve-or-reject/:id/:action')
-  @Roles('COMPANY_ADMIN', 'COMPANY_ADMIN')
+  @Put('/approve-or-reject')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWN')
   async approveOrReject(
     @Query('id') id: number,
     @Query('action') action: string,
@@ -159,20 +159,20 @@ export class EmployeeController {
     );
   }
 
-  @Put('approve-or-reject')
-  @Roles('COMPANY_EMPLOYEE', 'COMPANY_OWNER', 'COMPANY_ADMIN')
-  async approveorRejectMiningCompanyEmployees(
-    @Body() dto: ApproveOrRejectEmployeeDTO,
-  ) {
-    return new ApiResponse(
-      true,
-      'Empoyeee updated successfully',
-      await this.empService.approveorRejectMiningCompanyEmployees(
-        dto.id,
-        dto.action,
-      ),
-    );
-  }
+  // @Put('approve-or-reject')
+  // @Roles('COMPANY_EMPLOYEE', 'COMPANY_OWNER', 'COMPANY_ADMIN')
+  // async approveorRejectMiningCompanyEmployees(
+  //   @Body() dto: ApproveOrRejectEmployeeDTO,
+  // ) {
+  //   return new ApiResponse(
+  //     true,
+  //     'Empoyeee updated successfully',
+  //     await this.empService.approveorRejectMiningCompanyEmployees(
+  //       dto.id,
+  //       dto.action,
+  //     ),
+  //   );
+  // }
 
   @Delete('/all')
   @Roles('RMB_ADMI')
