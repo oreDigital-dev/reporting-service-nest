@@ -4,8 +4,6 @@ import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { Roles } from 'src/decorators/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
-import { UUID } from 'crypto';
-import { ApproveOrRejectEmployeeDTO } from 'src/dtos/reject_or_approve-user.dto';
 import { Public } from 'src/decorators/public.decorator';
 
 @Controller('users')
