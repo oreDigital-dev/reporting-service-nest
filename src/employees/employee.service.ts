@@ -9,8 +9,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
-import { Any, Repository } from 'typeorm';
-import { Request } from 'express';
+import { Repository } from 'typeorm';
+import { Request, query } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
@@ -24,14 +24,17 @@ import { AddressService } from 'src/address/address.service';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { PageOptionsDTO } from 'src/dtos/page-options.dto';
+import { PageMetaDto } from 'src/dtos/page-meta.dts';
+import { PageDto } from 'src/dtos/pagination-dto';
+import Page from 'twilio/lib/base/Page';
+import { Order } from 'src/enums/Order.enum';
+import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
+import { EUserType } from 'src/enums/EUserType.enum';
 import { RMBEmployee } from 'src/entities/rmb-employee';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
-import { EUserType } from 'src/enums/EUserType.enum';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
-import { Organization } from 'src/entities/organization.entity';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
-import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
-import { Console } from 'console';
 
 @Injectable()
 export class EmployeeService {
@@ -44,7 +47,6 @@ export class EmployeeService {
     public rescueTeamEmployeeRepo: Repository<RescueTeamEmployee>,
     @Inject(forwardRef(() => UtilsService))
     private utilsService: UtilsService,
-
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private roleService: RoleService,
@@ -209,7 +211,6 @@ export class EmployeeService {
           throw new BadRequestException('The provided user type is invalid');
       }
     } catch (error) {
-      console.error('Error creating employee: ', error);
       throw error;
     }
   }
@@ -227,10 +228,6 @@ export class EmployeeService {
     let employee = await this.employeeRepo.findOneBy({
       id,
     });
-
-    console.log(id);
-
-    console.log(employee);
 
     // if (employee.status != EActionType[EAccountStatus.ACTIVE]) {
     //   throw new BadRequestException('The Account has not yet been verified!');
@@ -259,12 +256,6 @@ export class EmployeeService {
     employee.password = await this.utilsService.hashString(employee.password);
     let createdEmployee = await this.employeeRepo.save(employee);
     delete createdEmployee.password;
-    console.log(
-      await this.employeeRepo.findOne({
-        where: { email: createdEmployee.email },
-        relations: ['roles'],
-      }),
-    );
     delete createdEmployee.password;
     delete createdEmployee.activationCode;
     return createdEmployee;
@@ -340,14 +331,29 @@ export class EmployeeService {
     return isEmployeeAvailable;
   }
 
-  async getEmployeesByLoggedInCompany(req: Request) {
+  async getEmployeesByLoggedInCompany(
+    req: Request,
+    pageOptionsDto: PageOptionsDTO,
+  ) {
     let employee: any = await this.utilsService.getLoggedInProfile(
       req,
       'company',
     );
     const employees = await this.employeeRepo.find({
       where: { company: employee.company },
+      order: { createdAt: Order[pageOptionsDto.order] },
+      take: pageOptionsDto.take,
     });
+
+    // const queryBuilder = this.employeeRepo.createQueryBuilder("user");
+    // console.log(Order[pageOptionsDto.order])
+    //  queryBuilder.orderBy("user.createdAt", Order[pageOptionsDto.order]).take(pageOptionsDto.take);
+
+    //  const itemCount=  await queryBuilder.getCount();
+    //  const {entities} = await queryBuilder.getRawAndEntities();
+    //  const pageMetaDto = new PageMetaDto({itemCount, pageOptionsDto})
+    //  return new PageDto(entities, pageMetaDto);
+
     let newEmployees: MiningCompanyEmployee[] = [];
     employees.forEach((employee) => {
       delete employee.password;
@@ -369,9 +375,11 @@ export class EmployeeService {
     });
     return newEmployees;
   }
+
   async deleteAllEmployees() {
     return this.employeeRepo.delete({});
   }
+
   async deleteEmployeeById(id: UUID) {
     let employee = await this.getEmployeeById(id);
     this.employeeRepo.remove(employee);

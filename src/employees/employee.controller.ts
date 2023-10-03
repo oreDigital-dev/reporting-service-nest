@@ -20,7 +20,9 @@ import { UUID } from 'crypto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { UsersService } from 'src/users/users.service';
 import { ApproveOrRejectEmployeeDTO } from 'src/dtos/reject_or_approve-user.dto';
-import { error } from 'console';
+import { PageOptionsDTO } from 'src/dtos/page-options.dto';
+import { PageDto } from 'src/dtos/pagination-dto';
+import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 
 @Controller('employees')
 @ApiTags('company-employees')
@@ -95,17 +97,21 @@ export class EmployeeController {
   @Get('/all/by-loggedin-company')
   @Roles('COMPANY_OWNER', 'COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
   async getEmployeesByLoggedInCompany(
+    @Query() pageOptionsDto: PageOptionsDTO,
     @Req() req: Request,
-  ): Promise<ApiResponse> {
+  ) {
     try {
       const employees = await this.empService.getEmployeesByLoggedInCompany(
         req,
+        pageOptionsDto,
       );
+
       return new ApiResponse(
         true,
         'All employees retrieved successfully',
         employees,
       );
+      // return this.empService.getEmployeesByLoggedInCompany(req, pageOptionsDto)
     } catch (error) {
       console.error(error);
       throw error;
