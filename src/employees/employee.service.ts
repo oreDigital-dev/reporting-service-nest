@@ -246,7 +246,7 @@ export class EmployeeService {
     // user.companies = companies;
     return user;
   }
-  async approveAndRejectEmp(id: UUID, action: string) {
+  async approveAndRejectEmp(id: any, action: string) {
     let employee = await this.employeeRepo.findOneBy({
       id,
     });
@@ -340,7 +340,7 @@ export class EmployeeService {
     return isEmployeeAvailable;
   }
 
-  async getEmployeeById(id: UUID) {
+  async getEmployeeById(id: any) {
     const isEmployeeAvailable = await this.employeeRepo.findOne({
       where: { id: id },
       relations: ['company', 'roles', 'notifications'],
