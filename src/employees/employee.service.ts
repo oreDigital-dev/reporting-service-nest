@@ -35,6 +35,7 @@ import { RMBEmployee } from 'src/entities/rmb-employee';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
+import { Console, log } from 'console';
 
 @Injectable()
 export class EmployeeService {
@@ -84,9 +85,10 @@ export class EmployeeService {
         specialChars: false,
       });
 
+      let availableEmployee;
       switch (dto.employeeType.toUpperCase()) {
         case EUserType[EUserType.MINING_COMPANY_EMPLOYEE]:
-          const availableEmployee = await this.employeeRepo.findOne({
+          availableEmployee = await this.employeeRepo.findOne({
             where: { email: dto.email },
           });
           if (availableEmployee) {
@@ -137,6 +139,14 @@ export class EmployeeService {
             relations: ['roles', 'company'],
           });
         case EUserType[EUserType.RMB_EMPLOYEE]:
+          availableEmployee = await this.rmbEmployeeRepo.findOne({
+            where: { email: dto.email },
+          });
+          if (availableEmployee) {
+            throw new BadRequestException(
+              'The employee with the provided email is already registered',
+            );
+          }
           let rmbEmp = new RMBEmployee(
             dto.firstName,
             dto.lastName,
@@ -153,21 +163,31 @@ export class EmployeeService {
             dto.employeeType.toUpperCase() != EEmployeeType[EEmployeeType.ADMIN]
           ) {
             rmbEmp.roles = await this.roleService.getRolesByNames([
-              ERole[ERole.COMPANY_EMPLOYEE],
+              ERole[ERole.RMB_EMPLOYEE],
             ]);
           } else {
             rmbEmp.roles = await this.roleService.getRolesByNames([
-              ERole[ERole.COMPANY_ADMIN],
+              ERole[ERole.RMB_ADMIN],
             ]);
           }
-          await this.employeeRepo.save(rmbEmp);
+          await this.rmbEmployeeRepo.save(rmbEmp);
 
-          return await this.employeeRepo.findOne({
+          let createdEmp = await this.rmbEmployeeRepo.findOne({
             where: { email: rmbEmp.email },
-            relations: ['roles', 'company'],
+            relations: ['roles'],
           });
 
+          return createdEmp;
+
         case EUserType[EUserType.RESCUE_TEAM_EMPLOYEE]:
+          availableEmployee = await this.rescueTeamEmployeeRepo.findOne({
+            where: { email: dto.email },
+          });
+          if (availableEmployee) {
+            throw new BadRequestException(
+              'The employee with the provided email is already registered',
+            );
+          }
           let rescueTeamEmp: RescueTeamEmployee = new RescueTeamEmployee(
             dto.firstName,
             dto.lastName,
@@ -185,28 +205,30 @@ export class EmployeeService {
           );
 
           company = this.rescueTeamService.rescueTeamRepo.findOne({
-            where: { id: company.rescueTeam.id },
+            where: { id: employee.rescueTeam.id },
           });
-          emp.address = address;
+          rescueTeamEmp.address = address;
           rescueTeamEmp.rescueTeam = company;
 
           if (
             dto.employeeType.toUpperCase() != EEmployeeType[EEmployeeType.ADMIN]
           ) {
-            emp.roles = await this.roleService.getRolesByNames([
-              ERole[ERole.COMPANY_EMPLOYEE],
+            rescueTeamEmp.roles = await this.roleService.getRolesByNames([
+              ERole[ERole.RESCUE_TEAM_EMPLOYEE],
             ]);
           } else {
-            emp.roles = await this.roleService.getRolesByNames([
-              ERole[ERole.COMPANY_ADMIN],
+            rescueTeamEmp.roles = await this.roleService.getRolesByNames([
+              ERole[ERole.RESCUE_TEAM_ADMIN],
             ]);
           }
-          await this.employeeRepo.save(emp);
+          rescueTeamEmp.employeeStatus = EAccountStatus[EAccountStatus.ACTIVE];
+          await this.rescueTeamEmployeeRepo.save(rescueTeamEmp);
 
-          return await this.employeeRepo.findOne({
+          let createdEmployee = await this.rescueTeamEmployeeRepo.findOne({
             where: { email: rescueTeamEmp.email },
-            relations: ['roles', 'company'],
+            relations: ['roles'],
           });
+          return createdEmployee;
         default:
           throw new BadRequestException('The provided user type is invalid');
       }
@@ -284,7 +306,6 @@ export class EmployeeService {
       upperCaseAlphabets: false,
       specialChars: false,
     });
-
     const emp: MiningCompanyEmployee = new MiningCompanyEmployee(
       dto.firstName,
       dto.lastName,

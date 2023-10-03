@@ -1,8 +1,7 @@
-import { Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, ManyToOne } from 'typeorm';
 import { MainUser } from './MainUser.entity';
 import { EGender } from 'src/enums/EGender.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { LastMonthInstance } from 'twilio/lib/rest/api/v2010/account/usage/record/lastMonth';
 import { RescueTeam } from './rescue-team.entity';
 
 @Entity('rescue_team_employees')

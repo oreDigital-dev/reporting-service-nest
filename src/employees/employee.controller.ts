@@ -36,6 +36,7 @@ export class EmployeeController {
   async createEmployee(@Req() req: Request, @Body() dto: CreateEmployeeDTO) {
     try {
       const employee = await this.empService.createEmployee(req, dto);
+      console.log(employee);
       return new ApiResponse(
         true,
         'The employee created successfully',
@@ -80,7 +81,7 @@ export class EmployeeController {
   }
 
   @Get('/one/:id')
-  async getEmployeeById(@Param('id') id: UUID): Promise<ApiResponse> {
+  async getEmployeeById(@Param('id') id: number): Promise<ApiResponse> {
     try {
       const employee = await this.empService.getEmployeeById(id);
       return new ApiResponse(
@@ -121,7 +122,7 @@ export class EmployeeController {
   @Post('/approve-or-reject/:id/:action')
   @Roles('COMPANY_ADMIN', 'COMPANY_ADMIN')
   async approveOrReject(
-    @Query('id') id: UUID,
+    @Query('id') id: number,
     @Query('action') action: string,
   ) {
     return new ApiResponse(

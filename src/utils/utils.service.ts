@@ -177,7 +177,6 @@ export class UtilsService {
           user = await this.rmbEmployeeService.getRMBEmployeeById(details.id);
           break;
         case EAccountType[EAccountType.RESCUE_TEAM]:
-          console.log('yes');
           user = await this.rescueTeamService.rescueTeamEmployeeRepo.findOne({
             where: { id: details.id },
             relations: ['rescueTeam'],
@@ -188,8 +187,6 @@ export class UtilsService {
             'The provided user type to decode is invalid',
           );
       }
-
-      console.log(user);
       return user;
     } else {
       throw new Exception('Please you are not authorized to access resource');
