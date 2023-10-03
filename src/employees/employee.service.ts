@@ -241,9 +241,7 @@ export class EmployeeService {
     if (!user || !company)
       throw new BadRequestException('The company or user should not be');
     let companies: MiningCompany[] = [];
-    // companies = user.companies;
     companies.push(company);
-    // user.companies = companies;
     return user;
   }
   async approveAndRejectEmp(id: any, action: string) {
@@ -251,9 +249,9 @@ export class EmployeeService {
       id,
     });
 
-    // if (employee.status != EActionType[EAccountStatus.ACTIVE]) {
-    //   throw new BadRequestException('The Account has not yet been verified!');
-    // }
+    if (employee.status != EActionType[EAccountStatus.ACTIVE]) {
+      throw new BadRequestException('The Account has not yet been verified!');
+    }
     switch (action.toUpperCase()) {
       case EActionType[EActionType.APPROVE]:
         employee.status = EAccountStatus[EAccountStatus.APPROVED];

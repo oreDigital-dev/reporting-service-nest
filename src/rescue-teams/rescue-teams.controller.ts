@@ -16,8 +16,9 @@ import { UUID } from 'crypto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateRescueTeam } from 'src/dtos/update_rescueteam.dto';
-import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 import { Request } from 'express';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('rescue-teams')
 @ApiTags('rescue_teams')
@@ -25,6 +26,7 @@ export class RescueTeamsController {
   constructor(private rescueTeamService: RescueTeamsService) {}
 
   @Post('create')
+  @Public()
   async createRescueTeam(@Body() dto: CreateRescueTeamDTO) {
     return new ApiResponse(
       true,

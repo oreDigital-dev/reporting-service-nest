@@ -35,7 +35,6 @@ import { CompanyController } from '../company/company.controller';
 import { Mineral } from '../entities/mineral.entity';
 import { MineralService } from '../mineral/mineral.service';
 import { NotificationModule } from '../notification/notification.module';
-import { UserMiddleWare } from '../middlewares/user.middleware';
 import { RmbModule } from '../rmb/rmb.module';
 import { MiningCompany } from '../entities/miningCompany.entity';
 import { Organization } from '../entities/organization.entity';
@@ -51,6 +50,7 @@ import { AppService } from './app.service';
 import { RescueTeam } from 'src/entities/rescue-team.entity';
 import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Module({
   imports: [
@@ -125,21 +125,17 @@ import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
   ],
   providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
 })
-export class AppModule implements OnModuleInit, NestModule {
+export class AppModule {
   constructor(
     private readonly roleService: RoleService,
     private readonly mineralService: MineralService,
   ) {}
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UserMiddleWare).forRoutes('*');
-  }
   async onModuleInit() {
     let roles = await this.roleService.getAllRoles();
     let minerals = await this.mineralService.getAllMinerals();
     if (!minerals || minerals.length == 0) {
       this.mineralService.createMinera();
     }
-    // await this.roleService.roleRepo.delete({});
     if (!roles || roles.length == 0) {
       this.roleService.createRoles();
     }

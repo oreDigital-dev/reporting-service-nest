@@ -19,6 +19,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -30,6 +31,7 @@ export class AuthController {
   ) {}
 
   @Post('/login')
+  @Public()
   async login(@Body() dto: LoginDTO): Promise<ApiResponse> {
     return new ApiResponse(
       true,
@@ -38,6 +40,7 @@ export class AuthController {
     );
   }
   @Post('verify_account')
+  @Public()
   async VerifyAccount(@Body() dto: VerifyAccountDTO): Promise<ApiResponse> {
     this.isUserAvailable = await this.userService.getUserByEmail(dto.email);
     if (this.isUserAvailable.activationCode != dto.verificationCode)
@@ -52,6 +55,7 @@ export class AuthController {
   }
 
   @Post('reset_password')
+  @Public()
   async resetPassword(@Body() dto: ResetPasswordDTO): Promise<ApiResponse> {
     return new ApiResponse(
       true,
@@ -70,6 +74,7 @@ export class AuthController {
   }
 
   @Get('resend/{verification-code}/:email')
+  @Public()
   async resendVerificationCode(
     @Param('email') email: string,
     userType: string,

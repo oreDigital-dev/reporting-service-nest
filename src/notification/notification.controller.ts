@@ -3,7 +3,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { NotificationService } from './notification.service';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
-import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('notifications')

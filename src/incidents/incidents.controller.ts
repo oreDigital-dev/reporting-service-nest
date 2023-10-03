@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  Req
-} from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { IncidentsService } from './incidents.service';
 import { CreateIncidentDTO } from 'src/dtos/create-incident.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
@@ -14,6 +7,7 @@ import { UUID } from 'crypto';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { CreateMiniIncidentDTO } from 'src/dtos/create_mini-incident.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiTags('incidents')
 @Controller('incidents')
@@ -21,6 +15,7 @@ export class IncidentsController {
   constructor(private incidentService: IncidentsService) {}
 
   @Post('/create')
+  @Public()
   async createIncident(
     @Query('type') type: string,
     @Query('measurement') measurement: number,
@@ -35,6 +30,7 @@ export class IncidentsController {
   }
 
   @Post('/min-incidents/create')
+  @Public()
   CreateMinIncident(
     @Query('type') type: string,
     @Query('isHappened') isHappened: number,
@@ -57,12 +53,8 @@ export class IncidentsController {
     );
   }
 
-
   @Get('/all/by-company')
-  async getIncidentsByLoggedInCompany(
-    @Req() request: Request,
-    
-  ) {
+  async getIncidentsByLoggedInCompany(@Req() request: Request) {
     return new ApiResponse(
       true,
       'Retrieved successfully!',

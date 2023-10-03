@@ -13,8 +13,9 @@ import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ApiTags } from '@nestjs/swagger';
 import { UUID } from 'crypto';
-import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('rmb')
 @ApiTags('rmb')
@@ -31,6 +32,7 @@ export class RmbController {
   }
 
   @Post('create/rmb-employee')
+  @Public()
   async createSytemAdmin(@Body() dto: CreateOrganizationEmployeeDTO) {
     const response = await this.rmbService.createSytemAdmin(dto);
     return new ApiResponse(true, response.message, response.admin);

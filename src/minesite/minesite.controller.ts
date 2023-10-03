@@ -18,18 +18,15 @@ import { Request, Response } from 'express';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { UUID } from 'crypto';
 import { UpdateMineSiteDTO } from 'src/dtos/update-minesite.dtp';
-import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('minesites')
 @Controller('minesites')
 export class MinesiteController {
-  constructor(private mineSiteService: MinesiteService) { }
+  constructor(private mineSiteService: MinesiteService) {}
   @Post('create')
-  async createMineSite(
-    @Body() body: createMineSiteDTO,
-
-  ) {
+  async createMineSite(@Body() body: createMineSiteDTO) {
     const createdMineSite = await this.mineSiteService.createMineSite(body);
     return new ApiResponse(
       true,
