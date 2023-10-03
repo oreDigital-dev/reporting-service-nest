@@ -156,7 +156,6 @@ export class UtilsService {
   async getLoggedInProfile(req: Request, type: string) {
     const authorization = req.headers.authorization;
     let user: any;
-
     if (authorization) {
       const token = authorization.split(' ')[1];
       if (!authorization.toString().startsWith('Bearer '))
@@ -178,18 +177,22 @@ export class UtilsService {
           user = await this.rmbEmployeeService.getRMBEmployeeById(details.id);
           break;
         case EAccountType[EAccountType.RESCUE_TEAM]:
-          await this.rescueTeamService.getEmployeeById(details.id);
+          console.log('yes');
+          user = await this.rescueTeamService.rescueTeamEmployeeRepo.findOne({
+            where: { id: details.id },
+            relations: ['rescueTeam'],
+          });
           break;
         default:
           throw new BadRequestException(
             'The provided user type to decode is invalid',
           );
       }
+
+      console.log(user);
       return user;
     } else {
       throw new Exception('Please you are not authorized to access resource');
     }
   }
-
-  
 }

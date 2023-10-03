@@ -17,6 +17,7 @@ export class RMBEmployee extends MainUser {
     national_id: string,
     phonenumber: string,
     password: string,
+    verificationCode: number,
   ) {
     super(
       firstName,
@@ -29,5 +30,6 @@ export class RMBEmployee extends MainUser {
       EAccountStatus.WAITING_EMAIL_VERIFICATION,
     );
     this.password = password;
+    this.activationCode = verificationCode;
   }
 }

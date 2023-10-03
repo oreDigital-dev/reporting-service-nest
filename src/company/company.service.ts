@@ -28,6 +28,7 @@ import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entit
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { frontendAccountVerificationUrl } from 'src/utils/appData/constants';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Injectable()
 export class CompanyService {
@@ -37,10 +38,9 @@ export class CompanyService {
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
     @InjectRepository(MiningCompany)
-    private companyRepo: Repository<MiningCompany>,
+    public companyRepo: Repository<MiningCompany>,
     private addressService: AddressService,
     @Inject(forwardRef(() => AuthService))
-    private authService: AuthService,
     private mineralService: MineralService,
     private roleService: RoleService,
     private mailingService: MailingService,
@@ -77,10 +77,10 @@ export class CompanyService {
     );
     let minerals: Mineral[] = [];
 
-    for (let min of dto.company.minerals) {
-      let mineral: Mineral = await this.mineralService.getMineralById(min);
-      minerals.push(mineral);
-    }
+    // for (let min of dto.company.minerals) {
+    //   let mineral: Mineral = await this.mineralService.getMineralById(min);
+    //   minerals.push(mineral);
+    // }
     company.minerals = minerals;
     company.address = companyAddress;
 
@@ -92,14 +92,8 @@ export class CompanyService {
       dto.companyAdmin.national_id,
       dto.companyAdmin.phoneNumber,
       dto.companyAdmin.password,
-      Number(
-        generate(6, {
-          digits: true,
-          lowerCaseAlphabets: false,
-          upperCaseAlphabets: false,
-          specialChars: false,
-        }),
-      ),
+      EAccountStatus.WAITING_EMAIL_VERIFICATION,
+      this.utilsService.generateRandomFourDigitNumber(),
     );
 
     let adminAddress: Address = await this.addressService.createAddress(

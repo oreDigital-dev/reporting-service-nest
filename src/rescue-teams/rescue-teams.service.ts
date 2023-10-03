@@ -79,6 +79,7 @@ export class RescueTeamsService {
           dto.RescueTeamAdmin.national_id,
           dto.RescueTeamAdmin.password,
           dto.RescueTeamAdmin.phoneNumber,
+          this.utilsService.generateRandomFourDigitNumber(),
         );
 
         rescueTeam = new RescueTeam(
@@ -118,6 +119,7 @@ export class RescueTeamsService {
           dto.RescueTeamAdmin.national_id,
           dto.RescueTeamAdmin.password,
           dto.RescueTeamAdmin.phoneNumber,
+          this.utilsService.generateRandomFourDigitNumber(),
         );
 
         rescueTeam = new RescueTeam(

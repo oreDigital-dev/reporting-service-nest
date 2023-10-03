@@ -11,12 +11,13 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { Address } from './address.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
+import { Organization } from './organization.entity';
 
 @Entity('users')
 export class MainUser extends InitiatorAudit {
@@ -71,14 +72,18 @@ export class MainUser extends InitiatorAudit {
   @Column()
   national_id: string;
 
+  @ManyToMany(() => Organization)
+  @JoinTable()
+  organizations: Organization[];
+
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
   @Column({
     enum: EEmployeeStatus,
-    default: EEmployeeStatus.ACTIVE,
+    default: EEmployeeStatus[EEmployeeStatus.PENDING],
   })
-  employeeStatus: EEmployeeStatus;
+  employeeStatus: string;
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];

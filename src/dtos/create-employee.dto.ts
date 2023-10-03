@@ -1,10 +1,8 @@
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { CreateUserDto } from './create-user.dto';
-import { ApiProperty } from '@nestjs/swagger';
-import { UUID } from 'crypto';
 
 export class CreateEmployeeDTO extends CreateUserDto {
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
-  company: UUID;
+  employeeRole: string;
 }

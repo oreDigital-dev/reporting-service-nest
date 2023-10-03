@@ -17,6 +17,7 @@ export class RescueTeamEmployee extends MainUser {
     national_id: string,
     password: string,
     phoneNumber: string,
+    activationCode: number,
   ) {
     super(
       firstName,
@@ -28,5 +29,6 @@ export class RescueTeamEmployee extends MainUser {
       password,
       EAccountStatus.WAITING_EMAIL_VERIFICATION,
     );
+    this.activationCode = activationCode;
   }
 }

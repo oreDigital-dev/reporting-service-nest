@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { EGender } from 'src/enums/EGender.enum';
 import { MiningCompany } from './miningCompany.entity';
 import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
@@ -29,6 +36,7 @@ export class MiningCompanyEmployee extends MainUser {
     phonenumber: string,
     password: string,
     status: EAccountStatus,
+    actionCode: number,
   ) {
     super(
       firstName,
@@ -40,5 +48,6 @@ export class MiningCompanyEmployee extends MainUser {
       password,
       status,
     );
+    this.activationCode = actionCode;
   }
 }

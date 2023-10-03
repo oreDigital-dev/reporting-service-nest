@@ -5,8 +5,8 @@ import { CreateEmployeeDTO } from './create-employee.dto';
 import { UUID } from 'crypto';
 
 export class UpdateEmployeeDTO extends CreateEmployeeDTO {
-  @IsUUID()
+  // @IsUUID()
   @IsNotEmpty()
   @ApiProperty()
-  id: UUID;
+  id: any;
 }

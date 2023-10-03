@@ -31,7 +31,6 @@ export class RmbService {
   ) {}
 
   async createSytemAdmin(dto: CreateOrganizationEmployeeDTO) {
-
     if (
       dto.registrationKey != 'admin@oreDigital' &&
       dto.employeeType == EEmployeeType[EEmployeeType.ADMIN]
@@ -60,6 +59,7 @@ export class RmbService {
       dto.national_id,
       dto.phoneNumber,
       dto.password,
+      this.utilsService.generateRandomFourDigitNumber(),
     );
     const rmbEmployee = await this.roleService.getRoleByName(
       ERole[ERole.RMB_EMPLOYEE],
@@ -83,8 +83,6 @@ export class RmbService {
       default:
         throw new BadRequestException('The provided userType is invalid');
     }
-    systemAdmin.activationCode =
-      this.utilsService.generateRandomFourDigitNumber();
     let createdAdmin = await this.rmbRepo.save(systemAdmin);
     await this.mailService.sendEmail(
       createdAdmin.email,
