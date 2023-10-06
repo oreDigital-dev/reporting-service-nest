@@ -25,9 +25,6 @@ import { EActionType } from 'src/enums/EActionType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { PageOptionsDTO } from 'src/dtos/page-options.dto';
-import { PageMetaDto } from 'src/dtos/page-meta.dts';
-import { PageDto } from 'src/dtos/pagination-dto';
-import Page from 'twilio/lib/base/Page';
 import { Order } from 'src/enums/Order.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
 import { EUserType } from 'src/enums/EUserType.enum';
@@ -35,7 +32,7 @@ import { RMBEmployee } from 'src/entities/rmb-employee';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
-import { Console, log } from 'console';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -254,10 +251,10 @@ export class EmployeeService {
     }
     switch (action.toUpperCase()) {
       case EActionType[EActionType.APPROVE]:
-        employee.status = EAccountStatus[EAccountStatus.APPROVED];
+        employee.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case EActionType[EActionType.REJECT]:
-        employee.status = EAccountStatus[EAccountStatus.REJECTED];
+        employee.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
     }
     return this.employeeRepo.save(employee);
   }
@@ -359,7 +356,10 @@ export class EmployeeService {
       'company',
     );
     const employees = await this.employeeRepo.find({
-      where: { company: employee.company },
+      where: {
+        company: employee.company,
+        status: EAccountStatus[EAccountStatus.ACTIVE],
+      },
       order: { createdAt: Order[pageOptionsDto.order] },
       take: pageOptionsDto.take,
     });
@@ -409,11 +409,11 @@ export class EmployeeService {
     switch (status.toUpperCase()) {
       case EActionType[EActionType.APPROVE] + 'D':
         return await this.employeeRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
         });
       case EActionType[EActionType.REJECT] + 'D':
         return await this.employeeRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
         });
       default:
         throw new BadRequestException('The provided action is invalid');
@@ -425,15 +425,15 @@ export class EmployeeService {
     switch (action.toUpperCase()) {
       case 'APPROVE':
         user = await this.getEmployeeById(id);
-        if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+        if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
           throw new ForbiddenException('The employee is already approved');
-        user.status = EAccountStatus[EAccountStatus.APPROVED];
+        user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case 'REJECT':
         user = await this.getEmployeeById(id);
-        if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+        if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
           throw new ForbiddenException('The employee is already rejected');
-        user.status = EAccountStatus[EAccountStatus.REJECTED];
+        user.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
         break;
       default:
         throw new BadRequestException('The provided action is invalid');

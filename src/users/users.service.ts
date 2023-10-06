@@ -23,6 +23,7 @@ import { EOrganizationType } from 'src/enums/EOrganizationType';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { EAccountType } from 'src/enums/EAccountType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 
 @Injectable()
 export class UsersService {
@@ -133,15 +134,15 @@ export class UsersService {
         switch (action.toUpperCase()) {
           case 'APPROVE':
             user = await this.employeeService.getEmployeeById(id);
-            if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+            if ((user.status = EAccountStatus[EEmployeeStatus.APPROVED]))
               throw new ForbiddenException('The employee is already approved');
-            user.status = EAccountStatus[EAccountStatus.APPROVED];
+            user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
             break;
           case 'REJECT':
             user = await this.employeeService.getEmployeeById(id);
-            if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+            if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
               throw new ForbiddenException('The employee is already rejected');
-            user.status = EAccountStatus[EAccountStatus.REJECTED];
+            user.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
             break;
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -151,15 +152,15 @@ export class UsersService {
         switch (action.toUpperCase()) {
           case 'APPROVE':
             user = await this.rescueTeamService.getEmployeeById(id);
-            if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+            if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
               throw new ForbiddenException('The employee is already approved');
-            user.status = EAccountStatus[EAccountStatus.APPROVED];
+            user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
             break;
           case 'REJECT':
             user = await this.rescueTeamService.getEmployeeById(id);
-            if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+            if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
               throw new ForbiddenException('The employee is already rejected');
-            user.status = EAccountStatus[EAccountStatus.REJECTED];
+            user.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
             break;
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -169,15 +170,15 @@ export class UsersService {
         switch (action.toUpperCase()) {
           case 'APPROVE':
             user = await this.rmbService.getRMBEmployeeById(id);
-            if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+            if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
               throw new ForbiddenException('The employee is already approved');
-            user.status = EAccountStatus[EAccountStatus.APPROVED];
+            user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
             break;
           case 'REJECT':
             user = await this.rmbService.getRMBEmployeeById(id);
-            if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+            if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
               throw new ForbiddenException('The employee is already rejected');
-            user.status = EAccountStatus[EAccountStatus.REJECTED];
+            user.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
             break;
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -197,11 +198,11 @@ export class UsersService {
         switch (status.toUpperCase()) {
           case EActionType[EActionType.APPROVE] + 'D':
             return await this.rmbService.rmbRepo.find({
-              where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+              where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
             });
           case EActionType[EActionType.REJECT] + 'D':
             return await this.rmbService.rmbRepo.find({
-              where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+              where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
             });
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -211,11 +212,11 @@ export class UsersService {
         switch (status.toUpperCase()) {
           case EActionType[EActionType.APPROVE] + 'D':
             return await this.employeeService.employeeRepo.find({
-              where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+              where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
             });
           case EActionType[EActionType.REJECT] + 'D':
             return await this.employeeService.employeeRepo.find({
-              where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+              where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
             });
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -225,11 +226,11 @@ export class UsersService {
         switch (status.toUpperCase()) {
           case EActionType[EActionType.APPROVE] + 'D':
             return await this.rescueTeamService.rescueTeamEmployeeRepo.find({
-              where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+              where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
             });
           case EActionType[EActionType.REJECT] + 'D':
             return await this.rescueTeamService.rescueTeamEmployeeRepo.find({
-              where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+              where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
             });
           default:
             throw new BadRequestException('The provided action is invalid');

@@ -10,7 +10,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UpdateEmployeeDTO } from 'src/dtos/update-employee.dto';
 import { EmployeeService } from './employee.service';
@@ -19,10 +19,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { UUID } from 'crypto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UsersService } from 'src/users/users.service';
-import { ApproveOrRejectEmployeeDTO } from 'src/dtos/reject_or_approve-user.dto';
 import { PageOptionsDTO } from 'src/dtos/page-options.dto';
-import { PageDto } from 'src/dtos/pagination-dto';
-import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { Public } from 'src/decorators/public.decorator';
 
 @Controller('employees')

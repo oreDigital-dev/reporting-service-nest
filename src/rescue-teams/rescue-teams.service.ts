@@ -24,6 +24,7 @@ import { Request } from 'express';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EActionType } from 'src/enums/EActionType.enum';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 
 @Injectable()
 export class RescueTeamsService {
@@ -251,14 +252,14 @@ export class RescueTeamsService {
     let rescueTeam = await this.getRescueTeamById(id);
     switch (action.toUpperCase()) {
       case 'APPROVE':
-        if ((rescueTeam.status = EAccountStatus[EAccountStatus.APPROVED]))
+        if ((rescueTeam.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
           throw new ForbiddenException('The rescue team is already approved');
-        rescueTeam.status = EAccountStatus[EAccountStatus.APPROVED];
+        rescueTeam.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case 'REJECT':
-        if (rescueTeam.status == EAccountStatus[EAccountStatus.REJECTED])
+        if (rescueTeam.status == EEmployeeStatus[EEmployeeStatus.REJECTED])
           throw new ForbiddenException('The rescue team is already rejected');
-        rescueTeam.status = EAccountStatus[EAccountStatus.REJECTED];
+        rescueTeam.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
         break;
       default:
         throw new BadRequestException('The provided action is invalid');
@@ -268,24 +269,24 @@ export class RescueTeamsService {
   async getRescueTeamsByStatus(status: string) {
     let rescueTeams;
     switch (status.toUpperCase()) {
-      case EAccountStatus[EAccountStatus.ACTIVE]:
+      case EEmployeeStatus[EEmployeeStatus.ACTIVE]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EAccountStatus[EAccountStatus.ACTIVE] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.ACTIVE] },
         });
         break;
-      case EAccountStatus[EAccountStatus.APPROVED]:
+      case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
         });
         break;
-      case EAccountStatus[EAccountStatus.PENDING]:
+      case EEmployeeStatus[EEmployeeStatus.PENDING]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EAccountStatus[EAccountStatus.PENDING] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.PENDING] },
         });
         break;
-      case EAccountStatus[EAccountStatus.REJECTED]:
+      case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
         });
         break;
       default:
@@ -298,11 +299,11 @@ export class RescueTeamsService {
     switch (status.toUpperCase()) {
       case EActionType[EActionType.APPROVE] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
         });
       case EActionType[EActionType.REJECT] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
         });
       default:
         throw new BadRequestException('The provided action is invalid');
@@ -313,15 +314,15 @@ export class RescueTeamsService {
     switch (action.toUpperCase()) {
       case 'APPROVE':
         user = await this.getEmployeeById(id);
-        if ((user.status = EAccountStatus[EAccountStatus.APPROVED]))
+        if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
           throw new ForbiddenException('The employee is already approved');
-        user.status = EAccountStatus[EAccountStatus.APPROVED];
+        user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case 'REJECT':
         user = await this.getEmployeeById(id);
-        if ((user.status = EAccountStatus[EAccountStatus.REJECTED]))
+        if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
           throw new ForbiddenException('The employee is already rejected');
-        user.status = EAccountStatus[EAccountStatus.REJECTED];
+        user.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
         break;
       default:
         throw new BadRequestException('The provided action is invalid');

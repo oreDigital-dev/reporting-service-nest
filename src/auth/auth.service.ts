@@ -19,6 +19,7 @@ import * as bcrypt from 'bcrypt';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { MailingService } from 'src/mailing/mailing.service';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 @Injectable()
 export class AuthService {
   constructor(
@@ -135,12 +136,14 @@ export class AuthService {
   activateUser(user: MainUser) {
     if (user.status === EAccountStatus[EAccountStatus.ACTIVE])
       throw new BadRequestException('This is already verified');
-    user.status = EAccountStatus[EAccountStatus.PENDING];
+    user.status = EEmployeeStatus[EEmployeeStatus.PENDING];
     user.roles.forEach((role) => {
       if (role.roleName == ERole[ERole.SYSTEM_ADMIN]) {
         user.status = EAccountStatus[EAccountStatus.ACTIVE];
+        user.employeeStatus = EEmployeeStatus[EEmployeeStatus.APPROVED];
       } else {
-        user.status = EAccountStatus[EAccountStatus.PENDING];
+        user.status = EAccountStatus[EAccountStatus.ACTIVE];
+        user.employeeStatus = EEmployeeStatus[EEmployeeStatus.PENDING];
       }
     });
     return user;
@@ -157,12 +160,16 @@ export class AuthService {
     const account = await this.userService.getUserByEmail(email);
     if (!account) throw new BadRequestException('This account does not exist');
     if (
-      account.status === EAccountStatus[EAccountStatus.PENDING] ||
       account.status ==
-        EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
+      EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]
     )
       throw new BadRequestException(
         "Please first verify your account and we'll help you to remember your password later",
+      );
+
+    if (account.employeeStatus == EEmployeeStatus[EEmployeeStatus.PENDING])
+      throw new BadRequestException(
+        'Your account is still pending! it is not yet approved by your company admin to be used',
       );
     if (account.activationCode != activationCode)
       throw new BadRequestException(

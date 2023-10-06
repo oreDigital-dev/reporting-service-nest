@@ -11,6 +11,7 @@ import { UUID } from 'crypto';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
 import { RMBEmployee } from 'src/entities/rmb-employee';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { ERole } from 'src/enums/ERole.enum';
@@ -151,14 +152,14 @@ export class RmbService {
       );
     switch (action.toUpperCase()) {
       case 'REJECT':
-        availableEmployee.status = EAccountStatus[EAccountStatus.REJECTED];
+        availableEmployee.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
         // await this.mailService.sendPhoneSMSTOUser(
         //   availableEmployee.phonenumber,
         //   'Hello! as oreDigital, we are kindly regretting that your request to create account as RMB employee has been  rejected due to many different reasons!!! Happy risk reducing and improve productivity',
         // );
         break;
       case 'APPROVE':
-        availableEmployee.status = EAccountStatus[EAccountStatus.APPROVED];
+        availableEmployee.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         // await this.mailService.sendPhoneSMSTOUser(
         //   availableEmployee.phonenumber,
         //   'Hello! as oreDigital, we are proudly happy to let you know that  that your request to create account as RMB employee has been  approved! Reduce the risk and improve productivity',
@@ -174,17 +175,17 @@ export class RmbService {
 
   async getAllRMBEmployeesByStatus(status: string) {
     switch (status.toUpperCase()) {
-      case EAccountStatus[EAccountStatus.REJECTED]:
+      case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         return await this.rmbRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.REJECTED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
         });
-      case EAccountStatus[EAccountStatus.APPROVED]:
+      case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         return await this.rmbRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.APPROVED] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
         });
-      case EAccountStatus[EAccountStatus.PENDING]:
+      case EEmployeeStatus[EEmployeeStatus.PENDING]:
         return await this.rmbRepo.find({
-          where: { status: EAccountStatus[EAccountStatus.PENDING] },
+          where: { status: EEmployeeStatus[EEmployeeStatus.PENDING] },
         });
       default:
         throw new BadRequestException('The provided status is not supported');
