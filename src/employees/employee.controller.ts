@@ -8,7 +8,6 @@ import {
   Put,
   Query,
   Req,
-  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
@@ -147,12 +146,15 @@ export class EmployeeController {
     }
   }
   @Get('all/by-status')
-  @Roles('COMPANY_EMPLOYEE', 'COMPANY_ADMIN')
-  async getMiningCompanyEmployeesByStatus(@Query('status') status: string) {
+  @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
+  async getMiningCompanyEmployeesByStatus(
+    @Query('status') status: string,
+    @Req() req: Request,
+  ) {
     return new ApiResponse(
       true,
       'Mining company retrieved successfully',
-      await this.empService.getMiningCompanyEmployeesByStatus(status),
+      await this.empService.getMiningCompanyEmployeesByStatus(status, req),
     );
   }
 

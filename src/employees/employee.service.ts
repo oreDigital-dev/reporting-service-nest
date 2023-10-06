@@ -384,7 +384,9 @@ export class EmployeeService {
   }
 
   async getAllEmployees() {
-    let employees = this.employeeRepo.find({});
+    let employees = this.employeeRepo.find({
+      where: { status: EAccountStatus[EAccountStatus.ACTIVE] },
+    });
     let newEmployees: MiningCompanyEmployee[] = [];
     (await employees).forEach((employee) => {
       delete employee.password;
@@ -405,16 +407,34 @@ export class EmployeeService {
   }
 
   // This api is optimized to be used to all types of employees
-  async getMiningCompanyEmployeesByStatus(status: string) {
+  async getMiningCompanyEmployeesByStatus(status: string, req: Request) {
+    let employee: any = await this.utilsService.getLoggedInProfile(
+      req,
+      'company',
+    );
     switch (status.toUpperCase()) {
-      case EActionType[EActionType.APPROVE] + 'D':
+      case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         return await this.employeeRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+          where: {
+            company: employee.company,
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.APPROVED],
+          },
         });
-      case EActionType[EActionType.REJECT] + 'D':
+      case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         return await this.employeeRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+          where: {
+            company: employee.company,
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.REJECTED],
+          },
         });
+      case EEmployeeStatus[EEmployeeStatus.PENDING]:
+        return await this.employeeRepo.find({
+          where: {
+            company: employee.company,
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.PENDING],
+          },
+        });
+
       default:
         throw new BadRequestException('The provided action is invalid');
     }
