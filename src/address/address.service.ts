@@ -19,21 +19,21 @@ export class AddressService {
 
   async createAddress(dto: CreateAddressDTO) {
     let address = new Address(
-      dto.province,
-      dto.district,
-      dto.sector,
-      dto.cell,
-      dto.village,
+      dto.province.toUpperCase(),
+      dto.district.toUpperCase(),
+      dto.sector.toUpperCase(),
+      dto.cell.toUpperCase(),
+      dto.village.toUpperCase(),
     );
 
     const isAddressRegistered = await this.addressRepo.findOne({
       where: [
         {
-          province: address.province,
-          district: dto.district,
-          sector: dto.sector,
-          cell: dto.cell,
-          village: dto.village,
+          province: address.province.toUpperCase(),
+          district: dto.district.toUpperCase(),
+          sector: dto.sector.toUpperCase(),
+          cell: dto.cell.toUpperCase(),
+          village: dto.village.toUpperCase(),
         },
       ],
     });
@@ -57,11 +57,11 @@ export class AddressService {
       const isAddressRegistered = await this.addressRepo.findOne({
         where: [
           {
-            province: addressEntity.province,
-            district: dto.district,
-            sector: dto.sector,
-            cell: dto.cell,
-            village: dto.village,
+            province: dto.province.toUpperCase(),
+            district: dto.district.toUpperCase(),
+            sector: dto.sector.toUpperCase(),
+            cell: dto.cell.toUpperCase(),
+            village: dto.village.toUpperCase(),
           },
         ],
       });

@@ -10,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
 import { RMBEmployee } from 'src/entities/rmb-employee';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';

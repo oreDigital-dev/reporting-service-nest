@@ -1,5 +1,4 @@
-import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
-import { CreateUserDto } from './create-user.dto';
+import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateEmployeeDTO } from './create-employee.dto';
 import { UUID } from 'crypto';

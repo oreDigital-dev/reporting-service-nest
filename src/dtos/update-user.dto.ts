@@ -1,13 +1,6 @@
 /* eslint-disable */
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsEmail,
-  IsPhoneNumber,
-} from 'class-validator';
-import { EGender } from 'src/enums/EGender.enum';
+import { IsString, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
 
 export class UpdateUserDto {
   @IsString()
