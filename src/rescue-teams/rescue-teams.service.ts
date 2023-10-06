@@ -25,6 +25,8 @@ import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
+import { async } from 'rxjs';
 
 @Injectable()
 export class RescueTeamsService {
@@ -223,8 +225,9 @@ export class RescueTeamsService {
   }
 
   async deleteRescueTeamEmployeeById(id: UUID) {
-    const availableEmployee = await this.getEmployeeById(id);
-    await this.rescueTeamEmployeeRepo.remove(availableEmployee);
+    let availableEmployee = await this.getEmployeeById(id);
+    availableEmployee.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+    await this.rescueTeamEmployeeRepo.save(availableEmployee);
   }
 
   async getEmployeesOfLoginRescueTeam(req: Request) {
@@ -240,11 +243,17 @@ export class RescueTeamsService {
 
   async deleteAllEmployees() {
     const availableEmployees = await this.rescueTeamEmployeeRepo.find({});
-    availableEmployees.forEach((emp) => {
+    availableEmployees.forEach(async (emp) => {
+      let isAdmin: boolean = false;
       emp.roles.forEach(async (role) => {
-        if (role.roleName != 'ADMIN')
-          await this.rescueTeamEmployeeRepo.remove(emp);
+        if (role.roleName == 'ADMIN') {
+          isAdmin = true;
+        }
       });
+      if (!isAdmin) {
+        emp.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+        await this.rescueTeamEmployeeRepo.save(emp);
+      }
     });
   }
 
@@ -312,13 +321,13 @@ export class RescueTeamsService {
   async approveOrRejectRescueTeamEmployees(id: UUID, action: string) {
     let user: MainUser;
     switch (action.toUpperCase()) {
-      case 'APPROVE':
+      case EActionType[EActionType.APPROVE]:
         user = await this.getEmployeeById(id);
         if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
           throw new ForbiddenException('The employee is already approved');
         user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
-      case 'REJECT':
+      case EActionType[EActionType.REJECT]:
         user = await this.getEmployeeById(id);
         if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
           throw new ForbiddenException('The employee is already rejected');

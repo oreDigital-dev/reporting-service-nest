@@ -6,16 +6,12 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
-import { Incident } from './incident.entity';
 import { Mineral } from './mineral.entity';
 import { UUID, randomUUID } from 'crypto';
 import { MiningCompany } from './miningCompany.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity('minesite')
 export class MineSite extends InitiatorAudit {

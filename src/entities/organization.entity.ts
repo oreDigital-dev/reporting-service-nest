@@ -11,6 +11,7 @@ import {
 import { Address } from './address.entity';
 import { Notification } from './notification.entity';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Entity('organizations')
 export class Organization extends InitiatorAudit {
@@ -30,6 +31,12 @@ export class Organization extends InitiatorAudit {
     default: EOrganizationStatus[EOrganizationStatus.PENDING],
   })
   status: string;
+
+  @Column({
+    enum: EVisibilityStatus,
+    default: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+  })
+  visibility: string;
 
   @ManyToOne(() => Address, (address) => address.company)
   @JoinColumn({ name: 'address_id' })
