@@ -131,7 +131,9 @@ export class RmbService {
     return availableEmployee;
   }
   async getAllRMBEmployees() {
-    return await this.rmbRepo.find({});
+    return await this.rmbRepo.find({
+      where: { visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN] },
+    });
   }
 
   async deleteRMBEmployee(id: UUID) {
@@ -181,15 +183,24 @@ export class RmbService {
     switch (status.toUpperCase()) {
       case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         return await this.rmbRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         return await this.rmbRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       case EEmployeeStatus[EEmployeeStatus.PENDING]:
         return await this.rmbRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.PENDING] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.PENDING],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       default:
         throw new BadRequestException('The provided status is not supported');
