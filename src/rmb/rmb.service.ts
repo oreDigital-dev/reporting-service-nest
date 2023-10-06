@@ -11,10 +11,12 @@ import { UUID } from 'crypto';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
 import { RMBEmployee } from 'src/entities/rmb-employee';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EActionType } from 'src/enums/EActionType.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EEmployeeType } from 'src/enums/EEmployeeType.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { ERole } from 'src/enums/ERole.enum';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 import { MailingService } from 'src/mailing/mailing.service';
 import { RoleService } from 'src/roles/roles.service';
 import { frontendAccountVerificationUrl } from 'src/utils/appData/constants';
@@ -129,18 +131,22 @@ export class RmbService {
     return availableEmployee;
   }
   async getAllRMBEmployees() {
-    return await this.rmbRepo.find({});
+    return await this.rmbRepo.find({
+      where: { visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN] },
+    });
   }
 
   async deleteRMBEmployee(id: UUID) {
     const employee = await this.getRMBEmployeeById(id);
-    await this.rmbRepo.remove(employee);
+    employee.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+    await this.rmbRepo.save(employee);
   }
 
   async deleteAllRMBEmployees() {
     const employees = await this.rmbRepo.find({});
     employees.forEach(async (emp) => {
-      await this.rmbRepo.remove(emp);
+      emp.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+      await this.rmbRepo.save(emp);
     });
   }
 
@@ -151,14 +157,14 @@ export class RmbService {
         'The RMB employee witht he provided id is not found',
       );
     switch (action.toUpperCase()) {
-      case 'REJECT':
+      case EActionType[EActionType.REJECT]:
         availableEmployee.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
         // await this.mailService.sendPhoneSMSTOUser(
         //   availableEmployee.phonenumber,
         //   'Hello! as oreDigital, we are kindly regretting that your request to create account as RMB employee has been  rejected due to many different reasons!!! Happy risk reducing and improve productivity',
         // );
         break;
-      case 'APPROVE':
+      case EActionType[EActionType.APPROVE]:
         availableEmployee.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         // await this.mailService.sendPhoneSMSTOUser(
         //   availableEmployee.phonenumber,
@@ -177,15 +183,24 @@ export class RmbService {
     switch (status.toUpperCase()) {
       case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         return await this.rmbRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         return await this.rmbRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       case EEmployeeStatus[EEmployeeStatus.PENDING]:
         return await this.rmbRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.PENDING] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.PENDING],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       default:
         throw new BadRequestException('The provided status is not supported');

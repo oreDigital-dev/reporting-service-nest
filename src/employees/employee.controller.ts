@@ -157,27 +157,11 @@ export class EmployeeController {
       await this.empService.getMiningCompanyEmployeesByStatus(status, req),
     );
   }
-
-  // @Put('approve-or-reject')
-  // @Roles('COMPANY_EMPLOYEE', 'COMPANY_OWNER', 'COMPANY_ADMIN')
-  // async approveorRejectMiningCompanyEmployees(
-  //   @Body() dto: ApproveOrRejectEmployeeDTO,
-  // ) {
-  //   return new ApiResponse(
-  //     true,
-  //     'Empoyeee updated successfully',
-  //     await this.empService.approveorRejectMiningCompanyEmployees(
-  //       dto.id,
-  //       dto.action,
-  //     ),
-  //   );
-  // }
-
   @Delete('/all')
   @Roles('RMB_ADMI')
-  async deleteAllEmployees(): Promise<ApiResponse> {
+  async deleteAllEmployees(@Req() req: Request): Promise<ApiResponse> {
     try {
-      await this.empService.deleteAllEmployees();
+      await this.empService.deleteAllEmployees(req);
       return new ApiResponse(true, 'All employees deleted successfully', null);
     } catch (error) {
       console.error(error);
@@ -187,9 +171,12 @@ export class EmployeeController {
 
   @Delete('/:id')
   @Roles('COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
-  async deleteEmployeeById(@Param('id') id: UUID): Promise<ApiResponse> {
+  async deleteEmployeeById(
+    @Param('id') id: UUID,
+    @Req() req: Request,
+  ): Promise<ApiResponse> {
     try {
-      await this.empService.deleteEmployeeById(id);
+      await this.empService.deleteEmployeeById(id, req);
       return new ApiResponse(true, 'The employee deleted successfully', null);
     } catch (error) {
       console.error(error);

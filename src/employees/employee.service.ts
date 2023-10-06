@@ -33,6 +33,8 @@ import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
+import { async } from 'rxjs';
 
 @Injectable()
 export class EmployeeService {
@@ -397,13 +399,30 @@ export class EmployeeService {
     return newEmployees;
   }
 
-  async deleteAllEmployees() {
-    return this.employeeRepo.delete({});
+  async deleteAllEmployees(req: Request) {
+    let employee: any = await this.utilsService.getLoggedInProfile(
+      req,
+      'company',
+    );
+    let employees = await this.employeeRepo.find({
+      where: { company: employee.company },
+    });
+    employees.forEach(async (employee) => {
+      employee.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+      await this.employeeRepo.save(employee);
+    });
   }
 
-  async deleteEmployeeById(id: UUID) {
+  async deleteEmployeeById(id: UUID, req: Request) {
+    let availableEmployee: any = await this.utilsService.getLoggedInProfile(
+      req,
+      'company',
+    );
     let employee = await this.getEmployeeById(id);
-    this.employeeRepo.remove(employee);
+    if (employee.company == availableEmployee.company) {
+      employee.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+      this.employeeRepo.remove(employee);
+    }
   }
 
   // This api is optimized to be used to all types of employees

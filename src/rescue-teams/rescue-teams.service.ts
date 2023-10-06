@@ -21,10 +21,10 @@ import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
-import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Injectable()
 export class RescueTeamsService {
@@ -182,7 +182,10 @@ export class RescueTeamsService {
 
   async getEmployeeByEmail(email: string) {
     const employee = await this.rescueTeamEmployeeRepo.findOne({
-      where: { email: email },
+      where: {
+        email: email,
+        visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+      },
     });
     if (!employee)
       throw new NotFoundException(
@@ -223,8 +226,9 @@ export class RescueTeamsService {
   }
 
   async deleteRescueTeamEmployeeById(id: UUID) {
-    const availableEmployee = await this.getEmployeeById(id);
-    await this.rescueTeamEmployeeRepo.remove(availableEmployee);
+    let availableEmployee = await this.getEmployeeById(id);
+    availableEmployee.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+    await this.rescueTeamEmployeeRepo.save(availableEmployee);
   }
 
   async getEmployeesOfLoginRescueTeam(req: Request) {
@@ -233,18 +237,27 @@ export class RescueTeamsService {
       'rescue_team',
     );
     return await this.rescueTeamEmployeeRepo.find({
-      where: { rescueTeam: teamOwner.rescueTeam },
+      where: {
+        rescueTeam: teamOwner.rescueTeam,
+        visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+      },
       relations: ['roles', 'rescueTeam'],
     });
   }
 
   async deleteAllEmployees() {
     const availableEmployees = await this.rescueTeamEmployeeRepo.find({});
-    availableEmployees.forEach((emp) => {
+    availableEmployees.forEach(async (emp) => {
+      let isAdmin: boolean = false;
       emp.roles.forEach(async (role) => {
-        if (role.roleName != 'ADMIN')
-          await this.rescueTeamEmployeeRepo.remove(emp);
+        if (role.roleName == 'ADMIN') {
+          isAdmin = true;
+        }
       });
+      if (!isAdmin) {
+        emp.visibility = EVisibilityStatus[EVisibilityStatus.HIDDEN];
+        await this.rescueTeamEmployeeRepo.save(emp);
+      }
     });
   }
 
@@ -271,22 +284,34 @@ export class RescueTeamsService {
     switch (status.toUpperCase()) {
       case EEmployeeStatus[EEmployeeStatus.ACTIVE]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EEmployeeStatus[EEmployeeStatus.ACTIVE] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.ACTIVE],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+          },
         });
         break;
       case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
         break;
       case EEmployeeStatus[EEmployeeStatus.PENDING]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EEmployeeStatus[EEmployeeStatus.PENDING] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.PENDING],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
         break;
       case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         rescueTeams = await this.rescueTeamRepo.findOne({
-          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
         break;
       default:
@@ -299,11 +324,17 @@ export class RescueTeamsService {
     switch (status.toUpperCase()) {
       case EActionType[EActionType.APPROVE] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       case EActionType[EActionType.REJECT] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
-          where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+          where: {
+            status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+          },
         });
       default:
         throw new BadRequestException('The provided action is invalid');
@@ -312,13 +343,13 @@ export class RescueTeamsService {
   async approveOrRejectRescueTeamEmployees(id: UUID, action: string) {
     let user: MainUser;
     switch (action.toUpperCase()) {
-      case 'APPROVE':
+      case EActionType[EActionType.APPROVE]:
         user = await this.getEmployeeById(id);
         if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
           throw new ForbiddenException('The employee is already approved');
         user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
-      case 'REJECT':
+      case EActionType[EActionType.REJECT]:
         user = await this.getEmployeeById(id);
         if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
           throw new ForbiddenException('The employee is already rejected');

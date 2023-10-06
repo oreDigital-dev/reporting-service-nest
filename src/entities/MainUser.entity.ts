@@ -18,6 +18,7 @@ import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { Organization } from './organization.entity';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Entity('users')
 export class MainUser extends InitiatorAudit {
@@ -84,6 +85,12 @@ export class MainUser extends InitiatorAudit {
     default: EEmployeeStatus[EEmployeeStatus.PENDING],
   })
   employeeStatus: string;
+
+  @Column({
+    enum: EVisibilityStatus,
+    default: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+  })
+  visibility: string;
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
