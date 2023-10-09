@@ -24,6 +24,7 @@ import { EActionType } from 'src/enums/EActionType.enum';
 import { EAccountType } from 'src/enums/EAccountType.enum';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
+import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Injectable()
 export class UsersService {
@@ -198,11 +199,17 @@ export class UsersService {
         switch (status.toUpperCase()) {
           case EActionType[EActionType.APPROVE] + 'D':
             return await this.rmbService.rmbRepo.find({
-              where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+              where: {
+                status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+                visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+              },
             });
           case EActionType[EActionType.REJECT] + 'D':
             return await this.rmbService.rmbRepo.find({
-              where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+              where: {
+                status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+                visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+              },
             });
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -212,11 +219,17 @@ export class UsersService {
         switch (status.toUpperCase()) {
           case EActionType[EActionType.APPROVE] + 'D':
             return await this.employeeService.employeeRepo.find({
-              where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+              where: {
+                status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+                visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+              },
             });
           case EActionType[EActionType.REJECT] + 'D':
             return await this.employeeService.employeeRepo.find({
-              where: { status: EEmployeeStatus[EEmployeeStatus.REJECTED] },
+              where: {
+                status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+                visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+              },
             });
           default:
             throw new BadRequestException('The provided action is invalid');
@@ -226,7 +239,10 @@ export class UsersService {
         switch (status.toUpperCase()) {
           case EActionType[EActionType.APPROVE] + 'D':
             return await this.rescueTeamService.rescueTeamEmployeeRepo.find({
-              where: { status: EEmployeeStatus[EEmployeeStatus.APPROVED] },
+              where: {
+                status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+                visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+              },
             });
           case EActionType[EActionType.REJECT] + 'D':
             return await this.rescueTeamService.rescueTeamEmployeeRepo.find({

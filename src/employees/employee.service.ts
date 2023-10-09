@@ -248,7 +248,7 @@ export class EmployeeService {
       id,
     });
 
-    if (employee.status != EActionType[EAccountStatus.ACTIVE]) {
+    if (employee.status != EAccountStatus[EAccountStatus.ACTIVE]) {
       throw new BadRequestException('The Account has not yet been verified!');
     }
     switch (action.toUpperCase()) {

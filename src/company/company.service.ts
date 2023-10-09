@@ -23,7 +23,6 @@ import { MineralService } from 'src/mineral/mineral.service';
 import { RoleService } from 'src/roles/roles.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { generate } from 'otp-generator';
 import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
 import { EOrganizationStatus } from 'src/enums/EOrganizationStatus.enum';
 import { MailingService } from 'src/mailing/mailing.service';
