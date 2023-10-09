@@ -294,7 +294,7 @@ export class RescueTeamsService {
         rescueTeams = await this.rescueTeamRepo.findOne({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.APPROVED],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
         break;
@@ -302,7 +302,7 @@ export class RescueTeamsService {
         rescueTeams = await this.rescueTeamRepo.findOne({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.PENDING],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
         break;
@@ -310,7 +310,7 @@ export class RescueTeamsService {
         rescueTeams = await this.rescueTeamRepo.findOne({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.REJECTED],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
         break;
@@ -326,14 +326,14 @@ export class RescueTeamsService {
         return await this.rescueTeamEmployeeRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.APPROVED],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       case EActionType[EActionType.REJECT] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.REJECTED],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       default:
@@ -345,15 +345,15 @@ export class RescueTeamsService {
     switch (action.toUpperCase()) {
       case EActionType[EActionType.APPROVE]:
         user = await this.getEmployeeById(id);
-        if ((user.status = EEmployeeStatus[EEmployeeStatus.APPROVED]))
+        if ((user.employeeStatus = EEmployeeStatus[EEmployeeStatus.APPROVED]))
           throw new ForbiddenException('The employee is already approved');
-        user.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
+        user.employeeStatus = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case EActionType[EActionType.REJECT]:
         user = await this.getEmployeeById(id);
-        if ((user.status = EEmployeeStatus[EEmployeeStatus.REJECTED]))
+        if ((user.employeeStatus = EEmployeeStatus[EEmployeeStatus.REJECTED]))
           throw new ForbiddenException('The employee is already rejected');
-        user.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
+        user.employeeStatus = EEmployeeStatus[EEmployeeStatus.REJECTED];
         break;
       default:
         throw new BadRequestException('The provided action is invalid');

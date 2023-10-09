@@ -9,7 +9,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { RmbService } from './rmb.service';
-import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ApiTags } from '@nestjs/swagger';
 import { UUID } from 'crypto';

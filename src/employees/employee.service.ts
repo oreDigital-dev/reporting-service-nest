@@ -253,10 +253,10 @@ export class EmployeeService {
     }
     switch (action.toUpperCase()) {
       case EActionType[EActionType.APPROVE]:
-        employee.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
+        employee.employeeStatus = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case EActionType[EActionType.REJECT]:
-        employee.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
+        employee.employeeStatus = EEmployeeStatus[EEmployeeStatus.REJECTED];
     }
     return this.employeeRepo.save(employee);
   }
@@ -426,7 +426,10 @@ export class EmployeeService {
   }
 
   // This api is optimized to be used to all types of employees
-  async getMiningCompanyEmployeesByStatus(status: string, req: Request) {
+  async getMiningCompanyEmployeesByEmployeeStatus(
+    status: string,
+    req: Request,
+  ) {
     let employee: any = await this.utilsService.getLoggedInProfile(
       req,
       'company',
@@ -454,6 +457,34 @@ export class EmployeeService {
           },
         });
 
+      default:
+        throw new BadRequestException('The provided action is invalid');
+    }
+  }
+
+  // This api is optimized to be used to all types of employees
+  async getMiningCompanyEmployeesByStatus(status: string, req: Request) {
+    let employee: any = await this.utilsService.getLoggedInProfile(
+      req,
+      'company',
+    );
+    switch (status.toUpperCase()) {
+      case EAccountStatus[EAccountStatus.ACTIVE]:
+        return await this.employeeRepo.find({
+          where: {
+            company: employee.company,
+            status: EAccountStatus[EAccountStatus.ACTIVE],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+          },
+        });
+      case EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION]:
+        return await this.employeeRepo.find({
+          where: {
+            company: employee.company,
+            status: EAccountStatus[EAccountStatus.WAITING_EMAIL_VERIFICATION],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
+          },
+        });
       default:
         throw new BadRequestException('The provided action is invalid');
     }

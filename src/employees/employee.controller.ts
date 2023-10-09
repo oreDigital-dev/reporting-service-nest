@@ -145,9 +145,25 @@ export class EmployeeController {
       throw error;
     }
   }
-  @Get('all/by-status')
+  @Get('all/by-employee-status')
   @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
   async getMiningCompanyEmployeesByStatus(
+    @Query('status') status: string,
+    @Req() req: Request,
+  ) {
+    return new ApiResponse(
+      true,
+      'Mining company retrieved successfully',
+      await this.empService.getMiningCompanyEmployeesByEmployeeStatus(
+        status,
+        req,
+      ),
+    );
+  }
+
+  @Get('all/by-status')
+  @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
+  async getAllMiningCompanyEmployeesByStatus(
     @Query('status') status: string,
     @Req() req: Request,
   ) {

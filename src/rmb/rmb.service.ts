@@ -131,7 +131,7 @@ export class RmbService {
   }
   async getAllRMBEmployees() {
     return await this.rmbRepo.find({
-      where: { visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN] },
+      where: { visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE] },
     });
   }
 
@@ -157,14 +157,16 @@ export class RmbService {
       );
     switch (action.toUpperCase()) {
       case EActionType[EActionType.REJECT]:
-        availableEmployee.status = EEmployeeStatus[EEmployeeStatus.REJECTED];
+        availableEmployee.employeeStatus =
+          EEmployeeStatus[EEmployeeStatus.REJECTED];
         // await this.mailService.sendPhoneSMSTOUser(
         //   availableEmployee.phonenumber,
         //   'Hello! as oreDigital, we are kindly regretting that your request to create account as RMB employee has been  rejected due to many different reasons!!! Happy risk reducing and improve productivity',
         // );
         break;
       case EActionType[EActionType.APPROVE]:
-        availableEmployee.status = EEmployeeStatus[EEmployeeStatus.APPROVED];
+        availableEmployee.employeeStatus =
+          EEmployeeStatus[EEmployeeStatus.APPROVED];
         // await this.mailService.sendPhoneSMSTOUser(
         //   availableEmployee.phonenumber,
         //   'Hello! as oreDigital, we are proudly happy to let you know that  that your request to create account as RMB employee has been  approved! Reduce the risk and improve productivity',
@@ -184,21 +186,21 @@ export class RmbService {
         return await this.rmbRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.REJECTED],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         return await this.rmbRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.APPROVED],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       case EEmployeeStatus[EEmployeeStatus.PENDING]:
         return await this.rmbRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.PENDING],
-            visibility: EVisibilityStatus[EVisibilityStatus.HIDDEN],
+            visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       default:
