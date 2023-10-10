@@ -32,7 +32,7 @@ export class CompanyController {
   }
 
   @Get('/all')
-  @Roles('SYSTEM_ADMIN')
+  @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
   async getAllCompanies() {
     return new ApiResponse(
       true,
@@ -51,7 +51,7 @@ export class CompanyController {
   }
 
   @Get('/id')
-  @Roles('SYSTEM_ADMIN, COMPANY_ADMIN')
+  @Roles('SYSTEM_ADMIN, RMB_ADMIN')
   async deleteCompany(@Param('id') id: UUID) {
     // return new ApiResponse(
     //   // true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
@@ -68,7 +68,7 @@ export class CompanyController {
   }
 
   @Put('approve-or-reject/:action/:id')
-  @Roles('SYSTEM_ADMIN')
+  @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
   async approveOrRejectCompany(
     @Param('action') action: string,
     @Param('id') id: UUID,
@@ -81,7 +81,7 @@ export class CompanyController {
   }
 
   @Get('by-status/:status')
-  @Roles('SYSTEM_ADMIN')
+  @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
   async getCompaniesByStatus(@Param('status') status: string) {
     return new ApiResponse(
       true,

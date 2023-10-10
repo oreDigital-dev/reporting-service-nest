@@ -325,14 +325,14 @@ export class RescueTeamsService {
       case EActionType[EActionType.APPROVE] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
           where: {
-            status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.APPROVED],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       case EActionType[EActionType.REJECT] + 'D':
         return await this.rescueTeamEmployeeRepo.find({
           where: {
-            status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.REJECTED],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
@@ -340,6 +340,7 @@ export class RescueTeamsService {
         throw new BadRequestException('The provided action is invalid');
     }
   }
+
   async approveOrRejectRescueTeamEmployees(id: UUID, action: string) {
     let user: MainUser;
     switch (action.toUpperCase()) {

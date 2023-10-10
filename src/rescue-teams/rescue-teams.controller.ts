@@ -52,7 +52,7 @@ export class RescueTeamsController {
       await this.rescueTeamService.UpdateRescueTeam(dto),
     );
   }
-  @Get('employees/{by-email}')
+  @Get('employees')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async getEmployeeByEmail(@Query('email') email: string) {
     return new ApiResponse(
@@ -62,7 +62,7 @@ export class RescueTeamsController {
     );
   }
 
-  @Get('employees/{loggedIn-rescue-team}')
+  @Get('employees/loggedIn-rescue-team')
   async getEmployeesOfLoginRescueTeam(@Req() req: Request) {
     return new ApiResponse(
       true,
@@ -79,7 +79,7 @@ export class RescueTeamsController {
       await this.rescueTeamService.getRescueTeamByEmail(email),
     );
   }
-  @Get('employees/{by-id}')
+  @Get('employees')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async getEmployeeById(@Query('id') id: UUID) {
     return new ApiResponse(
@@ -97,7 +97,7 @@ export class RescueTeamsController {
       await this.rescueTeamService.getAllRescueTeamEmployees(),
     );
   }
-  @Get('{all}')
+  @Get('all')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async getAllRescueTeams() {
     return new ApiResponse(
@@ -107,7 +107,7 @@ export class RescueTeamsController {
     );
   }
 
-  @Put('/{approve-or-reject}')
+  @Put('/approve-or-reject')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async approveOrRejectRescueTeams(
     @Query('action') action: string,
@@ -119,7 +119,7 @@ export class RescueTeamsController {
       await this.rescueTeamService.approveOrRejectRescueTeams(action, id),
     );
   }
-  @Get('all/{by-status}')
+  @Get('all/by-status')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async getRescueTeamsByStatus(@Query('status') status: string) {
     return new ApiResponse(
@@ -139,7 +139,7 @@ export class RescueTeamsController {
     );
   }
 
-  @Delete('employees/{all}')
+  @Delete('all')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async deleteAllEmployees() {
     return new ApiResponse(
