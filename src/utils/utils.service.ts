@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -21,6 +22,11 @@ import { EmployeeService } from 'src/employees/employee.service';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
+import * as ExcelJs from 'exceljs';
+import { Organization } from 'src/entities/organization.entity';
+import { MiningCompany } from 'src/entities/miningCompany.entity';
+import { RescueTeam } from 'src/entities/rescue-team.entity';
+import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 
 @Injectable()
 export class UtilsService {
@@ -62,6 +68,7 @@ export class UtilsService {
           'The provided entity type is not defined',
         );
     }
+
     const accessToken: String = await this.jwtService.signAsync(
       {
         type: type,
@@ -91,6 +98,19 @@ export class UtilsService {
       accessToken: accessToken.toString(),
       refreshToken: refreshToken.toString(),
     };
+  }
+
+  validateStatus(status: string) {
+    switch (status.toUpperCase()) {
+      case EEmployeeStatus[EEmployeeStatus.APPROVED]:
+        return EEmployeeStatus[EEmployeeStatus.APPROVED];
+      case EEmployeeStatus[EEmployeeStatus.REJECTED]:
+        return EEmployeeStatus[EEmployeeStatus.REJECTED];
+      case EEmployeeStatus[EEmployeeStatus.PENDING]:
+        return EEmployeeStatus[EEmployeeStatus.PENDING];
+      default:
+        throw new BadRequestException('The provided status is invalid');
+    }
   }
 
   async hashString(input: string) {
@@ -192,4 +212,151 @@ export class UtilsService {
       throw new Exception('Please you are not authorized to access resource');
     }
   }
+
+  async downloadEmployeesExcel(employees: any[]) {
+    if (employees.length == 0)
+      throw new ForbiddenException('Employee list is empty');
+    const workbook = new ExcelJs.Workbook();
+    const worksheet = workbook.addWorksheet('Mining_company_emaployees');
+
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'First Name', key: 'FirstName', width: 36 },
+      { header: 'Last Name', key: 'LastName', width: 36 },
+      { header: 'Email', key: 'Email', width: 20 },
+      { header: 'Phone Number', key: 'PhoneNumber', width: 36 },
+      { header: 'Company Name', key: 'CompanyName', width: 36 },
+      { header: 'District', key: 'District', width: 36 },
+      { header: 'Sector', key: 'Sector', width: 36 },
+      { header: 'Cell', key: 'Cell', width: 36 },
+      { header: 'Village', key: 'Village', width: 36 },
+      { header: 'Status', key: 'Status', width: 36 },
+    ];
+
+    let i = 1;
+    employees.forEach((employee) => {
+      worksheet.addRow({
+        id: i,
+        FirstName: employee.firstName,
+        LastName: employee.lastName,
+        companyName:
+          employee.company.name == null ? ' ' : employee.company.name,
+        District: employee.address.district,
+        Sector: employee.address.sector,
+        Cell: employee.address.cell,
+        Village: employee.address.village,
+        Status: employee.employeeStatus,
+      });
+
+      i++;
+    });
+
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFA500' },
+    };
+
+    worksheet.getRow(1).alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  }
+
+  async downloadCompaniesExcel(companies: MiningCompany[]) {
+    if (companies.length == 0)
+      throw new ForbiddenException('The companies list is empty');
+    const workbook = new ExcelJs.Workbook();
+    const workSheet = workbook.addWorksheet('companies');
+
+    workSheet.columns = [
+      { header: 'Id', key: 'id', width: 10 },
+      { header: 'Company Name', key: 'name', width: 36 },
+      { header: 'District', key: 'District', width: 36 },
+      { header: 'Sector', key: 'Sector', width: 36 },
+      { header: 'Cell', key: 'Cell', width: 36 },
+      { header: 'Village', key: 'Viallge', width: 36 },
+      { header: 'Status', key: 'Status', width: 10 },
+    ];
+
+    let i = 1;
+    companies.forEach((company) => {
+      workSheet.addRow({
+        id: i,
+        name: company.name,
+        district: company.address.district,
+        sector: company.address.sector,
+        cell: company.address.cell,
+        village: company.address.village,
+      });
+      i++;
+    });
+
+    workSheet.getRow(1).font = { bold: true };
+    workSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFA500' },
+    };
+
+    workSheet.getRow(1).alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  }
+
+  async downloadRescueTeamsExcel(rescueTeams: RescueTeam[]) {
+    if (rescueTeams.length == 0)
+      throw new ForbiddenException('The rescue teams list is empty');
+
+    const workbook = new ExcelJs.Workbook();
+    const workSheet = workbook.addWorksheet('Rescue teams');
+
+    workSheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'RescueTeam Name', key: 'name', width: 36 },
+      { header: 'District', key: 'District', width: 36 },
+      { header: 'Sector', key: 'Sector', width: 36 },
+      { header: 'Cell', key: 'Cell', width: 36 },
+      { header: 'Village', key: 'Viallge', width: 36 },
+      { header: 'Status', key: 'Status', width: 10 },
+    ];
+
+    let i = 0;
+    rescueTeams.forEach((rescueTeam) => {
+      workSheet.addRow({
+        id: i,
+        name: rescueTeam.name,
+        District: rescueTeam.address.district,
+        Sector: rescueTeam.address.sector,
+        Cell: rescueTeam.address.cell,
+        Village: rescueTeam.address.village,
+        Status: rescueTeam.status,
+      });
+      i++;
+    });
+    workSheet.getRow(1).font = { bold: true };
+    workSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFA500' },
+    };
+
+    workSheet.getRow(1).alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  }
+
+  async downloadTagsExcel(startDate: Date, endDate: Date, status: string) {}
 }

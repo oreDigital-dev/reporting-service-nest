@@ -1,11 +1,5 @@
 /* eslint-disable */
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  OnModuleInit,
-  forwardRef,
-} from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailingModule } from '../mailing/mailing.module';
@@ -43,14 +37,13 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { MiningCompanyEmployee } from '../entities/miningCompany-employee.entity';
 import { RMBEmployee } from '../entities/rmb-employee';
 import { MainUser } from '../entities/MainUser.entity';
-import { MailingService } from '../mailing/mailing.service';
 import { MiniIncident } from '../entities/mini-incident.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RescueTeam } from 'src/entities/rescue-team.entity';
 import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { UtilsModule } from 'src/utils/utils.module';
 
 @Module({
   imports: [
@@ -113,6 +106,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
     RmbModule,
     AuthModule,
     RescueTeamsModule,
+    UtilsModule,
     forwardRef(() => CompanyModule),
   ],
   controllers: [
