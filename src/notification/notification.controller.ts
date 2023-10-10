@@ -4,7 +4,7 @@ import { NotificationService } from './notification.service';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
 import { Roles } from 'src/decorators/roles.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @Controller('notifications')
 @ApiTags('Notifications')
@@ -21,6 +21,7 @@ export class NotificationController {
     );
   }
   @Get('all/loggedIn-user')
+  @ApiQuery({ name: 'userType', required: true, type: String, example: 'rmb' })
   async getMyNotifications(
     @Query('userType') userType: string,
     @Req() req: Request,
@@ -33,6 +34,8 @@ export class NotificationController {
   }
 
   @Get('all/userId/:id/:userType')
+  @ApiQuery({ name: 'id', required: true })
+  @ApiQuery({ name: 'userType', required: true, type: String, example: 'rmb' })
   async getNotificationsByUserId(
     @Param('id') id: UUID,
     @Param('userType') userType: string,
@@ -45,6 +48,7 @@ export class NotificationController {
   }
 
   @Get('latest-one/loggedIn-employee')
+  @ApiQuery({ name: 'userType', required: true, type: String, example: 'rmb' })
   async getMyLatestNotification(
     @Req() req: Request,
     @Query('userType') userType: string,
@@ -56,10 +60,12 @@ export class NotificationController {
     );
   }
 
-  @Get('latest-one/by-userId/:id')
+  @Get('latest-one/by-userId')
+  @ApiQuery({ name: 'id', required: true })
+  @ApiQuery({ name: 'userType', required: true, type: String, example: 'rmb' })
   async getLatestNotifictionByUserId(
-    @Param('id') id: UUID,
-    @Param('userType') userType: string,
+    @Query('id') id: UUID,
+    @Query('userType') userType: string,
   ) {
     return new ApiResponse(
       true,

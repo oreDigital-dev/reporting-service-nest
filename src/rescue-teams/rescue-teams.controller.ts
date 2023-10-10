@@ -14,7 +14,7 @@ import { CreateRescueTeamDTO } from 'src/dtos/create_rescue-team.dto';
 import { UpdateRescueTeamEmployee } from 'src/dtos/update_rescueteam-employee.dto';
 import { UUID } from 'crypto';
 import { ApiResponse } from 'src/payload/apiResponse';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UpdateRescueTeam } from 'src/dtos/update_rescueteam.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Request } from 'express';
@@ -54,6 +54,12 @@ export class RescueTeamsController {
   }
   @Get('employees')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @ApiQuery({
+    name: 'email',
+    type: String,
+    required: true,
+    example: 'info@oredigital.rw',
+  })
   async getEmployeeByEmail(@Query('email') email: string) {
     return new ApiResponse(
       true,
@@ -70,8 +76,14 @@ export class RescueTeamsController {
       await this.rescueTeamService.getEmployeesOfLoginRescueTeam(req),
     );
   }
-  @Get('/{by-email}')
+  @Get()
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @ApiQuery({
+    name: 'email',
+    type: String,
+    required: true,
+    example: 'info@oredigital.rw',
+  })
   async getRescueTeamByEmail(@Query('email') email: string) {
     return new ApiResponse(
       true,
@@ -81,6 +93,7 @@ export class RescueTeamsController {
   }
   @Get('employees')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @ApiQuery({ name: 'id', required: true })
   async getEmployeeById(@Query('id') id: UUID) {
     return new ApiResponse(
       true,
@@ -109,6 +122,13 @@ export class RescueTeamsController {
 
   @Put('/approve-or-reject')
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @ApiQuery({
+    name: 'action',
+    type: String,
+    required: true,
+    example: 'approve',
+  })
+  @ApiQuery({ name: 'id', required: true })
   async approveOrRejectRescueTeams(
     @Query('action') action: string,
     @Query('id') id: UUID,
@@ -120,6 +140,12 @@ export class RescueTeamsController {
     );
   }
   @Get('all/by-status')
+  @ApiQuery({
+    name: 'status',
+    required: true,
+    type: String,
+    example: 'pending',
+  })
   @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
   async getRescueTeamsByStatus(@Query('status') status: string) {
     return new ApiResponse(

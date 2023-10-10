@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { RmbService } from './rmb.service';
 import { ApiResponse } from 'src/payload/apiResponse';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UUID } from 'crypto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
@@ -59,6 +59,13 @@ export class RmbController {
 
   @Put('/approve-or-reject/:action/:id')
   @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
+  @ApiQuery({
+    name: 'action',
+    required: true,
+    type: String,
+    example: 'approve',
+  })
+  @ApiQuery({ name: 'id', required: true })
   async approveOrRejectRMBEmployee(
     @Param('action') action: string,
     @Param('id') id: UUID,
@@ -72,6 +79,12 @@ export class RmbController {
 
   @Get('/all-by-status/:status')
   @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
+  @ApiQuery({
+    name: 'status',
+    required: true,
+    type: String,
+    example: 'pending',
+  })
   async getAllRMBEmployeesByStatus(@Query('status') status: string) {
     return new ApiResponse(
       true,

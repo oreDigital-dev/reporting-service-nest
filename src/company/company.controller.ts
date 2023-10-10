@@ -6,9 +6,10 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CompanyService } from './company.service';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -41,8 +42,9 @@ export class CompanyController {
     );
   }
 
-  @Get('/id')
-  async getCompanyById(@Param('id') id: UUID) {
+  @Get('/by-id')
+  @ApiQuery({ name: 'id', required: true })
+  async getCompanyById(@Query('id') id: UUID) {
     return new ApiResponse(
       true,
       'Data retrieval successfull',
@@ -50,9 +52,10 @@ export class CompanyController {
     );
   }
 
-  @Get('/id')
+  @Get('by-id')
   @Roles('SYSTEM_ADMIN, RMB_ADMIN')
-  async deleteCompany(@Param('id') id: UUID) {
+  @ApiQuery({ name: 'id', required: true })
+  async deleteCompany(@Query('id') id: UUID) {
     // return new ApiResponse(
     //   // true, 'Data retrieval successfull', await this.companyService.deleteCompany(id)
     // )
@@ -69,9 +72,16 @@ export class CompanyController {
 
   @Put('approve-or-reject/:action/:id')
   @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
+  @ApiQuery({
+    name: 'action',
+    type: String,
+    required: true,
+    example: 'approve',
+  })
+  @ApiQuery({ name: 'id', required: true })
   async approveOrRejectCompany(
-    @Param('action') action: string,
-    @Param('id') id: UUID,
+    @Query('action') action: string,
+    @Query('id') id: UUID,
   ) {
     return new ApiResponse(
       true,
@@ -80,9 +90,10 @@ export class CompanyController {
     );
   }
 
-  @Get('by-status/:status')
+  @Get('by-status')
   @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
-  async getCompaniesByStatus(@Param('status') status: string) {
+  @ApiQuery({ name: 'status', type: String, example: 'pending' })
+  async getCompaniesByStatus(@Query('status') status: string) {
     return new ApiResponse(
       true,
       'Companies retrieved successfully',
