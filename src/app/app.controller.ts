@@ -102,7 +102,7 @@ export class AppController {
             createdAt: Between(startDate, endDate),
             employeeStatus: validatedStatus,
           },
-          relations: ['company', 'address'],
+          relations: ['rescueTeam', 'address'],
         });
         break;
       case EAccountType[EAccountType.RMB]:
@@ -111,7 +111,7 @@ export class AppController {
             createdAt: Between(startDate, endDate),
             employeeStatus: validatedStatus,
           },
-          relations: ['company', 'address'],
+          relations: ['address'],
         });
         break;
       default:
