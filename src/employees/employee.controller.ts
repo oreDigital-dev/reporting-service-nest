@@ -9,7 +9,7 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UpdateEmployeeDTO } from 'src/dtos/update-employee.dto';
 import { EmployeeService } from './employee.service';
@@ -119,6 +119,13 @@ export class EmployeeController {
 
   @Put('/approve-or-reject')
   @Roles('COMPANY_ADMIN', 'COMPANY_OWN')
+  @ApiQuery({
+    name: 'action',
+    type: String,
+    required: true,
+    example: 'approve',
+  })
+  @ApiQuery({ name: 'id', required: true })
   async approveOrReject(
     @Query('id') id: number,
     @Query('action') action: string,
@@ -147,6 +154,12 @@ export class EmployeeController {
   }
   @Get('all/by-employee-status')
   @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
+  @ApiQuery({
+    name: 'status',
+    required: true,
+    type: String,
+    example: 'pending',
+  })
   async getMiningCompanyEmployeesByStatus(
     @Query('status') status: string,
     @Req() req: Request,
@@ -161,18 +174,18 @@ export class EmployeeController {
     );
   }
 
-  @Get('all/by-status')
-  @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
-  async getAllMiningCompanyEmployeesByStatus(
-    @Query('status') status: string,
-    @Req() req: Request,
-  ) {
-    return new ApiResponse(
-      true,
-      'Mining company retrieved successfully',
-      await this.empService.getMiningCompanyEmployeesByStatus(status, req),
-    );
-  }
+  // @Get('all/by-status')
+  // @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
+  // async getAllMiningCompanyEmployeesByStatus(
+  //   @Query('status') status: string,
+  //   @Req() req: Request,
+  // ) {
+  //   return new ApiResponse(
+  //     true,
+  //     'Mining company retrieved successfully',
+  //     await this.empService.getMiningCompanyEmployeesByStatus(status, req),
+  //   );
+  // }
   @Delete('/all')
   @Roles('RMB_ADMI')
   async deleteAllEmployees(@Req() req: Request): Promise<ApiResponse> {
@@ -187,6 +200,10 @@ export class EmployeeController {
 
   @Delete('/:id')
   @Roles('COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
+  @ApiQuery({
+    name: 'id',
+    required: true,
+  })
   async deleteEmployeeById(
     @Param('id') id: UUID,
     @Req() req: Request,
