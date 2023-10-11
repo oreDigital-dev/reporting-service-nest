@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   UnauthorizedException,
+  UploadedFile,
   forwardRef,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -27,6 +28,8 @@ import { Organization } from 'src/entities/organization.entity';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { RescueTeam } from 'src/entities/rescue-team.entity';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
+import { file } from '@babel/types';
+import { EFileType } from 'src/enums/EFileType.enum';
 
 @Injectable()
 export class UtilsService {
@@ -358,5 +361,17 @@ export class UtilsService {
     return buffer;
   }
 
-  async downloadTagsExcel(startDate: Date, endDate: Date, status: string) {}
+  validateFile(type: string, @UploadedFile() file) {
+    let extenstion = file.originalname.split('.')[0];
+    switch (type.toUpperCase()) {
+      case EFileType[EFileType.EXCEL]:
+        break;
+      case EFileType[EFileType.DOCX]:
+        break;
+      case EFileType[EFileType.PDF]:
+        break;
+      default:
+        throw new BadRequestException('The provided file type is invalid');
+    }
+  }
 }

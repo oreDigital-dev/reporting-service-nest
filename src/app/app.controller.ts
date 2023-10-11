@@ -2,9 +2,12 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Post,
   Query,
   Req,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -22,6 +25,9 @@ import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Between } from 'typeorm';
+import Express from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { file } from '@babel/types';
 
 @Controller('app')
 @ApiTags('app')
@@ -227,4 +233,17 @@ export class AppController {
     );
     res.send(buffer);
   }
+
+  @Post('importing/employees')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiQuery({ name: 'org', type: String, required: true, example: 'company' })
+  async importEmplloyees(@UploadedFile() file) {
+    this.utilsService.validateFile('excel', file);
+  }
+
+  @Post('importing/companies')
+  async importCompanies(@Query('org') org: string) {}
+
+  @Post('importing/rescue_teams')
+  async importRescueTeams() {}
 }

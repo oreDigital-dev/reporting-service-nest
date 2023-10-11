@@ -53,7 +53,7 @@ export class CompanyController {
   }
 
   @Get('by-id')
-  @Roles('SYSTEM_ADMIN, RMB_ADMIN')
+  @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
   @ApiQuery({ name: 'id', required: true })
   async deleteCompany(@Query('id') id: UUID) {
     // return new ApiResponse(
