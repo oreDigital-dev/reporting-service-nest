@@ -49,7 +49,6 @@ export class RolesGuard implements CanActivate {
       });
       if (error) throw new UnauthorizedException(error.message);
       const details: any = await this.jwtService.decode(token);
-
       switch (details.type.toUpperCase()) {
         case 'COMPANY':
           user = await this.employeeService.getEmployeeById(details.id);
@@ -68,22 +67,27 @@ export class RolesGuard implements CanActivate {
             'The provided  entity type is not defined',
           );
       }
-    }
+      let type: boolean = false;
 
-    let type: boolean = false;
-    user.roles.forEach((role1: Role) => {
-      requiredRoles.forEach((requiredRole: String) => {
-        if (requiredRole.toUpperCase() == role1.roleName) {
-          type = true;
-        }
+      console.log(user);
+      user.roles.forEach((role1: Role) => {
+        requiredRoles.forEach((requiredRole: String) => {
+          if (requiredRole.toUpperCase() == role1.roleName) {
+            type = true;
+          }
+        });
       });
-    });
-    if (type == false)
+      if (type == false)
+        throw new UnauthorizedException(
+          `This resource is only for ${requiredRoles
+            .toLocaleString()
+            .toUpperCase()}`,
+        );
+      return type;
+    } else {
       throw new UnauthorizedException(
-        `This resource is only for ${requiredRoles
-          .toLocaleString()
-          .toUpperCase()}`,
+        'You are not authorized to access this resource',
       );
-    return type;
+    }
   }
 }
