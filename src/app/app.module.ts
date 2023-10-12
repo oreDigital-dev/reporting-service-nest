@@ -44,6 +44,7 @@ import { RescueTeam } from 'src/entities/rescue-team.entity';
 import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { UtilsModule } from 'src/utils/utils.module';
+import { ReportsController } from 'src/reports/reports.controller';
 
 @Module({
   imports: [
@@ -112,6 +113,7 @@ import { UtilsModule } from 'src/utils/utils.module';
   controllers: [
     HomeController,
     AppController,
+    ReportsController,
     AuthController,
     CompanyController,
     MinesiteController,
