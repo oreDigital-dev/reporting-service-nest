@@ -280,6 +280,16 @@ export class EmployeeService {
     return createdEmployee;
   }
 
+  async createExcelEmp(employee: MainUser) {
+    const availableEmployee = await this.employeeRepo.findOne({
+      where: { email: employee.email },
+    });
+    if (!availableEmployee) {
+      employee.password = await this.utilsService.hashString(employee.password);
+      await this.employeeRepo.save(employee);
+    }
+  }
+
   async updateEmployee(dto: UpdateEmployeeDTO) {
     let availalbleUser = await this.getEmployeeByEmail(dto.id);
     let gender;

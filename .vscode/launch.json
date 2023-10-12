@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/apple/projects/personal_projects/oreDigital/reporting-service-nest/src/auth/guards",
-      "program": "/Users/apple/projects/personal_projects/oreDigital/reporting-service-nest/src/auth/guards/build/Debug/outDebug"
+      "cwd": "/Users/apple/projects/personal_projects/oreDigital/reporting-service-nest/src/app",
+      "program": "/Users/apple/projects/personal_projects/oreDigital/reporting-service-nest/src/app/build/Debug/outDebug"
     }
   ]
 }

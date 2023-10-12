@@ -137,7 +137,7 @@ export class UtilsService {
     return regex.test(id.toString());
   }
 
-  getGender = (gender: string) => {
+  getGender = (gender: string): string => {
     switch (gender.toUpperCase()) {
       case EGender[EGender.FEMALE]:
         return EGender[EGender.FEMALE];
@@ -362,9 +362,17 @@ export class UtilsService {
   }
 
   validateFile(type: string, @UploadedFile() file) {
-    let extenstion = file.originalname.split('.')[0];
+    if (file.originalname.split('.').length > 2)
+      throw new BadRequestException(
+        `Your file name should not include '.' symbol`,
+      );
+    let extenstion = file.originalname.split('.')[1];
     switch (type.toUpperCase()) {
-      case EFileType[EFileType.EXCEL]:
+      case EFileType[EFileType.XLSX]:
+        if (extenstion.toUpperCase() != EFileType[EFileType.XLSX])
+          throw new BadRequestException(
+            'The provided file is not an excel file',
+          );
         break;
       case EFileType[EFileType.DOCX]:
         break;

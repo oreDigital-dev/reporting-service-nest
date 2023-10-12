@@ -25,9 +25,13 @@ import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Between } from 'typeorm';
-import Express from 'express';
+import * as ExcelJs from 'exceljs';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { file } from '@babel/types';
+import { AddressService } from 'src/address/address.service';
+import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entity';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
+import { EGender } from 'src/enums/EGender.enum';
+import { Address } from 'src/entities/address.entity';
 
 @Controller('app')
 @ApiTags('app')
@@ -40,6 +44,7 @@ export class AppController {
     private readonly rescueTeamService: RescueTeamsService,
     private readonly utilsService: UtilsService,
     private readonly companyService: CompanyService,
+    private readonly addressService: AddressService,
   ) {}
 
   @Get()
@@ -237,13 +242,59 @@ export class AppController {
   @Post('importing/employees')
   @UseInterceptors(FileInterceptor('file'))
   @ApiQuery({ name: 'org', type: String, required: true, example: 'company' })
-  async importEmplloyees(@UploadedFile() file) {
-    this.utilsService.validateFile('excel', file);
+  async importEmployees(
+    @UploadedFile() file,
+    @Query('org') type: string,
+    @Req() req: Request,
+  ) {
+    const companyOwner = await this.utilsService.getLoggedInProfile(
+      req,
+      'company',
+    );
+    this.utilsService.validateFile('XLSX', file);
+    const workbook = new ExcelJs.Workbook();
+    await workbook.xlsx.load(file.buffer);
+
+    const workSheet = workbook.getWorksheet(1);
+    await Promise.all(
+      workSheet.getRows(1, workSheet.rowCount).map(async (row, number) => {
+        if (number !== 1) {
+          let values = [];
+          row.eachCell((cell, cellNumber) => {
+            if (cellNumber !== 1) {
+              values.push(cell.value);
+            }
+          });
+
+          console.log(values[4]);
+          const employee = new MiningCompanyEmployee(
+            values[0],
+            values[1],
+            values[2],
+            EGender[this.utilsService.getGender(values[4])],
+            '',
+            `+250${values[3]}`,
+            '@oreDigital123',
+            EAccountStatus.WAITING_EMAIL_VERIFICATION,
+            this.utilsService.generateRandomFourDigitNumber(),
+          );
+
+          const address = new Address(
+            values[5].toUpperCase(),
+            values[6].toUpperCase(),
+            'Mukamira',
+            'Jaba',
+            'Jaba',
+          );
+
+          const createdAddress = await this.addressService.addressRepo.save(
+            address,
+          );
+          employee.address = createdAddress;
+          employee.company = companyOwner.company;
+          await this.employeesService.createExcelEmp(employee);
+        }
+      }),
+    );
   }
-
-  @Post('importing/companies')
-  async importCompanies(@Query('org') org: string) {}
-
-  @Post('importing/rescue_teams')
-  async importRescueTeams() {}
 }
