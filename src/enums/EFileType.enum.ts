@@ -1,5 +1,5 @@
 export enum EFileType {
-  EXCEL,
+  XLSX,
   PDF,
   DOCX,
 }
