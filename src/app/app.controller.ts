@@ -32,6 +32,7 @@ import { MiningCompanyEmployee } from 'src/entities/miningCompany-employee.entit
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { EGender } from 'src/enums/EGender.enum';
 import { Address } from 'src/entities/address.entity';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('app')
 @ApiTags('app')
@@ -62,6 +63,14 @@ export class AppController {
   }
 
   @Get('reporting/employees/filter-by-status-date')
+  @Roles(
+    'SYSTEM_ADMIN',
+    'RMB_ADMIN',
+    'COMPANY_ADMIN',
+    'COMPANY_OWNER',
+    'RESCUE_TEAM_ADMIN',
+    'RESCUE_TEAM_OWNER',
+  )
   @ApiQuery({
     name: 'startDate',
     type: Date,
@@ -142,6 +151,7 @@ export class AppController {
   }
 
   @Get('reporting/companies/filter-by-status-date')
+  @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
   @ApiQuery({
     name: 'startDate',
     type: Date,
@@ -240,6 +250,7 @@ export class AppController {
   }
 
   @Post('importing/employees')
+  @Roles('COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
   @UseInterceptors(FileInterceptor('file'))
   @ApiQuery({ name: 'org', type: String, required: true, example: 'company' })
   async importEmployees(

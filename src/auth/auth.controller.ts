@@ -13,18 +13,18 @@ import {
 import { UsersService } from 'src/users/users.service';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from 'src/dtos/login.dto';
-import { User } from 'src/entities/us.entity';
 import { VerifyAccountDTO } from 'src/dtos/verify-account.dto';
 import { ApiResponse } from 'src/payload/apiResponse';
 import { ResetPasswordDTO } from 'src/dtos/reset-password.dto';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { Public } from 'src/decorators/public.decorator';
+import { MainUser } from 'src/entities/MainUser.entity';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  public isUserAvailable: User;
+  public isUserAvailable: MainUser;
   constructor(
     private userService: UsersService,
     private authService: AuthService,

@@ -1,21 +1,15 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
 import { MineSite } from './minesite.entity';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { MiningCompanyEmployee } from './miningCompany-employee.entity';
 import { MiningCompany } from './miningCompany.entity';
 import { MainUser } from './MainUser.entity';
 
 @Entity('address')
 export class Address extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column({ name: 'country', default: 'RWANDA' })
   country: string;

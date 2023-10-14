@@ -17,8 +17,4 @@ export class createMineSiteDTO {
   @IsNotEmpty()
   @ApiProperty()
   address: CreateAddressDTO;
-
-  @IsUUID()
-  @IsNotEmpty()
-  company: UUID;
 }

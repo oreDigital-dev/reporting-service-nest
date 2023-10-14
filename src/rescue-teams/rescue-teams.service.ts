@@ -99,16 +99,22 @@ export class RescueTeamsService {
         ]);
 
         rescueTeamEmployee.roles = roles;
-        rescueTeamEmployee.rescueTeam = rescueTeam;
         rescueTeamEmployee.password = await this.utilsService.hashString(
           dto.RescueTeamAdmin.password,
         );
+
+        const addresses = this.addressService.createAddresses([
+          dto.RescueTeamAdmin.address,
+          dto.rescueTeam.address,
+        ]);
+        rescueTeamEmployee.address = (await addresses).address1;
+        rescueTeam.address = (await addresses).address2;
+        const createdRescueTeam = await this.rescueTeamRepo.save(rescueTeam);
+        rescueTeamEmployee.rescueTeam = createdRescueTeam;
         createdRescueTeamEmployee = await this.rescueTeamEmployeeRepo.save(
           rescueTeamEmployee,
         );
         return createdRescueTeamEmployee;
-
-        break;
       case EEmployeeType[EEmployeeType.EMPLOYEE]:
         rescueTeamEmployee = new RescueTeamEmployee(
           dto.RescueTeamAdmin.firstName,

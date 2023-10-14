@@ -12,7 +12,7 @@ import { ECompanyRole } from 'src/enums/ECompanyRole.enum';
 import { Address } from './address.entity';
 import { MainUser } from './MainUser.entity';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
-import { Exclude } from 'class-transformer';
+import { Report } from './report.entity';
 
 @Entity('mining_company_employees')
 export class MiningCompanyEmployee extends MainUser {
@@ -26,6 +26,13 @@ export class MiningCompanyEmployee extends MainUser {
   @OneToMany(() => Address, (address) => address.miningCompanyEmployees)
   @JoinColumn({ name: 'address_id' })
   address: Address;
+
+  @OneToMany(() => Report, (report) => report.owner)
+  ownedReports: Report[];
+
+  @ManyToOne(() => Report, (report) => report.victims)
+  @JoinColumn({ name: 'report_id' })
+  report: Report;
 
   constructor(
     firstName: string,

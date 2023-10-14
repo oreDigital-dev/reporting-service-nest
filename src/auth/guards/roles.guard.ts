@@ -11,7 +11,6 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { MainUser } from 'src/entities/MainUser.entity';
 import { Role } from 'src/entities/role.entity';
-import { User } from 'src/entities/us.entity';
 import { EmployeeService } from 'src/employees/employee.service';
 import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
@@ -67,9 +66,9 @@ export class RolesGuard implements CanActivate {
             'The provided  entity type is not defined',
           );
       }
-      let type: boolean = false;
-
       console.log(user);
+
+      let type: boolean = false;
       user.roles.forEach((role1: Role) => {
         requiredRoles.forEach((requiredRole: String) => {
           if (requiredRole.toUpperCase() == role1.roleName) {

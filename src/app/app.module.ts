@@ -7,7 +7,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { AuthModule } from '../auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from '../entities/us.entity';
 import { Role } from '../entities/role.entity';
 import { RoleService } from '../roles/roles.service';
 import { IncidentsModule } from '../incidents/incidents.module';
@@ -45,6 +44,10 @@ import { RescueTeamsModule } from 'src/rescue-teams/rescue-teams.module';
 import { RescueTeamEmployee } from 'src/entities/rescue_team-employee';
 import { UtilsModule } from 'src/utils/utils.module';
 import { ReportsController } from 'src/reports/reports.controller';
+import { Report } from 'src/entities/report.entity';
+import { ReportsModule } from 'src/reports/reports.module';
+import { FilesController } from 'src/files/files.controller';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
   imports: [
@@ -62,11 +65,12 @@ import { ReportsController } from 'src/reports/reports.controller';
         database: configService.get('DB_NAME'),
         entities: [
           MiningCompany,
-          User,
+          MainUser,
           Role,
           Notification,
           MainUser,
           MineSite,
+          Report,
           Incident,
           Address,
           Mineral,
@@ -108,16 +112,19 @@ import { ReportsController } from 'src/reports/reports.controller';
     AuthModule,
     RescueTeamsModule,
     UtilsModule,
+    ReportsModule,
+    FilesModule,
     forwardRef(() => CompanyModule),
   ],
   controllers: [
     HomeController,
+    AuthController,
     AppController,
     ReportsController,
-    AuthController,
     CompanyController,
     MinesiteController,
     EmployeeController,
+    FilesController,
   ],
   providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
 })

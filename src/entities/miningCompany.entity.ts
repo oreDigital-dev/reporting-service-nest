@@ -13,16 +13,13 @@ import { MineSite } from './minesite.entity';
 import { EOwnershipType } from 'src/enums/EOwnershipType.enum';
 import { Mineral } from './mineral.entity';
 import { Address } from './address.entity';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { Notification } from './notification.entity';
 import { MiningCompanyEmployee } from './miningCompany-employee.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('mining_companies')
 export class MiningCompany extends Organization {
-  @PrimaryColumn()
-  id: UUID;
-
   @Column()
   name: string;
   @Column()

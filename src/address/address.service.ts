@@ -18,7 +18,6 @@ export class AddressService {
   }
 
   async createAddress(dto: CreateAddressDTO) {
-    console.log(dto);
     let address = new Address(
       dto.province.toUpperCase(),
       dto.district.toUpperCase(),

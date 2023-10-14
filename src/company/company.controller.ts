@@ -15,6 +15,7 @@ import { ApiResponse } from 'src/payload/apiResponse';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UUID } from 'crypto';
 import { CreateMiningCompanyDTO } from 'src/dtos/create_mining-company.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('companies')
@@ -23,6 +24,7 @@ export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
   @Post('/create')
+  @Public()
   async createCompany(@Body() body: CreateMiningCompanyDTO) {
     const company = await this.companyService.createCompany(body);
     return new ApiResponse(

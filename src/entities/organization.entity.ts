@@ -1,4 +1,4 @@
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import {
   Column,
@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
@@ -15,8 +16,8 @@ import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Entity('organizations')
 export class Organization extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column()
   name: string;

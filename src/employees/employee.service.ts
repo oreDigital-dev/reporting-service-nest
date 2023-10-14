@@ -34,7 +34,6 @@ import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
-import { async } from 'rxjs';
 
 @Injectable()
 export class EmployeeService {
@@ -352,6 +351,7 @@ export class EmployeeService {
       where: { id: id },
       relations: ['company', 'roles', 'notifications'],
     });
+
     if (!isEmployeeAvailable)
       throw new NotFoundException(
         'The employee with the provided id is not found',

@@ -24,30 +24,25 @@ import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { RmbService } from 'src/rmb/rmb.service';
 import { UsersService } from 'src/users/users.service';
 import * as ExcelJs from 'exceljs';
-import { Organization } from 'src/entities/organization.entity';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { RescueTeam } from 'src/entities/rescue-team.entity';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
-import { file } from '@babel/types';
 import { EFileType } from 'src/enums/EFileType.enum';
+import { EReportCategory } from 'src/enums/EReportCategory.enum';
 
 @Injectable()
 export class UtilsService {
   constructor(
     @Inject(forwardRef(() => UsersService))
-    private userService: UsersService,
     @Inject(forwardRef(() => AuthService))
-    private authService: AuthService,
     @Inject(forwardRef(() => CompanyService))
-    private companyService: CompanyService,
-    @Inject(JwtService)
-    private jwtService: JwtService,
-    @Inject(ConfigService) private readonly configService: ConfigService,
-    private miningCompanyService: EmployeeService,
     @Inject(forwardRef(() => RmbService))
     private rmbEmployeeService: RmbService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
+    @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(RescueTeamsService)
     private readonly rescueTeamService: RescueTeamsService,
+    private readonly miningCompanyService: EmployeeService,
   ) {}
 
   async getTokens(
@@ -161,6 +156,19 @@ export class UtilsService {
     }
   };
 
+  getReportCategory = (category: string) => {
+    switch (category.toUpperCase()) {
+      case EReportCategory[EReportCategory.INCIDENT]:
+        return EReportCategory[EReportCategory.INCIDENT];
+      case EReportCategory[EReportCategory.PRODUCTION]:
+        return EReportCategory[EReportCategory.PRODUCTION];
+      default:
+        throw new BadRequestException(
+          `The provided category is invalid, please use 'incident' as category for now!`,
+        );
+    }
+  };
+
   getRescueTeamCategory = (category: string) => {
     switch (category.toUpperCase()) {
       case ERescueTeamCategory[ERescueTeamCategory.IMMEASUREY]:
@@ -194,7 +202,10 @@ export class UtilsService {
       const details: any = await this.jwtService.decode(token);
       switch (type.toUpperCase()) {
         case EAccountType[EAccountType.COMPANY]:
-          user = await this.miningCompanyService.getEmployeeById(details.id);
+          user = await this.miningCompanyService.employeeRepo.findOne({
+            where: { id: details.id },
+            relations: ['company', 'roles', 'notifications'],
+          });
           break;
         case EAccountType[EAccountType.RMB]:
           user = await this.rmbEmployeeService.getRMBEmployeeById(details.id);
@@ -377,6 +388,8 @@ export class UtilsService {
       case EFileType[EFileType.DOCX]:
         break;
       case EFileType[EFileType.PDF]:
+        if (extenstion.toUpperCase() != EFileType[EFileType.PDF])
+          throw new BadRequestException('The provided file is not pdf');
         break;
       default:
         throw new BadRequestException('The provided file type is invalid');

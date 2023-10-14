@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { Organization } from './organization.entity';
 import { RescueTeamEmployee } from './rescue_team-employee';
 
-@Entity('rescue_teams')
+@Entity('rescue_team')
 export class RescueTeam extends Organization {
   @Column({ name: 'rescue_team_category' })
   rescueTeamCategory: string;

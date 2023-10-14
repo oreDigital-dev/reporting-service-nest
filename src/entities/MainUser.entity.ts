@@ -8,6 +8,7 @@ import {
   JoinTable,
   OneToMany,
   ManyToOne,
+  PrimaryColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
@@ -22,8 +23,8 @@ import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Entity('users')
 export class MainUser extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column()
   firstName: string;
