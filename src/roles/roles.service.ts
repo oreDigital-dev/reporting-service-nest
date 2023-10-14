@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception
 import { ERole } from 'src/enums/ERole.enum';
 import { Role } from 'src/entities/role.entity';
 import { MainUser } from 'src/entities/MainUser.entity';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class RoleService {
@@ -62,7 +63,7 @@ export class RoleService {
     return roles;
   }
 
-  async getRoleById(id: number) {
+  async getRoleById(id: UUID) {
     const role = await this.roleRepo.findOne({
       where: {
         id: id,

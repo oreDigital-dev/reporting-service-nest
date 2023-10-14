@@ -6,7 +6,6 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common/exceptions';
-import { User } from 'src/entities/us.entity';
 import { UUID } from 'crypto';
 import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { RoleService } from 'src/roles/roles.service';
@@ -29,7 +28,7 @@ import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) public userRepo: Repository<User>,
+    @InjectRepository(MainUser) public userRepo: Repository<MainUser>,
 
     private roleService: RoleService,
     private mailService: MailingService,
@@ -57,7 +56,7 @@ export class UsersService {
         'The user with that email or phoneNumber already exist',
       );
     }
-    let systemAdmin = new User(
+    let systemAdmin = new MainUser(
       dto.firstName,
       dto.lastName,
       dto.email,

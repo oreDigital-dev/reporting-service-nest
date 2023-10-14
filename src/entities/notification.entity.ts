@@ -7,13 +7,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { MiningCompany } from './miningCompany.entity';
 import { MainUser } from './MainUser.entity';
 @Entity('notifications')
 export class Notification {
   @PrimaryGeneratedColumn()
-  id: UUID;
+  id: UUID = randomUUID();
 
   @Column({ nullable: true })
   type: ENotificationType;

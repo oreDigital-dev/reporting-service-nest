@@ -4,7 +4,7 @@ import { EGender } from 'src/enums/EGender.enum';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 import { RescueTeam } from './rescue-team.entity';
 
-@Entity('rescue_team_employees')
+@Entity('rescue_team_employes')
 export class RescueTeamEmployee extends MainUser {
   @ManyToOne(() => RescueTeam, (rescueTeam) => rescueTeam.employees)
   rescueTeam: RescueTeam;

@@ -26,8 +26,11 @@ import { Roles } from 'src/decorators/roles.decorator';
 export class MinesiteController {
   constructor(private mineSiteService: MinesiteService) {}
   @Post('create')
-  async createMineSite(@Body() body: createMineSiteDTO) {
-    const createdMineSite = await this.mineSiteService.createMineSite(body);
+  async createMineSite(@Body() body: createMineSiteDTO, @Req() req: Request) {
+    const createdMineSite = await this.mineSiteService.createMineSite(
+      body,
+      req,
+    );
     return new ApiResponse(
       true,
       'MineSite created successfully',

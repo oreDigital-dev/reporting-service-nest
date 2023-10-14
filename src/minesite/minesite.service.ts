@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Req,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
@@ -29,14 +30,14 @@ export class MinesiteService {
     private mineralService: MineralService,
   ) {}
 
-  async createMineSite(dto: createMineSiteDTO) {
+  async createMineSite(dto: createMineSiteDTO, req: Request) {
     let mineSite: MineSite = new MineSite(dto.name);
-    let company: any = await this.companyService.getCompanyById(dto.company);
+    const user = await this.utilService.getLoggedInProfile(req, 'company');
 
     let isAvailable = await this.mineSiteRepo.findOne({
       where: {
         name: dto.name,
-        company: company,
+        company: user.company,
       },
     });
     if (isAvailable)
@@ -61,8 +62,8 @@ export class MinesiteService {
     }
     mineSite.minerals = minerals;
     mineSite.address = address;
-    mineSite.company = company;
-    let mineSite2 = await this.mineSiteRepo.save(mineSite);    
+    mineSite.company = user.company;
+    let mineSite2 = await this.mineSiteRepo.save(mineSite);
     return mineSite2;
   }
 
@@ -78,24 +79,22 @@ export class MinesiteService {
   }
 
   async getMinSitesOfLoggedCompany(req: Request) {
+    const owner: any = await this.utilService.getLoggedInProfile(
+      req,
+      'company',
+    );
 
-      const owner: any = await this.utilService.getLoggedInProfile(
-        req,
-        'company',
-      );
+    let minesites = await this.mineSiteRepo.find({
+      where: { company: owner.company },
+    });
 
-      let minesites = await this.mineSiteRepo.find({
-        where: { company: owner.company },
-      });
-
-      return minesites;
-
+    return minesites;
   }
 
-  async getMinesitesByCompany(company : any) {
+  async getMinesitesByCompany(company: any) {
     try {
       let minesites = await this.mineSiteRepo.findBy({
-        company: company
+        company: company,
       });
       return minesites;
     } catch (error) {
@@ -103,7 +102,7 @@ export class MinesiteService {
     }
   }
 
-  async getMineSiteById(id: any) {
+  async getMineSiteById(id: UUID) {
     let minesite = await this.mineSiteRepo.findOne({
       where: {
         id: id,
@@ -111,9 +110,9 @@ export class MinesiteService {
       relations: ['address', 'company', 'minerals'],
     });
 
-    // if (minesite == null) {
-    //   throw new NotFoundException('Minesite with that id is  not found!');
-    // }
+    if (minesite == null) {
+      throw new NotFoundException('Minesite with that id is  not found!');
+    }
     return minesite;
   }
 
@@ -168,5 +167,4 @@ export class MinesiteService {
       throw error;
     }
   }
-
 }
