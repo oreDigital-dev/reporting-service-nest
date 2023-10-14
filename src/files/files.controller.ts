@@ -50,7 +50,7 @@ export class FilesController {
   }
 
   @Delete('/delete/:filename')
-  async deleteFile(@Param('filename') filename) {
+  async deleteFile(@Param('filename') filename: string) {
     const fileLocation = this.fileService.getFile(filename);
     if (!fileLocation || fileLocation == null) {
       return new NotFoundException('File not found');
@@ -64,7 +64,7 @@ export class FilesController {
   @Patch('/update/:filename')
   @UseInterceptors(FileInterceptor('file'))
   async updateFile(
-    @Param('filename') filename,
+    @Param('filename') filename: string,
     @Res() res,
     @UploadedFile() file: Express.Multer.File,
   ) {
