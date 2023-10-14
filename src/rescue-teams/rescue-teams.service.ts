@@ -289,7 +289,7 @@ export class RescueTeamsService {
     let rescueTeams;
     switch (status.toUpperCase()) {
       case EEmployeeStatus[EEmployeeStatus.ACTIVE]:
-        rescueTeams = await this.rescueTeamRepo.findOne({
+        rescueTeams = await this.rescueTeamRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.ACTIVE],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
@@ -297,7 +297,7 @@ export class RescueTeamsService {
         });
         break;
       case EEmployeeStatus[EEmployeeStatus.APPROVED]:
-        rescueTeams = await this.rescueTeamRepo.findOne({
+        rescueTeams = await this.rescueTeamRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.APPROVED],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
@@ -305,7 +305,7 @@ export class RescueTeamsService {
         });
         break;
       case EEmployeeStatus[EEmployeeStatus.PENDING]:
-        rescueTeams = await this.rescueTeamRepo.findOne({
+        rescueTeams = await this.rescueTeamRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.PENDING],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],

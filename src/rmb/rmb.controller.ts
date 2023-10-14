@@ -20,7 +20,7 @@ import { Public } from 'src/decorators/public.decorator';
 @ApiTags('rmb')
 export class RmbController {
   constructor(private rmbService: RmbService) {}
-  @Get('/all')
+  @Get('employees/all')
   @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
   async getAllRMBEmployees() {
     return new ApiResponse(
@@ -77,7 +77,7 @@ export class RmbController {
     );
   }
 
-  @Get('/all-by-status/:status')
+  @Get('employees/all-by-status/:status')
   @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
   @ApiQuery({
     name: 'status',
