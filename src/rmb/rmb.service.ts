@@ -75,7 +75,7 @@ export class RmbService {
       systemAdmin.password,
     );
 
-    switch (dto.employeeType.toUpperCase()) {
+    switch (dto.employeeRole.toUpperCase()) {
       case 'ADMIN':
         systemAdmin.roles = roles;
         break;
