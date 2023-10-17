@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UUID, randomUUID } from 'crypto';
@@ -12,7 +13,7 @@ import { MiningCompany } from './miningCompany.entity';
 import { MainUser } from './MainUser.entity';
 @Entity('notifications')
 export class Notification {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: UUID = randomUUID();
 
   @Column({ nullable: true })

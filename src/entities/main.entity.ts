@@ -6,17 +6,18 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  PrimaryColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { EGender } from 'src/enums/EGender.enum';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Entity('users')
 export class Main extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column()
   firstName: string;

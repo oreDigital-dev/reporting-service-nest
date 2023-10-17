@@ -7,7 +7,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Address } from './address.entity';
 import { Notification } from './notification.entity';
