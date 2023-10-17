@@ -185,21 +185,21 @@ export class RmbService {
       case EEmployeeStatus[EEmployeeStatus.REJECTED]:
         return await this.rmbRepo.find({
           where: {
-            status: EEmployeeStatus[EEmployeeStatus.REJECTED],
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.REJECTED],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       case EEmployeeStatus[EEmployeeStatus.APPROVED]:
         return await this.rmbRepo.find({
           where: {
-            status: EEmployeeStatus[EEmployeeStatus.APPROVED],
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.APPROVED],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
       case EEmployeeStatus[EEmployeeStatus.PENDING]:
         return await this.rmbRepo.find({
           where: {
-            status: EEmployeeStatus[EEmployeeStatus.PENDING],
+            employeeStatus: EEmployeeStatus[EEmployeeStatus.PENDING],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
           },
         });
