@@ -57,7 +57,7 @@ export class RmbController {
     );
   }
 
-  @Put('/approve-or-reject/:action/:id')
+  @Put('/approve-or-reject')
   @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
   @ApiQuery({
     name: 'action',
@@ -67,8 +67,8 @@ export class RmbController {
   })
   @ApiQuery({ name: 'id', required: true })
   async approveOrRejectRMBEmployee(
-    @Param('action') action: string,
-    @Param('id') id: UUID,
+    @Query('action') action: string,
+    @Query('id') id: UUID,
   ) {
     return new ApiResponse(
       true,
@@ -77,7 +77,7 @@ export class RmbController {
     );
   }
 
-  @Get('employees/all-by-status/:status')
+  @Get('employees/all-by-status')
   @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
   @ApiQuery({
     name: 'status',

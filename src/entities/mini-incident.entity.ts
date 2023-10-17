@@ -1,14 +1,14 @@
 import { InitiatorAudit } from 'src/audits/Initiator.audit';
 import { EIncidentStatus } from 'src/enums/EIncidentStatus.enum';
 import { EIncidentType } from 'src/enums/EIncidentType.enum';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { MineSite } from './minesite.entity';
-import { UUID } from 'crypto';
+import { UUID, randomUUID } from 'crypto';
 
 @Entity('mini_incidents')
 export class MiniIncident extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryColumn()
+  id: UUID = randomUUID();
 
   @Column({ nullable: true })
   type: EIncidentType;
