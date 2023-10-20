@@ -25,6 +25,7 @@ import { MainUser } from 'src/entities/MainUser.entity';
 import { EActionType } from 'src/enums/EActionType.enum';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
+import { EAccountStatus } from 'src/enums/EAccountStatus.enum';
 
 @Injectable()
 export class RescueTeamsService {
@@ -351,16 +352,18 @@ export class RescueTeamsService {
     let user: MainUser;
     switch (action.toUpperCase()) {
       case EActionType[EActionType.APPROVE]:
-        user = await this.getEmployeeById(id);
-        if ((user.employeeStatus = EEmployeeStatus[EEmployeeStatus.APPROVED]))
+        user = await this.rescueTeamEmployeeRepo.findOne({
+          where: { id: id, status: EAccountStatus[EAccountStatus.ACTIVE] },
+        });
+        if (user.employeeStatus == EEmployeeStatus[EEmployeeStatus.APPROVED])
           throw new ForbiddenException('The employee is already approved');
         user.employeeStatus = EEmployeeStatus[EEmployeeStatus.APPROVED];
         break;
       case EActionType[EActionType.REJECT]:
         user = await this.getEmployeeById(id);
-        if ((user.employeeStatus = EEmployeeStatus[EEmployeeStatus.REJECTED]))
+        if (user.employeeStatus == EEmployeeStatus[EEmployeeStatus.REJECTED])
           throw new ForbiddenException('The employee is already rejected');
-        user.employeeStatus = EEmployeeStatus[EEmployeeStatus.REJECTED];
+        user.employeeStatus == EEmployeeStatus[EEmployeeStatus.REJECTED];
         break;
       default:
         throw new BadRequestException('The provided action is invalid');

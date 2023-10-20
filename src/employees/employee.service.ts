@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { Request, query } from 'express';
+import { Request } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { UUID } from 'crypto';
 import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
@@ -219,7 +219,7 @@ export class EmployeeService {
               ERole[ERole.RESCUE_TEAM_ADMIN],
             ]);
           }
-          rescueTeamEmp.employeeStatus = EAccountStatus[EAccountStatus.ACTIVE];
+          rescueTeamEmp.employeeStatus = EAccountStatus[EAccountStatus.PENDING];
           await this.rescueTeamEmployeeRepo.save(rescueTeamEmp);
 
           let createdEmployee = await this.rescueTeamEmployeeRepo.findOne({

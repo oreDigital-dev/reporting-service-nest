@@ -121,7 +121,7 @@ export class RescueTeamsController {
   }
 
   @Put('/approve-or-reject')
-  @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
   @ApiQuery({
     name: 'action',
     type: String,
@@ -137,6 +137,29 @@ export class RescueTeamsController {
       true,
       'The rescue team updated successsfully',
       await this.rescueTeamService.approveOrRejectRescueTeams(action, id),
+    );
+  }
+
+  @Put('/employees/approve-or-reject')
+  @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @ApiQuery({
+    name: 'action',
+    type: String,
+    required: true,
+    example: 'approve',
+  })
+  @ApiQuery({ name: 'id', required: true })
+  async approveOrRejectRescueTeamEmployees(
+    @Query('action') action: string,
+    @Query('id') id: UUID,
+  ) {
+    return new ApiResponse(
+      true,
+      'The rescue team employee have approved successfully',
+      await this.rescueTeamService.approveOrRejectRescueTeamEmployees(
+        id,
+        action,
+      ),
     );
   }
   @Get('all/by-status')
