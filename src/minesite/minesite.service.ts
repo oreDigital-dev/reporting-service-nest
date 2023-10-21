@@ -9,16 +9,15 @@ import { UUID } from 'crypto';
 import { AddressService } from 'src/address/address.service';
 import { CompanyService } from 'src/company/company.service';
 import { createMineSiteDTO } from 'src/dtos/create-minesite.dto';
-import { Incident } from 'src/entities/incident.entity';
 import { MineSite } from 'src/entities/minesite.entity';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { Address } from 'src/entities/address.entity';
 import { UpdateMineSiteDTO } from 'src/dtos/update-minesite.dtp';
 import { Mineral } from 'src/entities/mineral.entity';
 import { MineralService } from 'src/mineral/mineral.service';
-import { MiningCompany } from 'src/entities/miningCompany.entity';
+import { ConcessionsService } from 'src/concessions/concessions.service';
 
 @Injectable()
 export class MinesiteService {
@@ -28,10 +27,12 @@ export class MinesiteService {
     private companyService: CompanyService,
     private utilService: UtilsService,
     private mineralService: MineralService,
+    private concessionService: ConcessionsService,
   ) {}
 
   async createMineSite(dto: createMineSiteDTO, req: Request) {
     let mineSite: MineSite = new MineSite(dto.name);
+    const concession = await this.concessionService.getById(dto.concessionId);
     const user = await this.utilService.getLoggedInProfile(req, 'company');
 
     let isAvailable = await this.mineSiteRepo.findOne({
@@ -63,6 +64,7 @@ export class MinesiteService {
     mineSite.minerals = minerals;
     mineSite.address = address;
     mineSite.company = user.company;
+    mineSite.concession = concession;
     let mineSite2 = await this.mineSiteRepo.save(mineSite);
     return mineSite2;
   }
