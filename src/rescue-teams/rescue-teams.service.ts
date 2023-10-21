@@ -314,7 +314,7 @@ export class RescueTeamsService {
         });
         break;
       case EEmployeeStatus[EEmployeeStatus.REJECTED]:
-        rescueTeams = await this.rescueTeamRepo.findOne({
+        rescueTeams = await this.rescueTeamRepo.find({
           where: {
             status: EEmployeeStatus[EEmployeeStatus.REJECTED],
             visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
