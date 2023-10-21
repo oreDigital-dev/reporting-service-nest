@@ -49,10 +49,10 @@ export class AppController {
   ) {}
 
   @Get()
-  @Public()
   getHello(): string {
     return this.appService.getHello();
   }
+  @Public()
   @Get('/get-profile')
   async getProfile(@Req() req: Request, @Query('type') type: string) {
     return new ApiResponse(
