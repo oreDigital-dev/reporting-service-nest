@@ -29,11 +29,11 @@ export class AddressService {
     const isAddressRegistered = await this.addressRepo.findOne({
       where: [
         {
-          province: address.province.toUpperCase(),
-          district: dto.district.toUpperCase(),
-          sector: dto.sector.toUpperCase(),
-          cell: dto.cell.toUpperCase(),
-          village: dto.village.toUpperCase(),
+          province: address.province,
+          district: dto.district,
+          sector: dto.sector,
+          cell: dto.cell,
+          village: dto.village,
         },
       ],
     });

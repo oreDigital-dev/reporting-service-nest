@@ -6,11 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 import { Request } from 'express';
-import { async } from 'rxjs';
+import { AddressService } from 'src/address/address.service';
 import { CompanyService } from 'src/company/company.service';
 import { CreateConcessionDTO } from 'src/dtos/create-concession.dto';
 import { Concession } from 'src/entities/concession.entity';
-import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
@@ -21,11 +20,14 @@ export class ConcessionsService {
     @InjectRepository(Concession) public concessionRepo: Repository<Concession>,
     private utilsService: UtilsService,
     private companyService: CompanyService,
+    private addressService: AddressService,
   ) {}
   async create(dto: CreateConcessionDTO, req: Request) {
     await this.getByName(dto.name);
+
     const concession = new Concession(dto.name);
     const owner = await this.utilsService.getLoggedInProfile(req, 'company');
+    const address = this.addressService.createAddress(dto.address);
     concession.company = owner.company;
     return await this.concessionRepo.save(concession);
   }
@@ -38,6 +40,7 @@ export class ConcessionsService {
   async getAll() {
     return await this.concessionRepo.find({
       where: { visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE] },
+      relations: ['minesites', 'company', 'address'],
     });
   }
 
@@ -47,6 +50,7 @@ export class ConcessionsService {
         id: id,
         visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
       },
+      relations: ['minesites', 'company', 'address'],
     });
     if (!availableConcession)
       throw new NotFoundException(
@@ -60,6 +64,7 @@ export class ConcessionsService {
         name: name,
         visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
       },
+      relations: ['minesites', 'company', 'address'],
     });
 
     if (availalbleConcession)
@@ -75,6 +80,7 @@ export class ConcessionsService {
         company: owner.company,
         visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
       },
+      relations: ['minesites', 'company', 'address'],
     });
   }
   async getAllByCompany(id: UUID) {
@@ -84,6 +90,7 @@ export class ConcessionsService {
         company: company,
         visibility: EVisibilityStatus[EVisibilityStatus.VISIBLE],
       },
+      relations: ['minesites', 'company', 'address'],
     });
   }
   async deleteById(id: UUID) {
