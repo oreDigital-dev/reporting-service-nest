@@ -20,6 +20,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { UsersService } from 'src/users/users.service';
 import { PageOptionsDTO } from 'src/dtos/page-options.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { CreatESelfEmployeeDTO } from 'src/dtos/create_self-employee.dto';
 
 @Controller('employees')
 @ApiTags('company-employees')
@@ -44,6 +45,15 @@ export class EmployeeController {
       console.error(error); // Log the error
       throw error; // Rethrow the error to ensure it's properly handled
     }
+  }
+
+  @Post('create/self-account')
+  async createSelfAccount(@Body() dto: CreatESelfEmployeeDTO) {
+    return new ApiResponse(
+      true,
+      'We have sent a verification code to your mobile phone and gmail, please check it out and verifiy your account',
+      await this.empService.createSelfAccount(dto),
+    );
   }
 
   @Get('/update')

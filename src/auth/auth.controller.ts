@@ -67,6 +67,7 @@ export class AuthController {
       ),
     );
   }
+  @Public()
   @Get('profile')
   async getProfile(@Req() req: Request, @Query('type') type: string) {
     let profile = await this.authService.getProfile(req, type);

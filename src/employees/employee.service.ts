@@ -34,7 +34,11 @@ import { RescueTeamsService } from 'src/rescue-teams/rescue-teams.service';
 import { MiningCompany } from 'src/entities/miningCompany.entity';
 import { EEmployeeStatus } from 'src/enums/EEmployeeStatus.enum';
 import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
-
+import { CreatESelfEmployeeDTO } from 'src/dtos/create_self-employee.dto';
+import { EAccountType } from 'src/enums/EAccountType.enum';
+import { Organization } from 'src/entities/organization.entity';
+import { Role } from 'src/entities/role.entity';
+import { EMPTY } from 'rxjs';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -232,6 +236,95 @@ export class EmployeeService {
       }
     } catch (error) {
       throw error;
+    }
+  }
+
+  async createSelfAccount(dto: CreatESelfEmployeeDTO) {
+    let org: any = null;
+    let address: Address = null;
+    let availableEmployee: any;
+    let roles: Role[];
+    switch (dto.employeeType.toUpperCase()) {
+      case EAccountType[EAccountType.COMPANY]:
+        availableEmployee = await this.employeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        if (availableEmployee)
+          throw new BadRequestException('The employee already exists');
+
+        address = await this.addressService.createAddress(dto.address);
+        let employee: MiningCompanyEmployee = new MiningCompanyEmployee(
+          dto.firstName,
+          dto.lastName,
+          dto.email,
+          EGender[this.utilsService.getGender(dto.myGender)],
+          dto.national_id,
+          dto.phoneNumber,
+          await this.utilsService.hashString(dto.password),
+          EAccountStatus.WAITING_EMAIL_VERIFICATION,
+          await this.utilsService.generateRandomFourDigitNumber(),
+        );
+        roles = await this.roleService.getRolesByNames([
+          ERole[ERole.COMPANY_EMPLOYEE],
+        ]);
+        org = await this.companyService.getCompanyById(dto.orgId);
+        employee.company = org;
+        employee.roles = roles;
+        employee.address = address;
+        return await this.employeeRepo.save(employee);
+      case EAccountType[EAccountType.RESCUE_TEAM]:
+        availableEmployee = await this.rescueTeamEmployeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        if (availableEmployee)
+          throw new BadRequestException('The employee already exists');
+        address = await this.addressService.createAddress(dto.address);
+        let rescueTeamEmployee: RescueTeamEmployee = new RescueTeamEmployee(
+          dto.firstName,
+          dto.lastName,
+          dto.email,
+          dto.myGender,
+          dto.national_id,
+          await this.utilsService.hashString(dto.password),
+          dto.phoneNumber,
+          this.utilsService.generateRandomFourDigitNumber(),
+        );
+        roles = await this.roleService.getRolesByNames([
+          ERole[ERole.RESCUE_TEAM_EMPLOYEE],
+        ]);
+        org = await this.companyService.getCompanyById(dto.orgId);
+        rescueTeamEmployee.rescueTeam = org;
+        rescueTeamEmployee.roles = roles;
+        console.log(roles);
+        rescueTeamEmployee.address = address;
+        return await this.rescueTeamEmployeeRepo.save(rescueTeamEmployee);
+      case EAccountType[EAccountType.RMB]:
+        availableEmployee = await this.rmbEmployeeRepo.findOne({
+          where: { email: dto.email },
+        });
+        if (availableEmployee)
+          throw new BadRequestException('The employee already exists');
+        address = await this.addressService.createAddress(dto.address);
+        let rmbEmployee: RMBEmployee = new RMBEmployee(
+          dto.firstName,
+          dto.lastName,
+          dto.email,
+          EGender[dto.myGender],
+          dto.national_id,
+          dto.phoneNumber,
+          await this.utilsService.hashString(dto.password),
+          this.utilsService.generateRandomFourDigitNumber(),
+        );
+        roles = await this.roleService.getRolesByNames([
+          ERole[ERole.RMB_EMPLOYEE],
+        ]);
+        rmbEmployee.address = address;
+        rmbEmployee.roles = roles;
+        return await this.rmbEmployeeRepo.save(rmbEmployee);
+      default:
+        throw new BadRequestException(
+          'The provided organization type is invalid',
+        );
     }
   }
 
