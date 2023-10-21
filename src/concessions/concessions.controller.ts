@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -22,7 +23,7 @@ export class ConcessionsController {
   constructor(private readonly concessionService: ConcessionsService) {}
   @Post('create')
   @Public()
-  async create(dto: CreateConcessionDTO, @Req() req: Request) {
+  async create(@Body() dto: CreateConcessionDTO, @Req() req: Request) {
     return new ApiResponse(
       true,
       'The concession has been created successfully',
@@ -31,7 +32,7 @@ export class ConcessionsController {
   }
   @Put('update/:id')
   @Public()
-  async update(@Param('id') id: UUID, dto: CreateConcessionDTO) {
+  async update(@Param('id') id: UUID, @Body() dto: CreateConcessionDTO) {
     return new ApiResponse(
       true,
       'The concession updated successfully',

@@ -8,6 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UUID, randomUUID } from 'crypto';
@@ -15,8 +16,9 @@ import { EVisibilityStatus } from 'src/enums/EVisibility.enum';
 
 @Entity('concessions')
 export class Concession extends InitiatorAudit {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: UUID = randomUUID();
+  @Column()
   name: string;
 
   @Column({ default: EVisibilityStatus[EVisibilityStatus.VISIBLE] })
