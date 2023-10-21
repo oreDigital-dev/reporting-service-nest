@@ -48,6 +48,7 @@ import { Report } from 'src/entities/report.entity';
 import { ReportsModule } from 'src/reports/reports.module';
 import { FilesController } from 'src/files/files.controller';
 import { FilesModule } from 'src/files/files.module';
+import { Concession } from 'src/entities/concession.entity';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { FilesModule } from 'src/files/files.module';
           MiniIncident,
           RescueTeam,
           RescueTeamEmployee,
+          Concession,
         ],
         synchronize: true,
       }),

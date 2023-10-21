@@ -1,9 +1,12 @@
-import { IsArray, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, IsUUID, isUUID } from 'class-validator';
 import { CreateAddressDTO } from './create-address.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UUID } from 'crypto';
 
 export class createMineSiteDTO {
+  @IsUUID()
+  @IsNotEmpty()
+  concessionId: UUID;
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
