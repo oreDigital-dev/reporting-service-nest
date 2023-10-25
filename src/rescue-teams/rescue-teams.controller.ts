@@ -169,7 +169,7 @@ export class RescueTeamsController {
     type: String,
     example: 'pending',
   })
-  @Roles('RESCUE_TEAM_ADMIN', 'RESCUE_TEAM_OWNER')
+  @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
   async getRescueTeamsByStatus(@Query('status') status: string) {
     return new ApiResponse(
       true,

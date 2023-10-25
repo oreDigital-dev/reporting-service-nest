@@ -34,11 +34,12 @@ export class ReportsService {
     const report: Report = new Report(
       await this.utilsService.getReportCategory(dto.category),
       dto.indicator,
+      dto.date,
       dto.description,
       dto.bleedingLevel,
       dto.condition,
-      dto.firstInfoSource,
-      dto.secondInfoSource,
+      dto.action,
+      dto.nonEmployedVictims,
       await this.fileService.uploadFile(file),
     );
     const mineSite = await this.mineSiteService.getMineSiteById(dto.mineSiteId);
@@ -50,7 +51,7 @@ export class ReportsService {
         const promises: any = dto.victimsIds.map(async (id) => {
           return await this.employeeService.getEmployeeById(id);
         });
-        report.victims = await Promise.all(promises);
+        report.employedVictims = await Promise.all(promises);
         return await this.reportRepo.save(report);
       })
       .catch((error) => {
@@ -65,12 +66,12 @@ export class ReportsService {
     report.category = dto.category;
     report.condition = dto.condition;
     report.indicator = dto.indicator;
-    report.firstInformationSource = dto.firstInfoSource;
-    report.secondInformationSource = dto.secondInfoSource;
+    report.action = dto.action;
+ 
     const promises: any = dto.victimsIds.map(async (id) => {
       return await this.employeeService.getEmployeeById(id);
     });
-    report.victims = await Promise.all(promises);
+    report.employedVictims = await Promise.all(promises);
     return await this.reportRepo.save(report);
   }
 

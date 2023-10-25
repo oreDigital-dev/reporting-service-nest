@@ -13,7 +13,6 @@ import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { EGender } from 'src/enums/EGender.enum';
 import { UUID } from 'crypto';
-import { UpdateEmployeeDTO } from '../dtos/update-employee.dto';
 import { CompanyService } from 'src/company/company.service';
 import { RoleService } from 'src/roles/roles.service';
 import { ERole } from 'src/enums/ERole.enum';
@@ -382,8 +381,8 @@ export class EmployeeService {
     }
   }
 
-  async updateEmployee(dto: UpdateEmployeeDTO) {
-    let availalbleUser = await this.getEmployeeByEmail(dto.id);
+  async updateMiningCompanyEmployee(id: UUID, dto: CreateEmployeeDTO) {
+    let availalbleUser = await this.getEmployeeByEmail(id);
     let gender;
     switch (dto.myGender.toUpperCase()) {
       case 'MALE':

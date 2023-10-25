@@ -72,7 +72,7 @@ export class CompanyController {
     );
   }
 
-  @Put('approve-or-reject/:action/:id')
+  @Put('approve-or-reject')
   @Roles('SYSTEM_ADMIN', 'RMB_ADMIN')
   @ApiQuery({
     name: 'action',

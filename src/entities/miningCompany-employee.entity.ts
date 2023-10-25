@@ -19,7 +19,7 @@ export class MiningCompanyEmployee extends MainUser {
   @JoinColumn({ name: 'company_id' })
   company: MiningCompany;
 
-  @Column({ default: ECompanyRole[ECompanyRole.EMPLOYEE] })
+  @Column({default: ECompanyRole[ECompanyRole.EMPLOYEE]})
   role: string;
 
   @OneToMany(() => Address, (address) => address.miningCompanyEmployees)
@@ -29,7 +29,7 @@ export class MiningCompanyEmployee extends MainUser {
   @OneToMany(() => Report, (report) => report.owner)
   ownedReports: Report[];
 
-  @ManyToOne(() => Report, (report) => report.victims)
+  @ManyToOne(() => Report, (report) => report.employedVictims)
   @JoinColumn({ name: 'report_id' })
   report: Report;
 
