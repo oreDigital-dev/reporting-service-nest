@@ -38,10 +38,6 @@ export class Report extends InitiatorAudit {
   @Column({ name: 'bledding_level' })
   bleedingLevel: number;
   condition: string;
-  @Column({ name: 'first_information_source' })
-  firstInformationSource: string;
-  @Column({ name: 'seconda_information_source' })
-  secondInformationSource: string;
   document: string;
 
   @Column({
