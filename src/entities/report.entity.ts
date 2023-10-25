@@ -48,11 +48,14 @@ export class Report extends InitiatorAudit {
 
   @Column({name : 'condition', nullable: true})
   condition: string;
+<<<<<<< HEAD
+=======
 
   @Column({name: 'action', nullable: true})
   action : string;
 
 
+>>>>>>> a44637e4886f6fbc41978a041d886aa9c5574cb2
   document: string;
 
   @Column({

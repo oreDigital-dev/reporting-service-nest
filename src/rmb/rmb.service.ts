@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
+import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
 import { RMBEmployee } from 'src/entities/rmb-employee';
 import { EActionType } from 'src/enums/EActionType.enum';
@@ -149,6 +150,11 @@ export class RmbService {
     });
   }
 
+  async UpdateRescueTeam(id: UUID, dto: Partial<CreateUserDto>) {
+    let availalbleRescueTeam = await this.getRMBEmployeeById(id);
+    Object.assign(availalbleRescueTeam, dto);
+    return await this.rmbRepo.save(availalbleRescueTeam);
+  }
   async approveOrRejectRMBEmployee(action: string, id: UUID) {
     let availableEmployee = await this.rmbRepo.findOne({ where: { id: id } });
     if (!availableEmployee)

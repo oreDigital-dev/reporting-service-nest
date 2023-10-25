@@ -15,6 +15,7 @@ import { UUID } from 'crypto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateOrganizationEmployeeDTO } from 'src/dtos/createRMBEmploye.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { CreateUserDto } from 'src/dtos/create-user.dto';
 
 @Controller('rmb')
 @ApiTags('rmb')
@@ -53,6 +54,16 @@ export class RmbController {
       true,
       'All rmb employees were deleted successfully',
       await this.rmbService.deleteAllRMBEmployees(),
+    );
+  }
+
+  @Put('/update/:id')
+  @Roles('RMB_ADMIN', 'SYSTEM_ADMIN')
+  async UpdateRescueTeam(@Param('id') id: UUID, @Body() dto: CreateUserDto) {
+    return new ApiResponse(
+      true,
+      'The employee updated successfully',
+      await this.rmbService.UpdateRescueTeam(id, dto),
     );
   }
 

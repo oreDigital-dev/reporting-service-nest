@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeDTO } from 'src/dtos/create-employee.dto';
-import { UpdateEmployeeDTO } from 'src/dtos/update-employee.dto';
 import { EmployeeService } from './employee.service';
 import { Request } from 'express';
 import { ApiResponse } from 'src/payload/apiResponse';
@@ -48,6 +47,7 @@ export class EmployeeController {
   }
 
   @Post('create/self-account')
+  @Public()
   async createSelfAccount(@Body() dto: CreatESelfEmployeeDTO) {
     return new ApiResponse(
       true,
@@ -56,10 +56,17 @@ export class EmployeeController {
     );
   }
 
-  @Get('/update')
-  async updateEmployee(@Body() dto: UpdateEmployeeDTO): Promise<ApiResponse> {
+  @Put('/update:id')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
+  async updateEmployee(
+    @Param('id') id: UUID,
+    @Body() dto: CreateEmployeeDTO,
+  ): Promise<ApiResponse> {
     try {
-      const updatedEmployee = await this.empService.updateEmployee(dto);
+      const updatedEmployee = await this.empService.updateMiningCompanyEmployee(
+        id,
+        dto,
+      );
       return new ApiResponse(
         true,
         'The employee updated successfully',
@@ -72,6 +79,7 @@ export class EmployeeController {
   }
 
   @Get('/one/:email')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
   async getEmployeeByEmail(
     @Param('email') email: string,
   ): Promise<ApiResponse> {
@@ -89,6 +97,7 @@ export class EmployeeController {
   }
 
   @Get('/one/:id')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
   async getEmployeeById(@Param('id') id: number): Promise<ApiResponse> {
     try {
       const employee = await this.empService.getEmployeeById(id);
@@ -184,20 +193,8 @@ export class EmployeeController {
     );
   }
 
-  // @Get('all/by-status')
-  // @Roles('COMPANY_OWNER', 'COMPANY_ADMIN')
-  // async getAllMiningCompanyEmployeesByStatus(
-  //   @Query('status') status: string,
-  //   @Req() req: Request,
-  // ) {
-  //   return new ApiResponse(
-  //     true,
-  //     'Mining company retrieved successfully',
-  //     await this.empService.getMiningCompanyEmployeesByStatus(status, req),
-  //   );
-  // }
   @Delete('/all')
-  @Roles('RMB_ADMI')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
   async deleteAllEmployees(@Req() req: Request): Promise<ApiResponse> {
     try {
       await this.empService.deleteAllEmployees(req);
@@ -209,7 +206,7 @@ export class EmployeeController {
   }
 
   @Delete('/:id')
-  @Roles('COMPANY_ADMIN', 'COMPANY_EMPLOYEE')
+  @Roles('COMPANY_ADMIN', 'COMPANY_OWNER')
   @ApiQuery({
     name: 'id',
     required: true,
