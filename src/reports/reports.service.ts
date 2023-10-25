@@ -67,8 +67,7 @@ export class ReportsService {
     report.condition = dto.condition;
     report.indicator = dto.indicator;
     report.action = dto.action;
-    report.firstInformationSource = dto.firstInfoSource;
-    report.secondInformationSource = dto.secondInfoSource;
+ 
     const promises: any = dto.victimsIds.map(async (id) => {
       return await this.employeeService.getEmployeeById(id);
     });
