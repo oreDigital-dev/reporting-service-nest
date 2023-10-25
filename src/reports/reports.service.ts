@@ -66,8 +66,7 @@ export class ReportsService {
     report.category = dto.category;
     report.condition = dto.condition;
     report.indicator = dto.indicator;
-    report.action = dto.action;
- 
+
     const promises: any = dto.victimsIds.map(async (id) => {
       return await this.employeeService.getEmployeeById(id);
     });

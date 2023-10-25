@@ -31,32 +31,27 @@ export class Report extends InitiatorAudit {
   @OneToMany(() => MiningCompanyEmployee, (employee) => employee.report)
   employedVictims: MainUser[];
 
-  @Column({name : 'non_employed_victims', nullable: true})
-  nonEmployedVictims : number;
+  @Column({ name: 'employed_victims_numeber', nullable: true })
+  nonEmployedVictims: number;
 
-  @Column({name : 'category', nullable: true})
+  @Column({ name: 'category', nullable: true })
   category: string;
 
-  @Column({name : 'indicator', nullable: true})
+  @Column({ name: 'indicator', nullable: true })
   indicator: string;
 
-  @Column({name : 'description', nullable: true})
+  @Column({ name: 'description', nullable: true })
   description: string;
 
   @Column({ name: 'bledding_level' })
   bleedingLevel: number;
 
-  @Column({name : 'condition', nullable: true})
+  @Column({ name: 'condition', nullable: true })
   condition: string;
-<<<<<<< HEAD
-=======
-
-  @Column({name: 'action', nullable: true})
-  action : string;
-
-
->>>>>>> a44637e4886f6fbc41978a041d886aa9c5574cb2
+  @Column()
   document: string;
+  @Column({ nullable: true })
+  action: String;
 
   @Column({
     name: 'visibility',
@@ -71,9 +66,9 @@ export class Report extends InitiatorAudit {
     description: string,
     bleedingLevel: number,
     condition: string,
-    action : string,
-    nonEmployedVictims : number,
-    document: string
+    action: string,
+    nonEmployedVictims: number,
+    document: string,
   ) {
     super();
     this.date = date;
@@ -82,7 +77,6 @@ export class Report extends InitiatorAudit {
     this.description = description;
     this.bleedingLevel = bleedingLevel;
     this.condition = condition;
-    this.action = action;
     this.nonEmployedVictims = nonEmployedVictims;
     this.document = document;
   }
