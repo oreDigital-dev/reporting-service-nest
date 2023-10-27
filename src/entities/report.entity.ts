@@ -48,7 +48,7 @@ export class Report extends InitiatorAudit {
 
   @Column({ name: 'condition', nullable: true })
   condition: string;
-  @Column()
+  @Column({nullable:true})
   document: string;
   @Column({ nullable: true })
   action: String;
